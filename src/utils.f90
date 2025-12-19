@@ -72,12 +72,82 @@ subroutine left_of_delim(input, delim, result)
 end subroutine left_of_delim
 
 subroutine split_line(line2, fields2, nfields, delim, maxsplit)
+    !===============================================================================
+    ! SUBROUTINE: split_line
+    ! PURPOSE:    Splits a string into fields using fixed-size arrays.
+    ! AUTHOR:     Developed by user fgeter through many failed iterations 
+    !             by Grok/xAI. Final corrections and working code was done by fgeter
+    ! DATE:       December 19, 2025
+    !
+    ! DESCRIPTION:
+    !   This subroutine splits an input line into individual fields and stores them
+    !   in a fixed-size output array. It is designed to be robust and debugger-friendly
+    !   with gfortran/VS Code by avoiding allocatable or deferred-length arrays.
+    !
+    !   Behaviour:
+    !     * If an optional delimiter (delim) is provided:
+    !         - Splits on that single character.
+    !         - Preserves empty fields (leading, trailing, and consecutive delimiters
+    !           all produce empty strings).
+    !     * If no delimiter is provided:
+    !         - Splits on whitespace (spaces and tabs).
+    !         - Collapses consecutive whitespace.
+    !         - Ignores leading and trailing whitespace (no empty fields created).
+    !     * If an optional maxsplit is provided:
+    !         - Performs at most maxsplit splits.
+    !         - The remainder of the line becomes the last field.
+    !
+    ! PARAMETERS:
+    !   line2     (in)  : character(len=*)          - Input string to split
+    !   fields2   (out) : character(len=*) :: fields2(:) - Fixed-size array to receive fields
+    !   nfields   (out) : integer                   - Number of fields found (size of result)
+    !   delim     (in, optional) : character(len=1) - Single character delimiter
+    !   maxsplit  (in, optional) : integer          - Maximum number of splits to perform
+    !
+    ! USAGE EXAMPLES:
+    !
+    !   character(len=1000) :: line
+    !   character(len=50)   :: fields(100)
+    !   integer             :: nf
+    !
+    !   ! 1. Default whitespace splitting (collapse whitespace)
+    !   line = "  hello   world  example  "
+    !   call split_line(line, fields, nf)
+    !   ! nf = 3, fields = 'hello', 'world', 'example'
+    !
+    !   ! 2. Split on comma, preserve empty fields
+    !   line = ",,  apple  ,,banana,"
+    !   call split_line(line, fields, nf, delim=",")
+    !   ! nf = 6, fields = '', '', 'apple', '', 'banana', ''
+    !
+    !   ! 3. Split on semicolon with maxsplit=1 (remainder as last field)
+    !   line = "one;two;three;four"
+    !   call split_line(line, fields, nf, delim=";", maxsplit=1)
+    !   ! nf = 2, fields = 'one', 'two;three;four'
+    !
+    !   ! 4. Empty line
+    !   line = ""
+    !   call split_line(line, fields, nf)
+    !   ! nf = 0
+    !
+    !   ! 5. Parsing line comma delimiter
+    !   line = '43   # a,  b,c,  d,e,f'
+    !   call split_line(line, fields, nf)
+    !   ! nf = 6, fields = '43   # a', 'b', 'c', 'd', 'e', 'f'
+    !
+    ! NOTES:
+    !   - Fields are left-justified with trailing blanks removed via adjustl(trim(...)).
+    !   - If the number of fields exceeds the size of fields2, an error message is printed
+    !     and the subroutine returns early.
+    !   - Safe for gfortran debugging (no allocatables or deferred-length components).
+    !===============================================================================
+
     character(len=*), intent(in)                 :: line2
     ! The following line uses deferred-length strings for fields2 array, however, gfortran debugger has issues with it.
     ! The gfortran debugging issue can be worked around by using fixed-length strings instead 
-    ! (uncomment the next line and comment out the following line to gfortran debugger to work).
-    ! character(len=30), intent(out)                :: fields2(:)  
+    ! (comment out the next line and uncomment the following line to get gfortran debugger to work).
     character(len=*), intent(out)                :: fields2(:)
+    ! character(len=30), intent(out)                :: fields2(:)  
     integer,          intent(out)                :: nfields
     character(len=1), intent(in), optional       :: delim
     integer,          intent(in), optional       :: maxsplit
@@ -207,162 +277,6 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
     end if
 
 end subroutine split_line
-
-    ! subroutine split(line, fields, sep, maxsplit)
-    !---------------------------------------------------------------------------
-    ! SUBROUTINE split
-    !
-    ! Purpase: Provides a routine that imics Python's str.split(sep=None, maxsplit=-1) function as closely as possible.
-    !
-    ! Author: Grok (xAI) after 12 iterations and extensive collaboration, testing, persistance and feedback from user fgeter
-    ! Date:   December 16, 2025
-    !
-    ! Behaviour exactly matches Python's str.split(sep=None, maxsplit=-1)
-    ! Fully compatible with gfortran 15.2
-    ! The calling program/subroutine must contain the following declaration:
-    !
-    ! character(len=:), allocatable :: parts(:)
-    !
-    ! Usage
-    !
-    ! Parameters:
-    !   line     (in)  : input string to split (character(len=*))
-    !   fields   (out) : allocatable array of deferred-length strings containing
-    !                    the split parts
-    !   sep      (in, optional) : separator string
-    !                             - If omitted: split on any whitespace and
-    !                               collapse consecutive whitespace
-    !                             - If present: split on exact sep, preserving
-    !                               all empty fields (leading, trailing, consecutive)
-    !   maxsplit (in, optional) : maximum number of splits to perform
-    !                             - Default is -1 (no limit)
-    !
-    ! Usage examples:
-    !   character(len=:), allocatable :: parts(:)
-    !
-    !   call split("  hello   world  ", parts)                 ! => ['hello', 'world']
-    !   call split("apple,banana,cherry", parts, sep=",")      ! => ['apple', 'banana', 'cherry']
-    !   call split(",,one,,two,", parts, sep=",")              ! => ['', '', 'one', '', 'two', '']
-    !   call split("a b c d e", parts, maxsplit=2)             ! => ['a', 'b', 'c d e']
-    !   call split("", parts)                                  ! => 0 elements (whitespace mode)
-    !   call split("", parts, sep=",")                         ! => 1 empty string
-    !
-    ! Notes:
-    !   - fields is automatically allocated and sized by the subroutine
-    !   - When printing fields, use TRIM(fields(i)) to avoid trailing blanks
-    !     (standard Fortran behaviour for fixed-length internal storage)
-    !---------------------------------------------------------------------------
-
-!     implicit none
-
-!     character(len=*), intent(in)               :: line
-!     character(len=:), allocatable, intent(out) :: fields(:)
-!     character(len=*), optional, intent(in)     :: sep
-!     integer, optional, intent(in)              :: maxsplit
-
-!     integer                       :: max_splits, n, i, j, sep_len, capacity
-!     character(len=:), allocatable :: s, temp(:)
-!     logical                       :: ws_mode
-
-!     max_splits = -1
-!     if (present(maxsplit)) max_splits = maxsplit
-
-!     ws_mode = .not. present(sep)
-
-!     s = line
-
-!     if (.not. ws_mode) then
-!         sep_len = len(sep)
-!         if (sep_len == 0) error stop "split(): empty separator"
-!     end if
-
-!     ! Empty/all-whitespace case
-!     if (len_trim(s) == 0) then
-!         if (ws_mode) then
-!             allocate(character(len=0) :: fields(0))
-!         else
-!             allocate(character(len=0) :: fields(1))
-!             fields(1) = ''
-!         end if
-!         return
-!     end if
-
-!     ! Allocate with sufficient length to avoid truncation
-!     capacity = 16
-!     allocate(character(len=len(line)) :: fields(capacity))
-!     n = 0
-!     i = 1
-
-!     do
-!         if (ws_mode) then
-!             ! Skip whitespace
-!             do while (i <= len(s) .and. verify(s(i:i), ' ') == 0)
-!                 i = i + 1
-!             end do
-!             if (i > len(s)) exit
-
-!             ! Find end of word
-!             j = i
-!             do while (j <= len(s) .and. verify(s(j:j), ' ') /= 0)
-!                 j = j + 1
-!             end do
-!             j = j - 1
-!         else
-!             ! Find next separator
-!             j = index(s(i:), sep)
-!             if (j == 0) exit
-!             j = i + j - 1
-!         end if
-
-!         n = n + 1
-!         if (n > capacity) then
-!             allocate(character(len=len(line)) :: temp(2*capacity))
-!             temp(1:capacity) = fields(1:capacity)
-!             call move_alloc(temp, fields)
-!             capacity = 2 * capacity
-!         end if
-
-!         if (ws_mode) then
-!             fields(n) = s(i:j)
-!         else
-!             fields(n) = s(i:j-1)  ! exclude separator
-!         end if
-
-!         if (ws_mode) then
-!             i = j + 1
-!         else
-!             i = j + sep_len
-!         end if
-
-!         if (max_splits >= 0 .and. n == max_splits) exit
-!     end do
-
-!     ! Add remaining text
-!     if (ws_mode) then
-!         do while (i <= len(s) .and. verify(s(i:i), ' ') == 0)
-!             i = i + 1
-!         end do
-!     end if
-
-!     if (i <= len(s)) then
-!         n = n + 1
-!         if (n > capacity) then
-!             allocate(character(len=len(line)) :: temp(2*capacity))
-!             temp(1:capacity) = fields(1:capacity)
-!             call move_alloc(temp, fields)
-!             capacity = 2 * capacity
-!         end if
-!         fields(n) = s(i:)
-!     end if
-
-!     ! Trim to exact size
-!     if (n < capacity) then
-!         allocate(character(len=len(line)) :: temp(n))
-!         temp(1:n) = fields(1:n)
-!         call move_alloc(temp, fields)
-!     end if
-
-! end subroutine split
 
 end module utils
 
