@@ -1,7 +1,6 @@
 hydrology.hyd:
 name                lat_ttime     lat_sed       canmx         esco          epco          erorgn        erorgp        Cn3_swf       biomix        perco         lat_orgn      lat_orgp      pet_co        latq_co
 #                      hours         lbs           mm            mm            mm            mm            mm            mm            mm            mm            mm            mm            mm            mm            
-
 hyd0001                0.00000       0.00000       0.00000       0.95000       1.00000       0.00000       0.00000       0.00000       0.20000       0.50000       0.00000       0.00000       1.00000       0.01000 # some comments 
 hyd0002                0.00000       0.00000       0.00000       0.95000       1.00000       0.00000       0.00000       0.00000       0.20000       0.50000       0.00000       0.00000       1.00000       0.01000 # some more comments 
 hyd0003                0.00000       0.00000       0.00000       0.95000       1.00000       0.00000       0.00000       0.00000       0.20000       0.50000       0.00000       0.00000       1.00000       0.01000  
