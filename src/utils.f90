@@ -1,6 +1,10 @@
 module utils
     IMPLICIT NONE
 
+    integer, parameter :: MAX_TABLE_COLS = 100
+    integer, parameter :: MAX_NAME_LEN = 40
+    integer, parameter :: MAX_LINE_LEN = 2000
+
 contains
 
 real function exp_w(y)
@@ -278,6 +282,120 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
 
 end subroutine split_line
 
+function num_data_lines_in_data_table(unit) result(imax)
+    integer, intent(in)  :: unit
+    integer :: imax
+    integer :: eof = 0              !           |end of file
+    integer :: num_header_cols, num_data_cols
+    character(len=MAX_LINE_LEN)  :: line
+    character (len=80) :: titldum = ""!           |title of file
+    character(len=MAX_NAME_LEN) :: fields(MAX_TABLE_COLS)
+    character(len=:), allocatable :: left_str
+    logical :: found_header_row
+
+    imax = 0
+    found_header_row = .false.
+
+    do
+        read (unit,*,iostat=eof) titldum
+        if (eof < 0) then 
+            exit
+        else
+            do
+                read(unit, '(A)', iostat=eof) line
+                if (eof /= 0) exit  ! EOF
+                line = adjustl(trim(line))
+                call left_of_delim(line, '#', left_str)         ! remove comments
+                if ( len(left_str) == 0) cycle                  ! skip empty lines
+                line = left_str
+                if (.not. found_header_row) then                 ! check to see if the header row has not yet been processed
+                    found_header_row = .true.
+                    call split_line(line, fields, num_header_cols) ! process header row into header columns
+                    cycle
+                end if
+                call split_line(line, fields, num_data_cols)     ! split data row into fields
+                ! Ignore datarow if the number data columns does not match the number of header columns
+                if (num_header_cols /= num_data_cols) then
+                    cycle
+                end if
+                imax = imax + 1
+            end do
+        endif
+    end do
+end function num_data_lines_in_data_table
+
+subroutine get_data_table_header_columns(unit, header_cols, nheader_cols, skip_rows, eof)
+    integer, intent(in)         :: unit
+    integer, intent(inout)      :: skip_rows
+    integer, intent(out)        :: nheader_cols
+    character(len=:), allocatable :: left_str
+    character(MAX_NAME_LEN), intent(out) :: header_cols(MAX_TABLE_COLS)
+
+    character(len=MAX_LINE_LEN)  :: line
+    character (len=80) :: titldum = ""!         |first line in file that generally is the title and it will be ignored.
+    integer                         :: eof
+    logical                         :: found_header_row
+
+    eof = 0
+    nheader_cols = 0
+    found_header_row = .false.
+    read (unit,*,iostat=eof) titldum ! Read the first line and ignore it 
+    skip_rows = skip_rows + 1
+    if (eof == 0) then 
+        do
+            read(unit, '(A)', iostat=eof) line
+            if (eof /= 0) exit  ! EOF
+            line = adjustl(trim(line))
+            call left_of_delim(line, '#', left_str)    ! remove comments
+            if ( len(left_str) == 0) then              ! skip empty lines 
+                skip_rows = skip_rows + 1
+                cycle                  
+            end if
+            line = left_str
+            if (.not. found_header_row) then                 ! check to see if the header row has not yet been processed
+                found_header_row = .true.
+                call split_line(line, header_cols, nheader_cols) ! process header row into header columns
+                skip_rows = skip_rows + 1
+                exit
+            end if
+        end do
+    end if
+
+end subroutine get_data_table_header_columns
+
+subroutine get_data_table_row_fields(unit, fields, num_data_cols, skip_rows, eof)
+    integer, intent(in)         :: unit
+    integer, intent(inout)      :: skip_rows
+    integer, intent(out)        :: num_data_cols
+    character(len=:), allocatable :: left_str
+    character(MAX_NAME_LEN), intent(out) :: fields(MAX_TABLE_COLS)
+
+    character(MAX_LINE_LEN)     :: line
+    integer, intent(out)        :: eof
+
+    num_data_cols = 0
+    do
+        read(unit, '(A)', iostat=eof) line
+        if (eof /= 0) exit
+        line = adjustl(trim(line))
+
+        ! get portion of line left of comment delimiter '#'
+        call left_of_delim(line, '#', left_str)
+        line = left_str
+
+        ! skip empty lines
+        if (len(left_str) == 0 ) then
+            skip_rows = skip_rows + 1
+            cycle ! get next line
+        endif
+        
+        ! split data row into fields
+        call split_line(line, fields, num_data_cols)
+        exit
+    enddo
+    
+    return
+end subroutine get_data_table_row_fields
 end module utils
 
 
