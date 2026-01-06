@@ -6,7 +6,6 @@
       use utils
       
       implicit none
-      character (len=80) :: titldum = ""!         |first line in file that generally is the title and it will be ignored.
       integer :: eof = 0              !           |end of file
       integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
