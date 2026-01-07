@@ -15,6 +15,7 @@
       character(MAX_NAME_LEN)       :: data_fields(MAX_TABLE_COLS)
       integer                       :: i, nrow, nheader_cols, ndata_cols, num_skip_rows
       integer                       :: nfields
+      logical, allocatable          :: col_okay(:)
       character(len=*), parameter :: sub_name = "hydrol_read"
 
       eof = 0
@@ -41,6 +42,9 @@
         rewind (107)
         
         call get_data_table_header_columns(107, header_cols, nheader_cols, num_skip_rows, eof)
+        allocate (col_okay(nheader_cols))
+        col_okay = .true.
+
         if (eof == 0) then
           nrow = 0
           do
@@ -84,10 +88,14 @@
               case ("latq_co")
                     read(data_fields(i), *) hyd_db(nrow)%latq_co
               case default
-                  write(9001,'(5A)') 'Warning: unknown column header named ', to_lower(trim(header_cols(i))), ' in ', sub_name, ' skipping:'
-                  print('(5A)'), 'Warning: unknown column header named ', to_lower(trim(header_cols(i))), ' in ', sub_name, ' skipping:'
+                if (col_okay(i) .eqv. .true.) then
+                  col_okay(i) = .false.
+                  write(9001,'(5A)') 'Warning: unknown column header named ', &
+                  to_lower(trim(header_cols(i))), ' in ', sub_name, ' : skipping:'
+                  print('(5A)'), 'Warning: unknown column header named ', &
+                  to_lower(trim(header_cols(i))), ' in ', sub_name, ' : skipping:'
+                endif
               end select
-
             end do
           enddo
         endif

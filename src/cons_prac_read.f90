@@ -15,7 +15,8 @@ character(MAX_NAME_LEN)       :: data_fields(MAX_TABLE_COLS)
 integer                       :: i, nrow 
 integer                       :: nheader_cols, ndata_cols, num_skip_rows
 integer                       :: nfields
-character(len=*), parameter :: sub_name = "cons_prac_read"
+logical, allocatable          :: col_okay(:)
+character(len=*), parameter   :: sub_name = "cons_prac_read"
 
 eof = 0
 imax = 0
@@ -37,13 +38,16 @@ else
     return
   end if
 
-  ! reed in the data now that data object has been allocated.    
+  ! read in the data now that data object has been allocated.    
   rewind (107)  ! reset file position to beginning
   
   ! get the column headers
   call get_data_table_header_columns(107, header_cols, nheader_cols, &
                                      num_skip_rows, eof)
 
+  allocate (col_okay(nheader_cols))
+  col_okay = .true.
+  
   if (eof == 0) then   ! proceed if not at the end of the file.
     nrow = 0
     do
@@ -64,10 +68,13 @@ else
         case ("sl_len_mx")
             read(data_fields(i), *) cons_prac(nrow)%sl_len_mx
         case default
-            write(9001,'(5A)') 'Warning: unknown column header named ', &
-            to_lower(trim(header_cols(i))), ' in ', sub_name, ' :skipping:'
-            print('(5A)'), 'Warning: unknown column header named ', &
-            to_lower(trim(header_cols(i))), ' in ', sub_name, ' : skipping:'
+            if (col_okay(i) .eqv. .true.) then
+              col_okay(i) = .false.
+              write(9001,'(5A)') 'Warning: unknown column header named ', &
+              to_lower(trim(header_cols(i))), ' in ', sub_name, ' :skipping:'
+              print('(5A)'), 'Warning: unknown column header named ', &
+              to_lower(trim(header_cols(i))), ' in ', sub_name, ' : skipping:'
+            endif
         end select
 
       end do
