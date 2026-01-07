@@ -296,32 +296,28 @@ function num_data_lines_in_data_table(unit) result(imax)
     imax = 0
     found_header_row = .false.
 
-    do
-        read (unit,*,iostat=eof) titldum
-        if (eof < 0) then 
-            exit
-        else
-            do
-                read(unit, '(A)', iostat=eof) line
-                if (eof /= 0) exit  ! EOF
-                line = adjustl(trim(line))
-                call left_of_delim(line, '#', left_str)         ! remove comments
-                if ( len(left_str) == 0) cycle                  ! skip empty lines
-                line = left_str
-                if (.not. found_header_row) then                 ! check to see if the header row has not yet been processed
-                    found_header_row = .true.
-                    call split_line(line, fields, num_header_cols) ! process header row into header columns
-                    cycle
-                end if
-                call split_line(line, fields, num_data_cols)     ! split data row into fields
-                ! Ignore datarow if the number data columns does not match the number of header columns
-                if (num_header_cols /= num_data_cols) then
-                    cycle
-                end if
-                imax = imax + 1
-            end do
-        endif
-    end do
+    read (unit,*,iostat=eof) titldum
+    if (eof == 0) then 
+        do
+            read(unit, '(A)', iostat=eof) line
+            if (eof /= 0) exit  ! EOF
+            line = adjustl(trim(line))
+            call left_of_delim(line, '#', left_str)         ! remove comments
+            if ( len(left_str) == 0) cycle                  ! skip empty lines
+            line = left_str
+            if (.not. found_header_row) then                 ! check to see if the header row has not yet been processed
+                found_header_row = .true.
+                call split_line(line, fields, num_header_cols) ! process header row into header columns
+                cycle
+            end if
+            call split_line(line, fields, num_data_cols)     ! split data row into fields
+            ! Ignore datarow if the number data columns does not match the number of header columns
+            if (num_header_cols /= num_data_cols) then
+                cycle
+            end if
+            imax = imax + 1
+        end do
+    endif
 end function num_data_lines_in_data_table
 
 subroutine get_data_table_header_columns(unit, header_cols, nheader_cols, skip_rows, eof)
