@@ -71,7 +71,7 @@ else
             if (col_okay(i) .eqv. .true.) then
               col_okay(i) = .false.
               write(9001,'(5A)') 'Warning: unknown column header named ', &
-              to_lower(trim(header_cols(i))), ' in ', sub_name, ' :skipping:'
+              to_lower(trim(header_cols(i))), ' in ', sub_name, ' : skipping:'
               print('(5A)'), 'Warning: unknown column header named ', &
               to_lower(trim(header_cols(i))), ' in ', sub_name, ' : skipping:'
             endif
