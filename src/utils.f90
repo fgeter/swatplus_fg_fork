@@ -2,8 +2,8 @@ module utils
     IMPLICIT NONE
 
     integer, parameter :: MAX_TABLE_COLS = 100
-    integer, parameter :: MAX_NAME_LEN = 40
-    integer, parameter :: MAX_LINE_LEN = 2000
+    integer, parameter :: MAX_NAME_LEN = 50
+    integer, parameter :: MAX_LINE_LEN = 2500
 
 contains
 
@@ -359,17 +359,19 @@ subroutine get_data_table_header_columns(unit, header_cols, nheader_cols, skip_r
 
 end subroutine get_data_table_header_columns
 
-subroutine get_data_table_row_fields(unit, fields, num_data_cols, skip_rows, eof)
+subroutine get_data_table_row_fields(unit, fields, ndata_cols, nheader_cols, sub_name, nrow, skip_rows, eof)
     integer, intent(in)         :: unit
+    integer, intent(in)         :: nheader_cols
     integer, intent(inout)      :: skip_rows
-    integer, intent(out)        :: num_data_cols
+    integer, intent(out)        :: ndata_cols
+    integer, intent(in)         :: nrow
     character(len=:), allocatable :: left_str
     character(MAX_NAME_LEN), intent(out) :: fields(MAX_TABLE_COLS)
-
+    character(len=*), intent(in) :: sub_name
     character(MAX_LINE_LEN)     :: line
     integer, intent(out)        :: eof
 
-    num_data_cols = 0
+    ndata_cols = 0
     do
         read(unit, '(A)', iostat=eof) line
         if (eof /= 0) exit
@@ -386,7 +388,15 @@ subroutine get_data_table_row_fields(unit, fields, num_data_cols, skip_rows, eof
         endif
         
         ! split data row into fields
-        call split_line(line, fields, num_data_cols)
+        call split_line(line, fields, ndata_cols)
+        
+        ! check for correct number of columns and if incorrect skip row with warning
+        if (ndata_cols /= nheader_cols) then
+            skip_rows = skip_rows + 1
+            write(9001,'(A,I3, 3A)') 'Warning: Row ', nrow + skip_rows, ' in ', sub_name, ' has the wrong number of columns, skipping'
+            print('(A,I3, 3A)'), 'Warning: Row ', nrow + skip_rows, ' in ', sub_name, ' has the wrong number of columns, skipping'
+            cycle
+        end if
         exit
     enddo
     

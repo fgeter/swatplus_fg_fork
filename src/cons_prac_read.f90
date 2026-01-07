@@ -14,9 +14,10 @@
       character(MAX_NAME_LEN)       :: data_fields(MAX_TABLE_COLS)
       integer                       :: i, nrow, nheader_cols, ndata_cols, num_skip_rows
       integer                       :: nfields
-      character(:), allocatable     :: sub_name !name of subroutine for data read warning messages       
+      ! character(:), allocatable     :: sub_name !name of subroutine for data read warning messages       
+      character(len=*), parameter :: sub_name = "cons_prac_read"
       
-      sub_name = "cons_prac_read"
+      ! sub_name = "cons_prac_read"
       
       eof = 0
       imax = 0
@@ -38,8 +39,8 @@
           return
         end if
 
-        ! Rinse and repeat to actually read the data in now that we know the size of the data object    
-        rewind (107)
+        ! reed the data now that data object has been allocated.    
+        rewind (107)  ! reset file position to beginning
         
         ! get the column headers
         call get_data_table_header_columns(107, header_cols, nheader_cols, num_skip_rows, eof)
@@ -48,31 +49,23 @@
           nrow = 0
           do
             ! get a row of data
-            call get_data_table_row_fields(107, data_fields, ndata_cols, num_skip_rows, eof)
+            call get_data_table_row_fields(107, data_fields, ndata_cols, nheader_cols, sub_name, nrow, num_skip_rows, eof)
             if (eof /= 0) exit  ! exit if at the end of the file.
             
-            ! check for correct number of columns and if incorrect skip row with warning
-            if (ndata_cols /= nheader_cols) then
-              num_skip_rows = num_skip_rows + 1
-              write(9001,'(A,I3, 3A)') 'Warning: Row ', nrow + num_skip_rows, ' in ', sub_name, ' has the wrong number of columns, skipping'
-              print('(A,I3, 3A)'), 'Warning: Row ', nrow + num_skip_rows, ' in ', sub_name, ' has the wrong number of columns, skipping'
-              cycle
-            end if
-
             nrow = nrow + 1
               
             ! Assign data to cons_prac fields based on header column names
             do i = 1, ndata_cols
               select case (to_lower(header_cols(i)))
               case ("name")
-                  cons_prac(nrow)%name = data_fields(i)
+                  cons_prac(nrow)%name = trim(data_fields(i))
               case ("pfac")
                   read(data_fields(i), *) cons_prac(nrow)%pfac
               case ("sl_len_mx")
                   read(data_fields(i), *) cons_prac(nrow)%sl_len_mx
               case default
-                  write(9001,'(4A)') 'Warning: unknown column header in ', sub_name, ' skipping: ', to_lower(trim(header_cols(i)))
-                  print('(4A)'), 'Warning: unknown column header in ', sub_name, ' skipping: ', to_lower(trim(header_cols(i)))
+                  write(9001,'(5A)') 'Warning: unknown column header named ', to_lower(trim(header_cols(i))), ' in ', sub_name, ' skipping:'
+                  print('(5A)'), 'Warning: unknown column header named ', to_lower(trim(header_cols(i))), ' in ', sub_name, ' skipping:'
               end select
 
             end do
