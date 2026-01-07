@@ -7,7 +7,6 @@
       
       implicit none
 
-      character (len=80) :: titldum = ""!         |first line in file that generally is the title and it will be ignored.
       integer :: eof = 0              !           |end of file
       integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
@@ -16,9 +15,7 @@
       character(MAX_NAME_LEN)       :: data_fields(MAX_TABLE_COLS)
       integer                       :: i, nrow, nheader_cols, ndata_cols, num_skip_rows
       integer                       :: nfields
-      character(:), allocatable     :: sub_name !name of subroutine for data read warning messages       
-      
-      sub_name = "hydrol_read"
+      character(len=*), parameter :: sub_name = "hydrol_read"
 
       eof = 0
       imax = 0
@@ -47,17 +44,9 @@
         if (eof == 0) then
           nrow = 0
           do
-            call get_data_table_row_fields(107, data_fields, ndata_cols, num_skip_rows, eof)
+            call get_data_table_row_fields(107, data_fields, ndata_cols, nheader_cols, sub_name, nrow,num_skip_rows, eof)
             if (eof /= 0) exit  ! EOF
             
-            ! check for correct number of columns and if incorrect skip row with warning
-            if (ndata_cols /= nheader_cols) then
-              num_skip_rows = num_skip_rows + 1
-              write(9001,'(A,I3, 3A)') 'Warning: Row ', nrow + num_skip_rows, ' in ', sub_name, ' has the wrong number of columns, skipping'
-              print('(A,I3, 3A)'), 'Warning: Row ', nrow + num_skip_rows, ' in ', sub_name, ' has the wrong number of columns, skipping'
-              cycle
-            end if
-
             nrow = nrow + 1
               
             ! Assign data to hyd_db fields based on header column names
@@ -65,7 +54,7 @@
               select case (to_lower(header_cols(i)))
     
               case ("name")
-                  hyd_db(nrow)%name = data_fields(i)
+                  hyd_db(nrow)%name = trim(data_fields(i))
               case ("lat_ttime")
                   read(data_fields(i), *) hyd_db(nrow)%lat_ttime
               case ("lat_sed")
@@ -95,8 +84,8 @@
               case ("latq_co")
                     read(data_fields(i), *) hyd_db(nrow)%latq_co
               case default
-                  write(9001,'(4A)') 'Warning: unknown column header in ', sub_name, ' skipping: ', to_lower(trim(header_cols(i)))
-                  print('(4A)'), 'Warning: unknown column header in ', sub_name, ' skipping: ', to_lower(trim(header_cols(i)))
+                  write(9001,'(5A)') 'Warning: unknown column header named ', to_lower(trim(header_cols(i))), ' in ', sub_name, ' skipping:'
+                  print('(5A)'), 'Warning: unknown column header named ', to_lower(trim(header_cols(i))), ' in ', sub_name, ' skipping:'
               end select
 
             end do
