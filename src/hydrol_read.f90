@@ -1,108 +1,97 @@
-      subroutine hydrol_read
+subroutine hydrol_read
       
-      use input_file_module
-      use maximum_data_module
-      use hydrology_data_module
-      use utils
+use input_file_module
+use maximum_data_module
+use hydrology_data_module
+use utils
+
+implicit none
+
+integer :: eof = 0        ! end of file
+integer :: imax = 0       ! number of elements to be allocated
+logical :: i_exist        ! true if file exists
+integer :: i
+
+tblr%sub_name = "hyrol_read"
+tblr%unit = 107
+
+inquire (file=in_hyd%hydrol_hyd, exist=i_exist)
+if (.not. i_exist .or. in_hyd%hydrol_hyd == "null") then
+  allocate (hyd_db(0:0))
+else
+  open (tblr%unit,file=in_hyd%hydrol_hyd)
+  imax = get_num_data_lines()  !get number of valid data lines
+
+  allocate (hyd_db(imax))
+  if (imax /= 0) then
+    ! get the column headers
+    call get_header_columns(eof)
+    if (eof == 0) then
+      if (allocated(tblr%col_okay)) deallocate(tblr%col_okay)
+      allocate (tblr%col_okay(tblr%ncols))
+      tblr%col_okay = .true.
       
-      implicit none
-
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
-      logical :: i_exist              !none       |check to determine if file exists
-
-      character(MAX_NAME_LEN)       :: header_cols(MAX_TABLE_COLS) 
-      character(MAX_NAME_LEN)       :: data_fields(MAX_TABLE_COLS)
-      integer                       :: i, nrow, nheader_cols, ndata_cols, num_skip_rows
-      integer                       :: nfields
-      logical, allocatable          :: col_okay(:)
-      character(len=*), parameter :: sub_name = "hydrol_read"
-
-      eof = 0
-      imax = 0
-      nfields = 0
-      num_skip_rows = 0
-      
-      !! read all data from hydrol.dat
-      inquire (file=in_hyd%hydrol_hyd, exist=i_exist)
-      if (.not. i_exist .or. in_hyd%hydrol_hyd == "null") then
-        allocate (hyd_db(0:0))
-      else
-        open (107,file=in_hyd%hydrol_hyd)
-        imax = num_data_lines_in_data_table(107)
-
-        allocate (hyd_db(imax))
-        if (imax == 0) then
-          db_mx%hyd = imax
-          close (107)
-          return
-        end if
-
-        ! Rinse and repeat to actually read in the data now that we know the size of the data object    
-        rewind (107)
-        
-        call get_data_table_header_columns(107, header_cols, nheader_cols, num_skip_rows, eof)
-        allocate (col_okay(nheader_cols))
-        col_okay = .true.
-
-        if (eof == 0) then
-          nrow = 0
-          do
-            call get_data_table_row_fields(107, data_fields, ndata_cols, nheader_cols, sub_name, nrow,num_skip_rows, eof)
-            if (eof /= 0) exit  ! EOF
+      if (eof == 0) then   ! proceed if not at the end of the file.
+        tblr%nrow = 0
+        do
+          ! get a row of data
+          call get_data_fields(eof)
+          if (eof /= 0) exit  ! exit if at the end of the file.
+          
+          tblr%nrow = tblr%nrow + 1
             
-            nrow = nrow + 1
-              
-            ! Assign data to hyd_db fields based on header column names
-            do i = 1, ndata_cols
-              select case (to_lower(header_cols(i)))
-    
+          ! Assign data to cons_prac fields based on header column names
+          do i = 1, tblr%ncols
+            select case (tblr%header_cols(i))
               case ("name")
-                  hyd_db(nrow)%name = trim(data_fields(i))
+                  hyd_db(tblr%nrow)%name = trim(tblr%data_fields(i))
               case ("lat_ttime")
-                  read(data_fields(i), *) hyd_db(nrow)%lat_ttime
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%lat_ttime
               case ("lat_sed")
-                  read(data_fields(i), *) hyd_db(nrow)%lat_sed
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%lat_sed
               case ("canmx")
-                  read(data_fields(i), *) hyd_db(nrow)%canmx
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%canmx
               case ("esco")
-                  read(data_fields(i), *) hyd_db(nrow)%esco
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%esco
               case ("epco")
-                  read(data_fields(i), *) hyd_db(nrow)%epco
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%epco
               case ("erorgn")
-                  read(data_fields(i), *) hyd_db(nrow)%erorgn
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%erorgn
               case ("erorgp")
-                  read(data_fields(i), *) hyd_db(nrow)%erorgp
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%erorgp
               case ("cn3_swf")
-                  read(data_fields(i), *) hyd_db(nrow)%cn3_swf
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%cn3_swf
               case ("biomix")
-                  read(data_fields(i), *) hyd_db(nrow)%biomix
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%biomix
               case ("perco")
-                  read(data_fields(i), *) hyd_db(nrow)%perco
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%perco
               case ("lat_orgn")
-                  read(data_fields(i), *) hyd_db(nrow)%lat_orgn
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%lat_orgn
               case ("lat_orgp")
-                  read(data_fields(i), *) hyd_db(nrow)%lat_orgp
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%lat_orgp
               case ("pet_co")
-                  read(data_fields(i), *) hyd_db(nrow)%pet_co
+                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%pet_co
               case ("latq_co")
-                    read(data_fields(i), *) hyd_db(nrow)%latq_co
+                    read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%latq_co
               case default
-                if (col_okay(i) .eqv. .true.) then
-                  col_okay(i) = .false.
-                  write(9001,'(5A)') 'Warning: unknown column header named ', &
-                  to_lower(trim(header_cols(i))), ' in ', sub_name, ' : skipping:'
-                  print('(5A)'), 'Warning: unknown column header named ', &
-                  to_lower(trim(header_cols(i))), ' in ', sub_name, ' : skipping:'
-                endif
-              end select
-            end do
-          enddo
-        endif
+                  if (tblr%col_okay(i) .eqv. .true.) then
+                    tblr%col_okay(i) = .false.
+                    write(9001,'(5A)') 'Warning: unknown column header named ', &
+                    to_lower(trim(tblr%header_cols(i))), ' in ', tblr%sub_name, ' : skipping:'
+                    print('(5A)'), 'Warning: unknown column header named ', &
+                    to_lower(trim(tblr%header_cols(i))), ' in ', tblr%sub_name, ' : skipping:'
+                  endif
+            end select
+          end do
+        enddo
       endif
-      close (107)
- 
-      db_mx%hyd = imax
-      
-      return
-      end subroutine hydrol_read
+    endif
+  endif
+endif
+
+db_mx%hyd = imax
+
+close(tblr%unit)
+
+return 
+end subroutine hydrol_read
