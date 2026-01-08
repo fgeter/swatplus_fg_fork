@@ -5,6 +5,24 @@ module utils
     integer, parameter :: MAX_NAME_LEN = 50
     integer, parameter :: MAX_LINE_LEN = 2500
 
+    type :: table_reader
+        character(MAX_NAME_LEN)  :: header_cols(MAX_TABLE_COLS) !array of header column names
+        character(MAX_NAME_LEN)  :: data_fields(MAX_TABLE_COLS) !array of data fields in a data row of data
+        character(len=MAX_LINE_LEN)  :: line      ! character string used to read in lines from data table
+        character (len=80)       :: titldum = ""  ! first in data file that that will be ignored 
+        integer                  :: nrow          ! data row number
+        integer                  :: ncols         ! number of header columns   
+        integer                  :: nfields       ! number of data columns/fields in a data row
+        integer                  :: skip_rows     ! number of rows skipped (empty or comment lines)
+        integer                  :: unit          ! file unit number
+        character(len=:), allocatable :: left_str ! portion of line left of comment delimiter '#'
+        logical                  :: found_header_row ! flag to indicate if header row has been found
+        logical, allocatable     :: col_okay(:)   ! array used to track if warning message has already
+                                                  ! been printed out for unknown column headers
+        character(len=:), allocatable :: sub_name ! name of the subroutine using the table reader routines
+    end type table_reader
+    type(table_reader), public  :: tblr
+
 contains
 
 real function exp_w(y)
@@ -232,7 +250,7 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
                         if (pos1 <= len_line) then
                             nfields = nfields + 1
                             if (nfields > size(fields2)) return
-                            fields2(nfields) = adjustl(trim(line2(pos1:)))
+                            fields2(nfields) = trim(adjustl(line2(pos1:)))
                         end if
                     return
                     end if
@@ -272,7 +290,7 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
                 if (pos1 <= len_line) then
                     nfields = nfields + 1
                     if (nfields > size(fields2)) return
-                    fields2(nfields) = line2(pos1:)
+                    fields2(nfields) = trim(adjustl(line2(pos1:)))
                 end if
                 endif
                 return
@@ -282,126 +300,139 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
 
 end subroutine split_line
 
-function num_data_lines_in_data_table(unit) result(imax)
-    integer, intent(in)  :: unit
+function get_num_data_lines() result(imax)
     integer :: imax
     integer :: eof = 0              !           |end of file
-    integer :: num_header_cols, num_data_cols
-    character(len=MAX_LINE_LEN)  :: line
-    character (len=80) :: titldum = ""!           |title of file
-    character(len=MAX_NAME_LEN) :: fields(MAX_TABLE_COLS)
-    character(len=:), allocatable :: left_str
-    logical :: found_header_row
+    ! integer :: num_header_cols, num_data_cols
+    ! character(len=MAX_LINE_LEN)  :: line
+    ! character (len=80) :: titldum = ""!           |title of file
+    ! character(len=MAX_NAME_LEN) :: fields(MAX_TABLE_COLS)
+    ! character(len=:), allocatable :: left_str
+    ! logical :: found_header_row
 
     imax = 0
-    found_header_row = .false.
+    tblr%found_header_row = .false.
 
-    read (unit,*,iostat=eof) titldum
+    read (tblr%unit,*,iostat=eof) tblr%titldum
     if (eof == 0) then 
         do
-            read(unit, '(A)', iostat=eof) line
+            read(tblr%unit, '(A)', iostat=eof) tblr%line
             if (eof /= 0) exit  ! EOF
-            line = adjustl(trim(line))
-            call left_of_delim(line, '#', left_str)         ! remove comments
-            if ( len(left_str) == 0) cycle                  ! skip empty lines
-            line = left_str
-            if (.not. found_header_row) then                 ! check to see if the header row has not yet been processed
-                found_header_row = .true.
-                call split_line(line, fields, num_header_cols) ! process header row into header columns
+            tblr%line = adjustl(trim(tblr%line))
+            call left_of_delim(tblr%line, '#', tblr%left_str)         ! remove comments
+            if ( len(tblr%left_str) == 0) cycle                  ! skip empty lines
+            tblr%line = tblr%left_str
+            if (.not. tblr%found_header_row) then                 ! check to see if the header row has not yet been processed
+                tblr%found_header_row = .true.
+                call split_line(tblr%line, tblr%data_fields, tblr%ncols) ! process header row into header columns
                 cycle
             end if
-            call split_line(line, fields, num_data_cols)     ! split data row into fields
+            call split_line(tblr%line, tblr%data_fields, tblr%nfields)     ! split data row into fields
             ! Ignore datarow if the number data columns does not match the number of header columns
-            if (num_header_cols /= num_data_cols) then
+            if (tblr%ncols /= tblr%nfields) then
                 cycle
             end if
             imax = imax + 1
         end do
     endif
-end function num_data_lines_in_data_table
+end function get_num_data_lines
 
-subroutine get_data_table_header_columns(unit, header_cols, nheader_cols, skip_rows, eof)
-    integer, intent(in)         :: unit
-    integer, intent(inout)      :: skip_rows
-    integer, intent(out)        :: nheader_cols
-    character(len=:), allocatable :: left_str
-    character(MAX_NAME_LEN), intent(out) :: header_cols(MAX_TABLE_COLS)
+! subroutine get_header_columns(unit, header_cols, nheader_cols, skip_rows, eof)
+subroutine get_header_columns(eof)
+    integer                     :: i
+    integer                     :: eof
+    ! integer, intent(in)         :: unit
+    ! integer, intent(inout)      :: skip_rows
+    ! integer, intent(out)        :: nheader_cols
+    ! integer                     :: i
+    ! character(len=:), allocatable :: left_str
+    ! character(MAX_NAME_LEN), intent(out) :: header_cols(MAX_TABLE_COLS)
 
-    character(len=MAX_LINE_LEN)  :: line
-    character (len=80) :: titldum = ""!         |first line in file that generally is the title and it will be ignored.
-    integer                         :: eof
-    logical                         :: found_header_row
+    ! character(len=MAX_LINE_LEN)  :: line
+    ! character (len=80) :: titldum = ""!         |first line in file that generally is the title and it will be ignored.
+    ! integer                         :: eof
+    ! logical                         :: found_header_row
 
     eof = 0
-    nheader_cols = 0
-    found_header_row = .false.
-    read (unit,*,iostat=eof) titldum ! Read the first line and ignore it 
-    skip_rows = skip_rows + 1
+    tblr%ncols = 0
+    tblr%found_header_row = .false.
+
+    rewind (tblr%unit)  ! reset file position to beginning
+    read (tblr%unit,*,iostat=eof) tblr%titldum ! Read the first line and ignore it 
+    tblr%skip_rows = tblr%skip_rows + 1
+
     if (eof == 0) then 
         do
-            read(unit, '(A)', iostat=eof) line
+            read(tblr%unit, '(A)', iostat=eof) tblr%line
             if (eof /= 0) exit  ! EOF
-            line = adjustl(trim(line))
-            call left_of_delim(line, '#', left_str)    ! remove comments
-            if ( len(left_str) == 0) then              ! skip empty lines 
-                skip_rows = skip_rows + 1
+            tblr%line = adjustl(trim(tblr%line))
+            call left_of_delim(tblr%line, '#', tblr%left_str)    ! remove comments
+            if ( len(tblr%left_str) == 0) then              ! skip empty lines 
+                tblr%skip_rows = tblr%skip_rows + 1
                 cycle                  
             end if
-            line = left_str
-            if (.not. found_header_row) then                 ! check to see if the header row has not yet been processed
-                found_header_row = .true.
-                call split_line(line, header_cols, nheader_cols) ! process header row into header columns
-                skip_rows = skip_rows + 1
+            tblr%line = tblr%left_str
+            if (.not. tblr%found_header_row) then                 ! check to see if the header row has not yet been processed
+                tblr%found_header_row = .true.
+                call split_line(tblr%line, tblr%header_cols, tblr%ncols) ! process header row into header columns
+                do i = 1 , tblr%ncols
+                    tblr%header_cols(i) = to_lower(trim(adjustl(tblr%header_cols(i))))
+                end do
+                tblr%skip_rows = tblr%skip_rows + 1
                 exit
             end if
         end do
     end if
 
-end subroutine get_data_table_header_columns
+end subroutine get_header_columns
 
-subroutine get_data_table_row_fields(unit, fields, ndata_cols, nheader_cols, sub_name, nrow, skip_rows, eof)
-    integer, intent(in)         :: unit
-    integer, intent(in)         :: nheader_cols
-    integer, intent(inout)      :: skip_rows
-    integer, intent(out)        :: ndata_cols
-    integer, intent(in)         :: nrow
-    character(len=:), allocatable :: left_str
-    character(MAX_NAME_LEN), intent(out) :: fields(MAX_TABLE_COLS)
-    character(len=*), intent(in) :: sub_name
-    character(MAX_LINE_LEN)     :: line
-    integer, intent(out)        :: eof
+! subroutine get_data_table_row_fields(unit, fields, ndata_cols, nheader_cols, sub_name, nrow, skip_rows, eof)
+subroutine get_data_fields(eof)
+    integer, intent(out)          :: eof
+    integer                       :: i
+    ! integer, intent(in)         :: unit
+    ! integer, intent(in)        d :: nheader_cols
+    ! integer, intent(inout)      :: skip_rows
+    ! integer, intent(out)        :: ndata_cols
+    ! integer, intent(in)         :: nrow
+    ! character(len=:), allocatable :: left_str
+    ! character(MAX_NAME_LEN), intent(out) :: fields(MAX_TABLE_COLS)
+    ! character(len=*), intent(in) :: sub_name
+    ! character(MAX_LINE_LEN)     :: line
 
-    ndata_cols = 0
     do
-        read(unit, '(A)', iostat=eof) line
+        read(tblr%unit, '(A)', iostat=eof) tblr%line
         if (eof /= 0) exit
-        line = adjustl(trim(line))
+        tblr%line = adjustl(trim(tblr%line))
 
         ! get portion of line left of comment delimiter '#'
-        call left_of_delim(line, '#', left_str)
-        line = left_str
+        call left_of_delim(tblr%line, '#', tblr%left_str)
+        tblr%line = tblr%left_str
 
         ! skip empty lines
-        if (len(left_str) == 0 ) then
-            skip_rows = skip_rows + 1
+        if (len(tblr%left_str) == 0 ) then
+            tblr%skip_rows = tblr%skip_rows + 1
             cycle ! get next line
         endif
         
         ! split data row into fields
-        call split_line(line, fields, ndata_cols)
+        call split_line(tblr%line, tblr%data_fields, tblr%nfields)
+        do i=1, tblr%nfields
+            tblr%data_fields(i) = trim(adjustl(tblr%data_fields(i)))
+        end do
         
         ! check for correct number of columns and if incorrect skip row with warning
-        if (ndata_cols /= nheader_cols) then
-            skip_rows = skip_rows + 1
-            write(9001,'(A,I3, 3A)') 'Warning: Row ', nrow + skip_rows, ' in ', sub_name, ' has the wrong number of columns, skipping'
-            print('(A,I3, 3A)'), 'Warning: Row ', nrow + skip_rows, ' in ', sub_name, ' has the wrong number of columns, skipping'
+        if (tblr%ncols /= tblr%nfields) then
+            tblr%skip_rows = tblr%skip_rows + 1
+            write(9001,'(A,I3, 3A)') 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in ', tblr%sub_name, ' has the wrong number of columns, skipping'
+            print('(A,I3, 3A)'), 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in ', tblr%sub_name, ' has the wrong number of columns, skipping'
             cycle
         end if
         exit
     enddo
     
     return
-end subroutine get_data_table_row_fields
+end subroutine get_data_fields
 end module utils
 
 
