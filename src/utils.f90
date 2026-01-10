@@ -19,7 +19,6 @@ module utils
         logical                  :: found_header_row ! flag to indicate if header row has been found
         logical, allocatable     :: col_okay(:)   ! array used to track if warning message has already
                                                   ! been printed out for unknown column headers
-        character(len=:), allocatable :: sub_name ! name of the subroutine using the table reader routines
         character(len=:), allocatable :: file_name ! name of the file being read
     end type table_reader
     type(table_reader), public  :: tblr
@@ -39,7 +38,6 @@ subroutine init_tblr_vars()
     tblr%left_str = ""
     tblr%found_header_row = .false.
     if (allocated(tblr%col_okay)) deallocate(tblr%col_okay)
-    tblr%sub_name = ""
     tblr%file_name = ""
     return
 end subroutine init_tblr_vars
