@@ -20,6 +20,7 @@ module utils
         logical, allocatable     :: col_okay(:)   ! array used to track if warning message has already
                                                   ! been printed out for unknown column headers
         character(len=:), allocatable :: sub_name ! name of the subroutine using the table reader routines
+        character(len=:), allocatable :: file_name ! name of the file being read
     end type table_reader
     type(table_reader), public  :: tblr
 
@@ -39,6 +40,7 @@ subroutine init_tblr_vars()
     tblr%found_header_row = .false.
     if (allocated(tblr%col_okay)) deallocate(tblr%col_okay)
     tblr%sub_name = ""
+    tblr%file_name = ""
     return
 end subroutine init_tblr_vars
 
@@ -680,10 +682,10 @@ subroutine get_data_fields(eof)
         ! check for correct number of columns and if incorrect skip row with warning
         if (tblr%ncols /= tblr%nfields) then
             tblr%skip_rows = tblr%skip_rows + 1
-            write(9001,'(A,I3, 3A)') 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in ', &
-                                      tblr%sub_name, ' has the wrong number of columns, skipping'
-            print('(A,I3, 3A)'), 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in ', & 
-                                      tblr%sub_name, ' has the wrong number of columns, skipping'
+            write(9001,'(A,I3, 3A)') 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in the input file ', &
+                                      tblr%file_name, ' has the wrong number of columns, skipping'
+            print('(A,I3, 3A)'), 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in the input file ', & 
+                                      tblr%file_name, ' has the wrong number of columns, skipping'
             cycle
         end if
         exit
@@ -730,9 +732,9 @@ subroutine output_column_warning(i)
     if (tblr%col_okay(i) .eqv. .true.) then
         tblr%col_okay(i) = .false.
         write(9001,'(5A)') 'Warning: unknown column header named ', &
-                           to_lower(trim(tblr%header_cols(i))), ' in ', tblr%sub_name, ' : skipping:'
+                           to_lower(trim(tblr%header_cols(i))), ' in the input file ', tblr%file_name, ' : skipping:'
         print('(5A)'), 'Warning: unknown column header named ', &
-                           to_lower(trim(tblr%header_cols(i))), ' in ', tblr%sub_name, ' : skipping:'
+                           to_lower(trim(tblr%header_cols(i))), ' in the input file ', tblr%file_name, ' : skipping:'
     endif
     return
 end subroutine output_column_warning

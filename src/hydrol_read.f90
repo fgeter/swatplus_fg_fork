@@ -15,6 +15,7 @@ integer :: i
 call init_tblr_vars()  ! initialize tblr variables to zero and arrays to null
 
 tblr%sub_name = "hyrol_read"
+tblr%file_name = in_hyd%hydrol_hyd
 tblr%unit = 107
 
 inquire (file=in_hyd%hydrol_hyd, exist=i_exist)
