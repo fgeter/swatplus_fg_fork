@@ -25,6 +25,24 @@ module utils
 
 contains
 
+subroutine init_tblr_vars()
+    tblr%header_cols = ''
+    tblr%data_fields = ''
+    tblr%line = '' 
+    tblr%titldum = ""
+    tblr%nrow = 0
+    tblr%ncols = 0 
+    tblr%nfields = 0
+    tblr%skip_rows = 0
+    tblr%unit = 0
+    tblr%left_str = ""
+    tblr%found_header_row = .false.
+    if (allocated(tblr%col_okay)) deallocate(tblr%col_okay)
+    tblr%sub_name = ""
+    return
+end subroutine init_tblr_vars
+
+
 real function exp_w(y)
 !===============================================================================
 ! Author: fgeter
@@ -565,7 +583,6 @@ subroutine get_header_columns(eof)
     integer                     :: eof
 
     eof = 0
-    tblr%ncols = 0
     tblr%found_header_row = .false.
 
     rewind (tblr%unit)  ! reset file position to beginning
@@ -636,6 +653,8 @@ subroutine get_data_fields(eof)
     integer, intent(out)          :: eof
     integer                       :: i
 
+    tblr%data_fields = ''
+    tblr%nfields = 0
     do
         read(tblr%unit, '(A)', iostat=eof) tblr%line
         if (eof /= 0) exit
