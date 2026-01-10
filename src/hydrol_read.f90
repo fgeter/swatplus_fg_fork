@@ -12,6 +12,8 @@ integer :: imax = 0       ! number of elements to be allocated
 logical :: i_exist        ! true if file exists
 integer :: i
 
+call init_tblr_vars()  ! initialize tblr variables to zero and arrays to null
+
 tblr%sub_name = "hyrol_read"
 tblr%unit = 107
 
@@ -27,7 +29,6 @@ else
     ! get the column headers
     call get_header_columns(eof)
     if (eof == 0) then
-      if (allocated(tblr%col_okay)) deallocate(tblr%col_okay)
       allocate (tblr%col_okay(tblr%ncols))
       tblr%col_okay = .true.
       
