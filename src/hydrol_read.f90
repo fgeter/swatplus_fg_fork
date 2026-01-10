@@ -7,22 +7,21 @@ use utils
 
 implicit none
 
-integer :: eof = 0        ! end of file
-integer :: imax = 0       ! number of elements to be allocated
-logical :: i_exist        ! true if file exists
+integer :: eof = 0     ! end of file
+integer :: imax = 0    ! number of elements to be allocated
+logical :: i_exist     ! true if file exists
 integer :: i
 
 call init_tblr_vars()  ! initialize tblr variables to zero and arrays to null
 
-tblr%sub_name = "hyrol_read"
 tblr%file_name = in_hyd%hydrol_hyd
 tblr%unit = 107
 
-inquire (file=in_hyd%hydrol_hyd, exist=i_exist)
-if (.not. i_exist .or. in_hyd%hydrol_hyd == "null") then
+inquire (file=tblr%file_name, exist=i_exist)
+if (.not. i_exist .or. tblr%file_name == "null") then
   allocate (hyd_db(0:0))
 else
-  open (tblr%unit,file=in_hyd%hydrol_hyd)
+  open (tblr%unit,file=tblr%file_name)
   imax = get_num_data_lines()  !get number of valid data lines
 
   allocate (hyd_db(imax))

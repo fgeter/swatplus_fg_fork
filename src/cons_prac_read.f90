@@ -7,23 +7,22 @@ use utils
 
 implicit none
 
-integer :: eof = 0        ! end of file
-integer :: imax = 0       ! number of elements to be allocated
-logical :: i_exist        ! true if file exists
+integer :: eof = 0     ! end of file
+integer :: imax = 0    ! number of elements to be allocated
+logical :: i_exist     ! true if file exists
 integer :: i
 
-call init_tblr_vars()
+call init_tblr_vars()   ! initialize tblr variables to zero and arrays to null
 
-tblr%sub_name = "cons_prac_read"
 tblr%file_name = in_lum%cons_prac_lum
 tblr%unit = 107
 
 !! read all curve number data from cn.tbl
-inquire (file=in_lum%cons_prac_lum, exist=i_exist)
-if (.not. i_exist .or. in_lum%cons_prac_lum == "null") then
+inquire (file=tblr%file_name, exist=i_exist)
+if (.not. i_exist .or. tblr%file_name == "null") then
   allocate (cons_prac(0:0))
 else
-  open (tblr%unit,file=in_lum%cons_prac_lum)
+  open (tblr%unit,file=tblr%file_name)
   imax = get_num_data_lines()  !get number of valid data lines
 
   allocate (cons_prac(0:imax))
