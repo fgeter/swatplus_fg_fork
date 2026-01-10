@@ -26,6 +26,57 @@ module utils
 contains
 
 real function exp_w(y)
+!===============================================================================
+! Author: fgeter
+!
+! Function: exp_w
+!
+! Purpose:
+!   Computes the exponential of 'y' (exp(y)) with safe handling of severe
+!   underflow conditions. If 'y' is less than -80.0, the result is set to 0.0
+!   to avoid floating-point underflow, and an optional diagnostic warning is
+!   emitted to the error unit (stderr).
+!
+!   This "wrapped" exponential prevents program crashes or silent NaN/Inf in
+!   environments where very small exponents underflow to zero anyway, while
+!   providing traceability via compiler-specific stack traces when enabled.
+!
+! Arguments:
+!   y          : real, intent(in)
+!                The exponent value (any real number)
+!
+! Returns:
+!   exp_w      : real
+!                exp(y) if y >= -80.0; otherwise 0.0
+!
+! Features:
+!   - Underflow threshold: -80.0 (chosen as exp(-80) ≈ 1.8e-35, safely below
+!     single-precision denormalized range and near zero for most practical purposes)
+!   - Optional error reporting controlled by 'err_output' flag:
+!       * .true.  → prints warning message + compiler-specific stack trace
+!       * .false. → silent (default; no output or performance overhead)
+!   - Compiler-specific backtrace support:
+!       * Intel Fortran (__INTEL_COMPILER): tracebackqq
+!       * GNU Fortran (__GFORTRAN__): backtrace()
+!       * Other compilers: fallback message (no trace)
+!   - Uses iso_fortran_env for portable 'error_unit'
+!   - Implicit none and intent(in) for safety
+!
+! Example usage:
+!   real :: safe_exp
+!   safe_exp = exp_w(-90.0)   ! Returns 0.0 (with optional warning + trace)
+!   safe_exp = exp_w(10.0)    ! Returns exp(10.0) ≈ 22026.465
+!
+! Notes:
+!   - The err_output flag is hardcoded to .false. for production use.
+!     Uncomment the .true. line for debugging underflow issues.
+!   - Stack traces are expensive; keep err_output=.false. in release builds.
+!   - Threshold (-80.0) is conservative for real(kind=real32); adjust if using
+!     higher precision (e.g., real64) and stricter needs.
+!   - No allocation or side effects beyond optional I/O and trace.
+!
+!===============================================================================
+
       use iso_fortran_env
 #ifdef __INTEL_COMPILER
       use ifcore, only: tracebackqq
@@ -59,7 +110,48 @@ real function exp_w(y)
     endif
 end function exp_w
 
+
 pure function to_lower(str) result(lower)
+!===============================================================================
+! Author: fgeter
+!
+! Function: to_lower
+!
+! Purpose:
+!   Converts the input string to lowercase using a pure, elemental-style approach.
+!   Only ASCII uppercase letters (A-Z) are converted; all other characters
+!   (lowercase letters, digits, symbols, spaces, etc.) remain unchanged.
+!
+!   This is a lightweight, portable, dependency-free alternative to using
+!   intrinsic routines that may not be available in all compilers/environments.
+!
+! Arguments:
+!   str    : character(len=*), intent(in)
+!            The input string to convert (can be any length)
+!
+! Returns:
+!   lower  : character(len=len(str))
+!            The input string with all ASCII uppercase letters converted to
+!            their lowercase equivalents. The length is identical to the input.
+!
+! Features:
+!   - Pure function: no side effects, suitable for use in expressions and
+!     initialization expressions
+!   - Uses iachar() and achar() for reliable, portable ASCII code manipulation
+!   - Handles only basic Latin alphabet (A-Z → a-z); does not perform locale-
+!     sensitive conversions (e.g., no handling of accented characters)
+!
+! Example usage:
+!   print *, to_lower("Hello WORLD! 123")   ! Outputs: "hello world! 123"
+!   character(len=20) :: name = "Fortran ROCKS"
+!   print *, to_lower(name)                 ! Outputs: "fortran rocks"
+!
+! Notes:
+!   - Performance is good for typical string lengths (character-by-character loop)
+!   - Safe for strings containing non-letter characters or already-lowercase text
+!   - No allocation is performed (fixed-length result matches input length)
+!
+!===============================================================================
     character(len=*), intent(in) :: str
     character(len=len(str))      :: lower
     integer                      :: i, code
@@ -74,7 +166,47 @@ pure function to_lower(str) result(lower)
     end do
 end function to_lower
 
+
 subroutine left_of_delim(input, delim, result)
+!===============================================================================
+! Author: fgeter
+!
+! Subroutine: left_of_delim
+!
+! Purpose:
+!   Extracts the substring from the beginning of 'input' up to (but not including)
+!   the first occurrence of the specified delimiter character 'delim'.
+!   If the delimiter is not found, the entire input string is returned.
+!
+!   This routine is typically used to strip trailing comments or extract the
+!   meaningful part of a line (e.g., everything before a '#' comment marker).
+!
+! Arguments:
+!   input    : character(len=*), intent(in)
+!              The input string to process (may contain leading/trailing spaces)
+!
+!   delim    : character(len=1), intent(in)
+!              Single character delimiter to search for (e.g., '#', '!', ':', etc.)
+!
+!   result   : character(len=:), allocatable, intent(out)
+!              Output: the substring from start of 'input' to just before the first
+!              'delim', or the entire trimmed input if 'delim' is not found.
+!              Allocated automatically to the exact required length.
+!
+! Notes:
+!   - The returned string does NOT include the delimiter itself.
+!   - Leading and trailing whitespace are preserved in the result only if they
+!     appear before the delimiter (or in the whole string if no delimiter).
+!   - Uses Fortran intrinsic 'index()' for efficient delimiter search.
+!   - Safe for empty input strings (returns empty allocated string).
+!
+! Example usage:
+!   character(len=:), allocatable :: comment_free
+!   call left_of_delim("data  1 2 3  # this is a comment", "#", comment_free)
+!   ! comment_free now contains "data  1 2 3  " (note preserved trailing spaces)
+!
+!===============================================================================
+
     character(len=*), intent(in)               :: input
     character(len=1), intent(in)               :: delim
     character(len=:), allocatable, intent(out) :: result
@@ -85,13 +217,14 @@ subroutine left_of_delim(input, delim, result)
 
     if (pos == 0) then
       ! Delimiter not found → return whole string, trimmed
-      result = trim(input)
+      result = input
     else
       ! Return everything before the delimiter (exclude the delimiter itself)
       result = input(1:pos-1)
     end if
 
 end subroutine left_of_delim
+
 
 subroutine split_line(line2, fields2, nfields, delim, maxsplit)
     !===============================================================================
@@ -297,18 +430,49 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
             end if
         end do
     end if
-
+    return
 end subroutine split_line
 
+
 function get_num_data_lines() result(imax)
+!===============================================================================
+! Author: fgeter
+!
+! Function: get_num_data_lines
+!
+! Purpose:
+!   Counts the number of valid data lines in the currently open table file
+!   (associated with tblr%unit). It skips:
+!     - comment lines (everything after #)
+!     - blank lines
+!     - lines with incorrect number of fields compared to header
+!
+!   The function also:
+!     - Identifies and processes the first non-comment/non-blank line as the header row
+!     - Splits the header into column names (stored in tblr%data_fields)
+!     - Sets tblr%found_header_row = .true. after processing the header
+!     - Counts only data rows that have exactly the same number of fields as the header
+!
+!   Side effects:
+!     - Modifies tblr%found_header_row
+!     - Modifies tblr%line, tblr%left_str, tblr%data_fields, tblr%ncols, tblr%nfields
+!     - Leaves the file position at the END OF FILE (after last read)
+!
+! Arguments: none (uses module-level derived type tblr)
+!
+! Returns:
+!   imax : integer - Number of valid data rows (lines that match header column count)
+!
+! Notes:
+!   - Assumes tblr%unit is already open and positioned at the beginning of the data
+!   - Uses free-format read for the first line (title/dummy), then fixed '(A)' for others
+!   - Relies on external routines: left_of_delim() and split_line()
+!   - Safe against empty files or files with only comments/blank lines
+!
+!===============================================================================
+
     integer :: imax
     integer :: eof = 0              !           |end of file
-    ! integer :: num_header_cols, num_data_cols
-    ! character(len=MAX_LINE_LEN)  :: line
-    ! character (len=80) :: titldum = ""!           |title of file
-    ! character(len=MAX_NAME_LEN) :: fields(MAX_TABLE_COLS)
-    ! character(len=:), allocatable :: left_str
-    ! logical :: found_header_row
 
     imax = 0
     tblr%found_header_row = .false.
@@ -319,39 +483,86 @@ function get_num_data_lines() result(imax)
             read(tblr%unit, '(A)', iostat=eof) tblr%line
             if (eof /= 0) exit  ! EOF
             tblr%line = adjustl(trim(tblr%line))
-            call left_of_delim(tblr%line, '#', tblr%left_str)         ! remove comments
+            call left_of_delim(tblr%line, '#', tblr%left_str)    ! remove comments
+            tblr%left_str = trim(adjustl(tblr%left_str))
             if ( len(tblr%left_str) == 0) cycle                  ! skip empty lines
             tblr%line = tblr%left_str
-            if (.not. tblr%found_header_row) then                 ! check to see if the header row has not yet been processed
+            if (.not. tblr%found_header_row) then                ! check to see if the header row has not yet been processed
                 tblr%found_header_row = .true.
                 call split_line(tblr%line, tblr%data_fields, tblr%ncols) ! process header row into header columns
                 cycle
             end if
-            call split_line(tblr%line, tblr%data_fields, tblr%nfields)     ! split data row into fields
-            ! Ignore datarow if the number data columns does not match the number of header columns
+            call split_line(tblr%line, tblr%data_fields, tblr%nfields)    ! split data row into fields
+
+            ! Ignore datarow if the number of data fields does not match the number of header columns
             if (tblr%ncols /= tblr%nfields) then
                 cycle
             end if
             imax = imax + 1
         end do
     endif
+    return
 end function get_num_data_lines
 
-! subroutine get_header_columns(unit, header_cols, nheader_cols, skip_rows, eof)
+
 subroutine get_header_columns(eof)
+!===============================================================================
+! Author: fgeter
+!
+! Subroutine: get_header_columns
+!
+! Purpose:
+!   Locates, reads, and processes the header row from the table file associated
+!   with tblr%unit. It:
+!     - Rewinds the file to the beginning
+!     - Skips the first line (treated as a title/dummy line)
+!     - Skips any blank lines or comment-only lines
+!     - Identifies the first meaningful (non-empty, non-comment) line as the header
+!     - Splits that line into individual column names
+!     - Converts each column name to lowercase and trims whitespace
+!     - Stores the cleaned column names in tblr%header_cols(:)
+!     - Sets tblr%ncols to the number of columns found
+!     - Updates tblr%skip_rows to reflect how many lines were skipped before the header
+!     - Sets tblr%found_header_row = .true. upon successful header detection
+!
+!   The subroutine leaves the file positioned immediately after the header row.
+!
+! Arguments:
+!   eof    : integer, intent(out)
+!            Final IOSTAT value from the last read operation:
+!              0    = success (header found)
+!              < 0  = end-of-file reached before finding a header
+!              > 0  = read error occurred
+!
+! Side effects:
+!   - Rewinds and reads from tblr%unit
+!   - Modifies: tblr%found_header_row, tblr%ncols, tblr%header_cols,
+!               tblr%skip_rows, tblr%line, tblr%left_str
+!   - Calls external routines: left_of_delim(), split_line(), to_lower()
+!
+! Notes:
+!   - Assumes tblr%unit is already open for reading
+!   - Assumes tblr%skip_rows is initialized (likely to 0) before calling
+!   - Column names are normalized to lowercase and trimmed for consistency
+!   - If no valid header is found before EOF, tblr%ncols remains 0 and
+!     tblr%found_header_row stays .false.
+!   - Uses '(A)' format for robust line reading, then processes manually
+!
+! Example behavior:
+!   File content:
+!     Some title line
+!     # comment
+!       
+!     ID,Name,Value   ← header
+!     1,Alice,10.5
+!
+!   → After call: tblr%ncols = 3, tblr%header_cols = ['id','name','value'],
+!     tblr%skip_rows incremented by 4 (title + comment + blank + header)
+!
+!============================================o===================================
+
     integer                     :: i
     integer                     :: eof
-    ! integer, intent(in)         :: unit
-    ! integer, intent(inout)      :: skip_rows
-    ! integer, intent(out)        :: nheader_cols
-    ! integer                     :: i
-    ! character(len=:), allocatable :: left_str
-    ! character(MAX_NAME_LEN), intent(out) :: header_cols(MAX_TABLE_COLS)
-
-    ! character(len=MAX_LINE_LEN)  :: line
-    ! character (len=80) :: titldum = ""!         |first line in file that generally is the title and it will be ignored.
-    ! integer                         :: eof
-    ! logical                         :: found_header_row
 
     eof = 0
     tblr%ncols = 0
@@ -365,8 +576,9 @@ subroutine get_header_columns(eof)
         do
             read(tblr%unit, '(A)', iostat=eof) tblr%line
             if (eof /= 0) exit  ! EOF
-            tblr%line = adjustl(trim(tblr%line))
+            tblr%line = trim(adjustl(tblr%line))
             call left_of_delim(tblr%line, '#', tblr%left_str)    ! remove comments
+            tblr%left_str = trim(adjustl(tblr%left_str))
             if ( len(tblr%left_str) == 0) then              ! skip empty lines 
                 tblr%skip_rows = tblr%skip_rows + 1
                 cycle                  
@@ -383,22 +595,46 @@ subroutine get_header_columns(eof)
             end if
         end do
     end if
-
+    return
 end subroutine get_header_columns
 
-! subroutine get_data_table_row_fields(unit, fields, ndata_cols, nheader_cols, sub_name, nrow, skip_rows, eof)
+
 subroutine get_data_fields(eof)
+!===============================================================================
+! Subroutine: get_data_fields
+!
+! Author:     fgeter
+!
+! Purpose:    Reads lines from the input file (unit=tblr%unit) until a valid 
+!             data row is found. Processes the line by:
+!               - removing comments (everything after #)
+!               - skipping blank lines
+!               - splitting into fields
+!               - checking correct number of columns
+!
+!             The routine stops at the first valid data row or when EOF is reached.
+!             Keeps track of skipped rows (blank lines or wrong column count).
+!
+! Arguments:
+!   eof   : intent(out) integer
+!           IOSTAT value from the last READ operation.
+!           0   = success (valid data row found)
+!           >0  = end of file or error condition
+!
+! Side effects / modifies:
+!   tblr%line         - last read line (raw)
+!   tblr%left_str     - line content left of comment delimiter
+!   tblr%data_fields  - array of trimmed fields from the current valid row
+!   tblr%nfields      - number of fields found in current row
+!   tblr%skip_rows    - counter of skipped rows (blank + wrong column count)
+!   tblr%nrow         - assumed to be updated outside (current data row count)
+!
+! Dependencies:
+!   - Module variable/type: tblr (table reader context)
+!   - External routines: left_of_delim, split_line
+!===============================================================================
     integer, intent(out)          :: eof
     integer                       :: i
-    ! integer, intent(in)         :: unit
-    ! integer, intent(in)        d :: nheader_cols
-    ! integer, intent(inout)      :: skip_rows
-    ! integer, intent(out)        :: ndata_cols
-    ! integer, intent(in)         :: nrow
-    ! character(len=:), allocatable :: left_str
-    ! character(MAX_NAME_LEN), intent(out) :: fields(MAX_TABLE_COLS)
-    ! character(len=*), intent(in) :: sub_name
-    ! character(MAX_LINE_LEN)     :: line
 
     do
         read(tblr%unit, '(A)', iostat=eof) tblr%line
@@ -407,6 +643,7 @@ subroutine get_data_fields(eof)
 
         ! get portion of line left of comment delimiter '#'
         call left_of_delim(tblr%line, '#', tblr%left_str)
+        tblr%left_str = trim(adjustl(tblr%left_str))
         tblr%line = tblr%left_str
 
         ! skip empty lines
@@ -424,15 +661,64 @@ subroutine get_data_fields(eof)
         ! check for correct number of columns and if incorrect skip row with warning
         if (tblr%ncols /= tblr%nfields) then
             tblr%skip_rows = tblr%skip_rows + 1
-            write(9001,'(A,I3, 3A)') 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in ', tblr%sub_name, ' has the wrong number of columns, skipping'
-            print('(A,I3, 3A)'), 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in ', tblr%sub_name, ' has the wrong number of columns, skipping'
+            write(9001,'(A,I3, 3A)') 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in ', &
+                                      tblr%sub_name, ' has the wrong number of columns, skipping'
+            print('(A,I3, 3A)'), 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in ', & 
+                                      tblr%sub_name, ' has the wrong number of columns, skipping'
             cycle
         end if
         exit
     enddo
-    
     return
 end subroutine get_data_fields
+
+
+subroutine output_column_warning(i)
+!===============================================================================
+! Subroutine: output_column_warning
+!
+! Author:     fgeter
+!
+! Purpose:    Issues a one-time warning (to diagnostic file unit 9001 and stdout)
+!             when an unrecognized column header is encountered in the input file.
+!             The warning is printed only the first time a particular unknown 
+!             column is detected (subsequent occurrences are silently ignored).
+!
+!             This routine helps inform the user about columns that are present 
+!             in the input file but are not recognized/expected by the program.
+!
+! Arguments:
+!   i     : intent(in) integer
+!           Index of the column in tblr%header_cols whose name is unknown
+!
+! Side effects / modifies:
+!   tblr%col_okay(i)  - set to .false. after first warning (prevents repeated messages)
+!
+! Dependencies / assumptions:
+!   - Module variable/type: tblr (table reader context)
+!   - tblr%header_cols(:)   contains the column header names read from file
+!   - tblr%col_okay(:)      logical array tracking which columns are recognized
+!   - tblr%sub_name         name of the current subroutine/context (for message clarity)
+!   - Function to_lower()   converts string to lowercase (assumed available)
+!   - Output units:
+!       9001 = log/warning file
+!       *    = standard output (print statement)
+!
+! Note: The warning is printed only once per unknown column name.
+!===============================================================================
+
+    integer, intent(in) :: i
+    if (tblr%col_okay(i) .eqv. .true.) then
+        tblr%col_okay(i) = .false.
+        write(9001,'(5A)') 'Warning: unknown column header named ', &
+                           to_lower(trim(tblr%header_cols(i))), ' in ', tblr%sub_name, ' : skipping:'
+        print('(5A)'), 'Warning: unknown column header named ', &
+                           to_lower(trim(tblr%header_cols(i))), ' in ', tblr%sub_name, ' : skipping:'
+    endif
+    return
+end subroutine output_column_warning
+
+
 end module utils
 
 
