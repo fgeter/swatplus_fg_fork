@@ -15,6 +15,7 @@ integer :: i
 call init_tblr_vars()
 
 tblr%sub_name = "cons_prac_read"
+tblr%file_name = in_lum%cons_prac_lum
 tblr%unit = 107
 
 !! read all curve number data from cn.tbl
