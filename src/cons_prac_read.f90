@@ -51,15 +51,8 @@ else
               case ("sl_len_mx")
                   read(tblr%data_fields(i), *) cons_prac(tblr%nrow)%sl_len_mx
               case default
-                  if (tblr%col_okay(i) .eqv. .true.) then
-                    tblr%col_okay(i) = .false.
-                    write(9001,'(5A)') 'Warning: unknown column header named ',&
-                    to_lower(trim(tblr%header_cols(i))), ' in ', tblr%sub_name,&
-                    ' : skipping:'
-                    print('(5A)'), 'Warning: unknown column header named ', &
-                    to_lower(trim(tblr%header_cols(i))), ' in ', tblr%sub_name,&
-                    ' : skipping:'
-                  endif
+                ! Output warning for unknown column header
+                call output_column_warning(i)
             end select
           end do
         enddo
