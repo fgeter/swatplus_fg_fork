@@ -5,42 +5,53 @@ module utils
     integer, parameter :: MAX_NAME_LEN = 50
     integer, parameter :: MAX_LINE_LEN = 2500
 
+    public :: table_reader
+
     type :: table_reader
         character(MAX_NAME_LEN)  :: header_cols(MAX_TABLE_COLS) !array of header column names
         character(MAX_NAME_LEN)  :: data_fields(MAX_TABLE_COLS) !array of data fields in a data row of data
-        character(len=MAX_LINE_LEN)  :: line      ! character string used to read in lines from data table
-        character (len=80)       :: titldum = ""  ! first in data file that that will be ignored 
-        integer                  :: nrow          ! data row number
-        integer                  :: ncols         ! number of header columns   
-        integer                  :: nfields       ! number of data columns/fields in a data row
-        integer                  :: skip_rows     ! number of rows skipped (empty or comment lines)
-        integer                  :: unit          ! file unit number
-        character(len=:), allocatable :: left_str ! portion of line left of comment delimiter '#'
-        logical                  :: found_header_row ! flag to indicate if header row has been found
+        character(len=MAX_LINE_LEN)  :: line         ! character string used to read in lines from data table
+        character (len=80)       :: titldum = ""     ! first line in data file that that will be ignored 
+        integer                  :: nrow = 0         ! data row number
+        integer                  :: ncols = 0        ! number of header columns   
+        integer                  :: nfields = 0      ! number of data columns/fields in a data row
+        integer                  :: skip_rows = 0    ! number of rows skipped (empty or comment lines)
+        integer                  :: start_row_numbr = 0! the number of the row in to start reading data from
+        integer                  :: unit = 0         ! file unit number
+        character(len=:), allocatable :: left_str    ! portion of line left of comment delimiter '#'
+        logical                  :: found_header_row = .false. ! flag to indicate if header row has been found
         logical, allocatable     :: col_okay(:)   ! array used to track if warning message has already
                                                   ! been printed out for unknown column headers
-        character(len=:), allocatable :: file_name ! name of the file being read
+        character(len=:), allocatable :: file_name   ! name of the file being read
+        ! character(len=25)        :: file_name 
+    contains
+        procedure                :: init
+        procedure                :: get_num_data_lines
+        procedure                :: get_header_columns
+        procedure                :: get_data_fields
+        procedure                :: output_column_warning
     end type table_reader
-    type(table_reader), public  :: tblr
 
 contains
 
-subroutine init_tblr_vars()
-    tblr%header_cols = ''
-    tblr%data_fields = ''
-    tblr%line = '' 
-    tblr%titldum = ""
-    tblr%nrow = 0
-    tblr%ncols = 0 
-    tblr%nfields = 0
-    tblr%skip_rows = 0
-    tblr%unit = 0
-    tblr%left_str = ""
-    tblr%found_header_row = .false.
-    if (allocated(tblr%col_okay)) deallocate(tblr%col_okay)
-    tblr%file_name = ""
+subroutine init(self, unit, file_name, start_row_numbr)
+    class(table_reader), intent(inout) :: self
+    integer, intent(in), optional                       :: unit          
+    ! character(len=:), allocatable, intent(in), optional :: file_name
+    character(len=*), optional :: file_name
+    integer, intent(in), optional                       :: start_row_numbr    
+
+    if (present(unit)) self%unit = unit
+    if (present(file_name)) self%file_name = file_name
+    if (present(start_row_numbr)) then
+        self%start_row_numbr = start_row_numbr
+        if (start_row_numbr < 1) then
+            self%start_row_numbr = 1
+        end if
+        self%skip_rows = start_row_numbr -1
+    end if
     return
-end subroutine init_tblr_vars
+end subroutine init
 
 
 real function exp_w(y)
@@ -452,7 +463,7 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
 end subroutine split_line
 
 
-function get_num_data_lines() result(imax)
+function get_num_data_lines(self) result(imax)
 !===============================================================================
 ! Author: fgeter
 !
@@ -488,32 +499,32 @@ function get_num_data_lines() result(imax)
 !   - Safe against empty files or files with only comments/blank lines
 !
 !===============================================================================
-
+    class(table_reader), intent(inout) :: self
     integer :: imax
     integer :: eof = 0              !           |end of file
 
     imax = 0
-    tblr%found_header_row = .false.
+    self%found_header_row = .false.
 
-    read (tblr%unit,*,iostat=eof) tblr%titldum
+    read (self%unit,*,iostat=eof) self%titldum
     if (eof == 0) then 
         do
-            read(tblr%unit, '(A)', iostat=eof) tblr%line
+            read(self%unit, '(A)', iostat=eof) self%line
             if (eof /= 0) exit  ! EOF
-            tblr%line = adjustl(trim(tblr%line))
-            call left_of_delim(tblr%line, '#', tblr%left_str)    ! remove comments
-            tblr%left_str = trim(adjustl(tblr%left_str))
-            if ( len(tblr%left_str) == 0) cycle                  ! skip empty lines
-            tblr%line = tblr%left_str
-            if (.not. tblr%found_header_row) then                ! check to see if the header row has not yet been processed
-                tblr%found_header_row = .true.
-                call split_line(tblr%line, tblr%data_fields, tblr%ncols) ! process header row into header columns
+            self%line = adjustl(trim(self%line))
+            call left_of_delim(self%line, '#', self%left_str)    ! remove comments
+            self%left_str = trim(adjustl(self%left_str))
+            if ( len(self%left_str) == 0) cycle                  ! skip empty lines
+            self%line = self%left_str
+            if (.not. self%found_header_row) then                ! check to see if the header row has not yet been processed
+                self%found_header_row = .true.
+                call split_line(self%line, self%data_fields, self%ncols) ! process header row into header columns
                 cycle
             end if
-            call split_line(tblr%line, tblr%data_fields, tblr%nfields)    ! split data row into fields
+            call split_line(self%line, self%data_fields, self%nfields)    ! split data row into fields
 
             ! Ignore datarow if the number of data fields does not match the number of header columns
-            if (tblr%ncols /= tblr%nfields) then
+            if (self%ncols /= self%nfields) then
                 cycle
             end if
             imax = imax + 1
@@ -523,7 +534,7 @@ function get_num_data_lines() result(imax)
 end function get_num_data_lines
 
 
-subroutine get_header_columns(eof)
+subroutine get_header_columns(self, eof)
 !===============================================================================
 ! Author: fgeter
 !
@@ -560,7 +571,6 @@ subroutine get_header_columns(eof)
 !
 ! Notes:
 !   - Assumes tblr%unit is already open for reading
-!   - Assumes tblr%skip_rows is initialized (likely to 0) before calling
 !   - Column names are normalized to lowercase and trimmed for consistency
 !   - If no valid header is found before EOF, tblr%ncols remains 0 and
 !     tblr%found_header_row stays .false.
@@ -579,35 +589,36 @@ subroutine get_header_columns(eof)
 !
 !============================================o===================================
 
+    class(table_reader), intent(inout) :: self
     integer                     :: i
     integer                     :: eof
 
     eof = 0
-    tblr%found_header_row = .false.
 
-    rewind (tblr%unit)  ! reset file position to beginning
-    read (tblr%unit,*,iostat=eof) tblr%titldum ! Read the first line and ignore it 
-    tblr%skip_rows = tblr%skip_rows + 1
+    rewind (self%unit)  ! reset file position to beginning
+    read (self%unit,*,iostat=eof) self%titldum ! Read the first line and ignore it 
+    self%skip_rows = self%skip_rows + 1
+    self%found_header_row = .false.
 
     if (eof == 0) then 
         do
-            read(tblr%unit, '(A)', iostat=eof) tblr%line
+            read(self%unit, '(A)', iostat=eof) self%line
             if (eof /= 0) exit  ! EOF
-            tblr%line = trim(adjustl(tblr%line))
-            call left_of_delim(tblr%line, '#', tblr%left_str)    ! remove comments
-            tblr%left_str = trim(adjustl(tblr%left_str))
-            if ( len(tblr%left_str) == 0) then              ! skip empty lines 
-                tblr%skip_rows = tblr%skip_rows + 1
+            self%line = trim(adjustl(self%line))
+            call left_of_delim(self%line, '#', self%left_str)    ! remove comments
+            self%left_str = trim(adjustl(self%left_str))
+            if ( len(self%left_str) == 0) then              ! skip empty lines 
+                self%skip_rows = self%skip_rows + 1
                 cycle                  
             end if
-            tblr%line = tblr%left_str
-            if (.not. tblr%found_header_row) then                 ! check to see if the header row has not yet been processed
-                tblr%found_header_row = .true.
-                call split_line(tblr%line, tblr%header_cols, tblr%ncols) ! process header row into header columns
-                do i = 1 , tblr%ncols
-                    tblr%header_cols(i) = to_lower(trim(adjustl(tblr%header_cols(i))))
+            self%line = self%left_str
+            if (.not. self%found_header_row) then                 ! check to see if the header row has not yet been processed
+                self%found_header_row = .true.
+                call split_line(self%line, self%header_cols, self%ncols) ! process header row into header columns
+                do i = 1 , self%ncols
+                    self%header_cols(i) = to_lower(trim(adjustl(self%header_cols(i))))
                 end do
-                tblr%skip_rows = tblr%skip_rows + 1
+                self%skip_rows = self%skip_rows + 1
                 exit
             end if
         end do
@@ -616,7 +627,7 @@ subroutine get_header_columns(eof)
 end subroutine get_header_columns
 
 
-subroutine get_data_fields(eof)
+subroutine get_data_fields(self, eof)
 !===============================================================================
 ! Subroutine: get_data_fields
 !
@@ -650,40 +661,41 @@ subroutine get_data_fields(eof)
 !   - Module variable/type: tblr (table reader context)
 !   - External routines: left_of_delim, split_line
 !===============================================================================
+    class(table_reader), intent(inout) :: self
     integer, intent(out)          :: eof
     integer                       :: i
 
-    tblr%data_fields = ''
-    tblr%nfields = 0
+    self%data_fields = ''
+    self%nfields = 0
     do
-        read(tblr%unit, '(A)', iostat=eof) tblr%line
+        read(self%unit, '(A)', iostat=eof) self%line
         if (eof /= 0) exit
-        tblr%line = adjustl(trim(tblr%line))
+        self%line = adjustl(trim(self%line))
 
         ! get portion of line left of comment delimiter '#'
-        call left_of_delim(tblr%line, '#', tblr%left_str)
-        tblr%left_str = trim(adjustl(tblr%left_str))
-        tblr%line = tblr%left_str
+        call left_of_delim(self%line, '#', self%left_str)
+        self%left_str = trim(adjustl(self%left_str))
+        self%line = self%left_str
 
         ! skip empty lines
-        if (len(tblr%left_str) == 0 ) then
-            tblr%skip_rows = tblr%skip_rows + 1
+        if (len(self%left_str) == 0 ) then
+            self%skip_rows = self%skip_rows + 1
             cycle ! get next line
         endif
         
         ! split data row into fields
-        call split_line(tblr%line, tblr%data_fields, tblr%nfields)
-        do i=1, tblr%nfields
-            tblr%data_fields(i) = trim(adjustl(tblr%data_fields(i)))
+        call split_line(self%line, self%data_fields, self%nfields)
+        do i=1, self%nfields
+            self%data_fields(i) = trim(adjustl(self%data_fields(i)))
         end do
         
         ! check for correct number of columns and if incorrect skip row with warning
-        if (tblr%ncols /= tblr%nfields) then
-            tblr%skip_rows = tblr%skip_rows + 1
-            write(9001,'(A,I3, 3A)') 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in the input file ', &
-                                      tblr%file_name, ' has the wrong number of columns, skipping'
-            print('(A,I3, 3A)'), 'Warning: Row ', tblr%nrow + tblr%skip_rows, ' in the input file ', & 
-                                      tblr%file_name, ' has the wrong number of columns, skipping'
+        if (self%ncols /= self%nfields) then
+            self%skip_rows = self%skip_rows + 1
+            write(9001,'(A,I3, 3A)') 'Warning: Row ', self%nrow + self%skip_rows, ' in the input file ', &
+                                      self%file_name, ' has the wrong number of columns, skipping'
+            print('(A,I3, 3A)'), 'Warning: Row ', self%nrow + self%skip_rows, ' in the input file ', & 
+                                      self%file_name, ' has the wrong number of columns, skipping'
             cycle
         end if
         exit
@@ -692,7 +704,7 @@ subroutine get_data_fields(eof)
 end subroutine get_data_fields
 
 
-subroutine output_column_warning(i)
+subroutine output_column_warning(self, i)
 !===============================================================================
 ! Subroutine: output_column_warning
 !
@@ -725,14 +737,14 @@ subroutine output_column_warning(i)
 !
 ! Note: The warning is printed only once per unknown column name.
 !===============================================================================
-
+    class(table_reader), intent(inout) :: self
     integer, intent(in) :: i
-    if (tblr%col_okay(i) .eqv. .true.) then
-        tblr%col_okay(i) = .false.
+    if (self%col_okay(i) .eqv. .true.) then
+        self%col_okay(i) = .false.
         write(9001,'(5A)') 'Warning: unknown column header named ', &
-                           to_lower(trim(tblr%header_cols(i))), ' in the input file ', tblr%file_name, ' : skipping:'
+                           to_lower(trim(self%header_cols(i))), ' in the input file ', self%file_name, ' : skipping:'
         print('(5A)'), 'Warning: unknown column header named ', &
-                           to_lower(trim(tblr%header_cols(i))), ' in the input file ', tblr%file_name, ' : skipping:'
+                           to_lower(trim(self%header_cols(i))), ' in the input file ', self%file_name, ' : skipping:'
     endif
     return
 end subroutine output_column_warning
