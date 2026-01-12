@@ -12,22 +12,20 @@ integer :: imax = 0    ! number of elements to be allocated
 logical :: i_exist     ! true if file exists
 integer :: i
 
-call init_tblr_vars()  ! initialize tblr variables to zero and arrays to null
-
-tblr%file_name = in_hyd%hydrol_hyd
-tblr%unit = 107
+type(table_reader) :: tblr
+call tblr%init(unit=107, file_name=in_hyd%hydrol_hyd)
 
 inquire (file=tblr%file_name, exist=i_exist)
 if (.not. i_exist .or. tblr%file_name == "null") then
   allocate (hyd_db(0:0))
 else
   open (tblr%unit,file=tblr%file_name)
-  imax = get_num_data_lines()  !get number of valid data lines
+  imax = tblr%get_num_data_lines()  !get number of valid data lines
 
   allocate (hyd_db(imax))
   if (imax /= 0) then
     ! get the column headers
-    call get_header_columns(eof)
+    call tblr%get_header_columns(eof)
     if (eof == 0) then
       allocate (tblr%col_okay(tblr%ncols))
       tblr%col_okay = .true.
@@ -36,7 +34,7 @@ else
         tblr%nrow = 0
         do
           ! get a row of data
-          call get_data_fields(eof)
+          call tblr%get_data_fields(eof)
           if (eof /= 0) exit  ! exit if at the end of the file.
           
           tblr%nrow = tblr%nrow + 1
@@ -76,7 +74,7 @@ else
                     read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%latq_co
               case default
                 ! Output warning for unknown column header
-                call output_column_warning(i)
+                call tblr%output_column_warning(i)
             end select
           end do
         enddo
