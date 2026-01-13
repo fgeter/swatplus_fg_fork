@@ -9,7 +9,7 @@ module utils
 
     type :: table_reader
         character(MAX_NAME_LEN)  :: header_cols(MAX_TABLE_COLS) = ''  !array of header column names
-        character(MAX_NAME_LEN)  :: data_fields(MAX_TABLE_COLS) = '' !array of data fields in a data row of data
+        character(MAX_NAME_LEN)  :: row_field(MAX_TABLE_COLS) = '' !array of data fields in a data row of data
         character(len=MAX_LINE_LEN)   :: line = ''   ! character string used to read in lines from data table
         character(len=:), allocatable :: left_str    ! portion of line left of comment delimiter '#'
         character(len=:), allocatable :: file_name   ! name of the file being read
@@ -30,8 +30,11 @@ module utils
         procedure              :: init
         procedure              :: get_num_data_lines
         procedure              :: get_header_columns
-        procedure              :: get_data_fields
+        procedure              :: get_row_fields
         procedure              :: output_column_warning
+        procedure              :: get_row_idx
+        procedure              :: get_col_count
+
     end type table_reader
 
 contains
@@ -469,6 +472,23 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
     return
 end subroutine split_line
 
+function get_row_idx(self) result(row)
+! returns the current row index
+  class(table_reader), intent(inout) :: self
+  integer :: row
+  row = self%nrow
+  return
+end function get_row_idx
+
+function get_col_count(self) result(col)
+! returns the number of columns
+  class(table_reader), intent(inout) :: self
+  integer :: col
+  col = self%ncols
+  return
+end function get_col_count
+
+
 
 function get_num_data_lines(self) result(imax)
 !===============================================================================
@@ -492,7 +512,7 @@ function get_num_data_lines(self) result(imax)
 ! - The file position is left at **END-OF-FILE** after execution
 ! - `self%found_header_row` is set to `.true.` if a header was found
 ! - `self%ncols` is set to the number of columns detected in the header
-! - `self%line`, `self%left_str`, `self%data_fields` are modified (working buffers)
+! - `self%line`, `self%left_str`, `self%row_field` are modified (working buffers)
 ! - This function leaves the file at EOF. Rewind if needed before further reads.
 !   → Call this function **before** reading the actual data, or rewind afterward.
 !
@@ -531,10 +551,10 @@ function get_num_data_lines(self) result(imax)
             self%line = self%left_str
             if (.not. self%found_header_row) then                ! check to see if the header row has not yet been processed
                 self%found_header_row = .true.
-                call split_line(self%line, self%data_fields, self%ncols) ! process header row into header columns
+                call split_line(self%line, self%row_field, self%ncols) ! process header row into header columns
                 cycle
             end if
-            call split_line(self%line, self%data_fields, self%nfields)    ! split data row into fields
+            call split_line(self%line, self%row_field, self%nfields)    ! split data row into fields
 
             ! Ignore datarow if the number of data fields does not match the number of header columns
             if (self%ncols /= self%nfields) then
@@ -655,9 +675,9 @@ subroutine get_header_columns(self, eof)
 end subroutine get_header_columns
 
 
-subroutine get_data_fields(self, eof)
+subroutine get_row_fields(self, eof)
 !===============================================================================
-! Subroutine: get_data_fields
+! Subroutine: get_row_fields
 !
 ! Author:     fgeter
 !
@@ -680,7 +700,7 @@ subroutine get_data_fields(self, eof)
 ! Side effects / modifies:
 !   tblr%line         - last read line (raw)
 !   tblr%left_str     - line content left of comment delimiter
-!   tblr%data_fields  - array of trimmed fields from the current valid row
+!   tblr%row_field    - array of trimmed fields from the current valid row
 !   tblr%nfields      - number of fields found in current row
 !   tblr%skipped_rows    - counter of skipped rows (blank + wrong column count)
 !   tblr%nrow         - assumed to be updated outside (current data row count)
@@ -693,7 +713,7 @@ subroutine get_data_fields(self, eof)
     integer, intent(out)          :: eof
     integer                       :: i
 
-    self%data_fields = ''
+    self%row_field = ''
     self%nfields = 0
     do
         read(self%unit, '(A)', iostat=eof) self%line
@@ -712,24 +732,25 @@ subroutine get_data_fields(self, eof)
         endif
         
         ! split data row into fields
-        call split_line(self%line, self%data_fields, self%nfields)
+        call split_line(self%line, self%row_field, self%nfields)
         do i=1, self%nfields
-            self%data_fields(i) = trim(adjustl(self%data_fields(i)))
+            self%row_field(i) = trim(adjustl(self%row_field(i)))
         end do
         
         ! check for correct number of columns and if incorrect skip row with warning
         if (self%ncols /= self%nfields) then
             self%skipped_rows = self%skipped_rows + 1
             write(9001,'(A,I3, 3A)') 'Warning: Row ', self%nrow + self%skipped_rows, ' in the input file ', &
-                                      self%file_name, ' has the wrong number of columns, skipping'
+                                      self%file_name, ' has the wrong number of columns: skipping'
             print('(A,I3, 3A)'), 'Warning: Row ', self%nrow + self%skipped_rows, ' in the input file ', & 
-                                      self%file_name, ' has the wrong number of columns, skipping'
+                                      self%file_name, ' has the wrong number of columns: skipping'
             cycle
         end if
+        self%nrow = self%nrow + 1
         exit
     enddo
     return
-end subroutine get_data_fields
+end subroutine get_row_fields
 
 
 subroutine output_column_warning(self, i)
@@ -776,8 +797,6 @@ subroutine output_column_warning(self, i)
     endif
     return
 end subroutine output_column_warning
-
-
 end module utils
 
 

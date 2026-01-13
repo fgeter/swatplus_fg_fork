@@ -26,23 +26,20 @@ else
     call lu_tbl%get_header_columns(eof)
       
     if (eof == 0) then   ! proceed if not at the end of the file.
-      lu_tbl%nrow = 0
       do
         ! get a row of data
-        call lu_tbl%get_data_fields(eof)
+        call lu_tbl%get_row_fields(eof)
         if (eof /= 0) exit  ! exit if at the end of the file.
         
-        lu_tbl%nrow = lu_tbl%nrow + 1
-          
         ! Assign data to cons_prac fields based on header column names
-        do i = 1, lu_tbl%ncols
+        do i = 1, lu_tbl%get_col_count()
           select case (lu_tbl%header_cols(i))
             case ("name")
-                cons_prac(lu_tbl%nrow)%name = trim(lu_tbl%data_fields(i))
+                cons_prac(lu_tbl%get_row_idx())%name = trim(lu_tbl%row_field(i))
             case ("pfac")
-                read(lu_tbl%data_fields(i), *) cons_prac(lu_tbl%nrow)%pfac
+                read(lu_tbl%row_field(i), *) cons_prac(lu_tbl%get_row_idx())%pfac
             case ("sl_len_mx")
-                read(lu_tbl%data_fields(i), *) cons_prac(lu_tbl%nrow)%sl_len_mx
+                read(lu_tbl%row_field(i), *) cons_prac(lu_tbl%get_row_idx())%sl_len_mx
             case default
               ! Output warning for unknown column header
               call lu_tbl%output_column_warning(i)
