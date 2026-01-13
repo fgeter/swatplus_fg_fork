@@ -10,19 +10,19 @@ module utils
     type :: table_reader
         character(MAX_NAME_LEN)  :: header_cols(MAX_TABLE_COLS) = ''  !array of header column names
         character(MAX_NAME_LEN)  :: data_fields(MAX_TABLE_COLS) = '' !array of data fields in a data row of data
-        character(len=MAX_LINE_LEN)  :: line = ''        ! character string used to read in lines from data table
-        character (len=80)       :: titldum = ""     ! first line in data file that that will be ignored 
-        integer                  :: nrow = 0         ! data row number
-        integer                  :: ncols = 0        ! number of header columns   
-        integer                  :: nfields = 0      ! number of data columns/fields in a data row
-        integer                  :: skip_rows = 0    ! number of rows skipped (empty or comment lines)
-        integer                  :: start_row_numbr = 0! the number of the row in to start reading data from
-        integer                  :: unit = 0         ! file unit number
+        character(len=MAX_LINE_LEN)   :: line = ''   ! character string used to read in lines from data table
         character(len=:), allocatable :: left_str    ! portion of line left of comment delimiter '#'
-        logical                  :: found_header_row = .false. ! flag to indicate if header row has been found
-        logical, allocatable     :: col_okay(:)   ! array used to track if warning message has already
-                                                  ! been printed out for unknown column headers
         character(len=:), allocatable :: file_name   ! name of the file being read
+        character (len=80)     :: titldum = ""       ! first line in data file that that will be ignored 
+        integer                :: nrow = 0           ! data row number
+        integer                :: ncols = 0          ! number of header columns   
+        integer                :: nfields = 0        ! number of data columns/fields in a data row
+        integer                :: skip_rows = 0      ! number of rows skipped (empty or comment lines)
+        integer                :: start_row_numbr = 0! the number of the row in to start reading data from
+        integer                :: unit = 0           ! file unit number
+        logical                :: found_header_row = .false. ! flag to indicate if header row has been found
+        logical, allocatable   :: col_okay(:)        ! array used to track if warning message has already
+                                                     ! been printed out for unknown column headers
     contains
         procedure                :: init
         procedure                :: get_num_data_lines
@@ -464,39 +464,35 @@ end subroutine split_line
 
 function get_num_data_lines(self) result(imax)
 !===============================================================================
-! Author: fgeter
+!> @brief Count the number of valid data rows in the table file
 !
-! Function: get_num_data_lines
+! @author  fgeter
 !
-! Purpose:
-!   Counts the number of valid data lines in the currently open table file
-!   (associated with tblr%unit). It skips:
-!     - comment lines (everything after #)
-!     - blank lines
-!     - lines with incorrect number of fields compared to header
+! @par Purpose
+! This function scans the entire file associated with `self%unit` to determine 
+! how many valid data rows exist. It performs the following steps:
+! - Rewinds to the beginning of the file
+! - Skips the first line (title/description line)
+! - Identifies the first non-empty, non-comment line as the header row
+! - Counts only those subsequent rows that:
+!   - are not empty
+!   - are not comment-only
+!   - contain exactly the same number of fields as found in the header row
 !
-!   The function also:
-!     - Identifies and processes the first non-comment/non-blank line as the header row
-!     - Splits the header into column names (stored in tblr%data_fields)
-!     - Sets tblr%found_header_row = .true. after processing the header
-!     - Counts only data rows that have exactly the same number of fields as the header
+! @note
+! **Important side effects:**
+! - The file position is left at **END-OF-FILE** after execution
+! - `self%found_header_row` is set to `.true.` if a header was found
+! - `self%ncols` is set to the number of columns detected in the header
+! - `self%line`, `self%left_str`, `self%data_fields` are modified (working buffers)
+! - This function leaves the file at EOF. Rewind if needed before further reads.
+!   → Call this function **before** reading the actual data, or rewind afterward.
 !
-!   Side effects:
-!     - Modifies tblr%found_header_row
-!     - Modifies tblr%line, tblr%left_str, tblr%data_fields, tblr%ncols, tblr%nfields
-!     - Leaves the file position at the END OF FILE (after last read)
+! @warning
+! This function leaves the file at EOF. Use rewind if needed before further reads.
 !
-! Arguments: none (uses module-level derived type tblr)
-!
-! Returns:
-!   imax : integer - Number of valid data rows (lines that match header column count)
-!
-! Notes:
-!   - Assumes tblr%unit is already open and positioned at the beginning of the data
-!   - Uses free-format read for the first line (title/dummy), then fixed '(A)' for others
-!   - Relies on external routines: left_of_delim() and split_line()
-!   - Safe against empty files or files with only comments/blank lines
-!
+! @param[inout] self   The `table_reader` object containing file unit and buffers
+! @return       imax   Number of valid data rows (rows with correct column count)
 !===============================================================================
     class(table_reader), intent(inout) :: self
     integer :: imax
