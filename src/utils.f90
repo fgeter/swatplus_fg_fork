@@ -8,9 +8,9 @@ module utils
     public :: table_reader
 
     type :: table_reader
-        character(MAX_NAME_LEN)  :: header_cols(MAX_TABLE_COLS) !array of header column names
-        character(MAX_NAME_LEN)  :: data_fields(MAX_TABLE_COLS) !array of data fields in a data row of data
-        character(len=MAX_LINE_LEN)  :: line         ! character string used to read in lines from data table
+        character(MAX_NAME_LEN)  :: header_cols(MAX_TABLE_COLS) = ''  !array of header column names
+        character(MAX_NAME_LEN)  :: data_fields(MAX_TABLE_COLS) = '' !array of data fields in a data row of data
+        character(len=MAX_LINE_LEN)  :: line = ''        ! character string used to read in lines from data table
         character (len=80)       :: titldum = ""     ! first line in data file that that will be ignored 
         integer                  :: nrow = 0         ! data row number
         integer                  :: ncols = 0        ! number of header columns   
@@ -23,7 +23,6 @@ module utils
         logical, allocatable     :: col_okay(:)   ! array used to track if warning message has already
                                                   ! been printed out for unknown column headers
         character(len=:), allocatable :: file_name   ! name of the file being read
-        ! character(len=25)        :: file_name 
     contains
         procedure                :: init
         procedure                :: get_num_data_lines
