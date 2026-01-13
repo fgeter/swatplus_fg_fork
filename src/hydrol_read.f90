@@ -9,72 +9,70 @@ implicit none
 
 integer :: eof = 0     ! end of file
 integer :: imax = 0    ! number of elements to be allocated
-logical :: i_exist     ! true if file exists
 integer :: i
 
-type(table_reader) :: tblr
-call tblr%init(unit=107, file_name=in_hyd%hydrol_hyd)
+type(table_reader) :: hyd_tbl
+call hyd_tbl%init(unit=107, file_name=in_hyd%hydrol_hyd)
 
-inquire (file=tblr%file_name, exist=i_exist)
-if (.not. i_exist .or. tblr%file_name == "null") then
-  allocate (hyd_db(0:0))
+if (hyd_tbl%file_exists .eqv. .false.) then
+  allocate (hyd_db(imax))
 else
-  open (tblr%unit,file=tblr%file_name)
-  imax = tblr%get_num_data_lines()  !get number of valid data lines
+
+  imax = hyd_tbl%get_num_data_lines()  !get number of valid data lines
 
   allocate (hyd_db(imax))
   if (imax /= 0) then
     ! get the column headers
-    call tblr%get_header_columns(eof)
+    call hyd_tbl%get_header_columns(eof)
     if (eof == 0) then
-      allocate (tblr%col_okay(tblr%ncols))
-      tblr%col_okay = .true.
+      allocate (hyd_tbl%col_okay(hyd_tbl%ncols))
+      hyd_tbl%col_okay = .true.
       
       if (eof == 0) then   ! proceed if not at the end of the file.
-        tblr%nrow = 0
+        hyd_tbl%nrow = 0
         do
           ! get a row of data
-          call tblr%get_data_fields(eof)
+          call hyd_tbl%get_data_fields(eof)
           if (eof /= 0) exit  ! exit if at the end of the file.
           
-          tblr%nrow = tblr%nrow + 1
+          hyd_tbl%nrow = hyd_tbl%nrow + 1
             
           ! Assign data to cons_prac fields based on header column names
-          do i = 1, tblr%ncols
-            select case (tblr%header_cols(i))
+          do i = 1, hyd_tbl%ncols
+            select case (hyd_tbl%header_cols(i))
               case ("name")
-                  hyd_db(tblr%nrow)%name = trim(tblr%data_fields(i))
+                  hyd_db(hyd_tbl%nrow)%name = trim(hyd_tbl%data_fields(i))
               case ("lat_ttime")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%lat_ttime
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%lat_ttime
               case ("lat_sed")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%lat_sed
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%lat_sed
               case ("canmx")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%canmx
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%canmx
               case ("esco")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%esco
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%esco
               case ("epco")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%epco
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%epco
               case ("erorgn")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%erorgn
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%erorgn
               case ("erorgp")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%erorgp
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%erorgp
               case ("cn3_swf")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%cn3_swf
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%cn3_swf
               case ("biomix")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%biomix
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%biomix
               case ("perco")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%perco
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%perco
               case ("lat_orgn")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%lat_orgn
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%lat_orgn
               case ("lat_orgp")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%lat_orgp
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%lat_orgp
               case ("pet_co")
-                  read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%pet_co
+                  read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%pet_co
               case ("latq_co")
-                    read(tblr%data_fields(i), *) hyd_db(tblr%nrow)%latq_co
+                    read(hyd_tbl%data_fields(i), *) hyd_db(hyd_tbl%nrow)%latq_co
               case default
                 ! Output warning for unknown column header
-                call tblr%output_column_warning(i)
+                call hyd_tbl%output_column_warning(i)
             end select
           end do
         enddo
@@ -85,7 +83,7 @@ endif
 
 db_mx%hyd = imax
 
-close(tblr%unit)
+close(hyd_tbl%unit)
 
 return 
 end subroutine hydrol_read
