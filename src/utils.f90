@@ -648,6 +648,8 @@ subroutine get_header_columns(self, eof)
                 exit
             end if
         end do
+        allocate (self%col_okay(self%ncols))
+        self%col_okay = .true.
     end if
     return
 end subroutine get_header_columns
