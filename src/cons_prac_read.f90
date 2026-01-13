@@ -12,13 +12,12 @@ integer :: imax = 0    ! number of elements to be allocated
 integer :: i
 
 type(table_reader) :: lu_tbl
-call lu_tbl%init(unit=107, file_name=in_lum%cons_prac_lum, start_row_numbr=4)
+call lu_tbl%init(unit=107, file_name=in_lum%cons_prac_lum)
+! call lu_tbl%init(unit=107, file_name=in_lum%cons_prac_lum, start_row_numbr=4)
 
-!! read all curve number data from cn.tbl
 if (lu_tbl%file_exists .eqv. .false.) then
   allocate (cons_prac(0:0))
 else
-
   imax = lu_tbl%get_num_data_lines()  !get number of valid data lines
   allocate (cons_prac(0:imax))
 
