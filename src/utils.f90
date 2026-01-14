@@ -573,23 +573,29 @@ function get_num_data_lines(self) result(imax)
 end function get_num_data_lines
 
 subroutine min_req_cols(self, min_cols)
+! Sets the minimum required columns data element
     class(table_reader), intent(inout) :: self
     character(len=*), intent(in) :: min_cols
     self%min_cols = trim(adjustl(min_cols))
 end subroutine min_req_cols
 
+
 subroutine min_header_cols(self, min_cols)
+!===============================================================================
+! Author fgeter
+! Purpose: Checks to see if user specified required columns are in the header 
+!          columns that are read in and if not print error and stop.
+!===============================================================================
+
     class(table_reader), intent(inout) :: self
     character(len=*), intent(in) :: min_cols
     character(MAX_NAME_LEN)  :: min_hdr_cols(MAX_TABLE_COLS) = ''  !array of header column names
     integer :: i, ncols 
     character(len=:), allocatable :: min_col
-    logical :: found_col
 
     call split_line(min_cols, min_hdr_cols, ncols) ! process into header columns
 
     ! Check if all minimum required columns are present in the header
-    found_col = .false.
     do i = 1, ncols
         min_col = trim(adjustl(min_hdr_cols(i)))
         if (index(self%line, min_col) == 0) then
