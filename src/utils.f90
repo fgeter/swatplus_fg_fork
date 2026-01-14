@@ -10,9 +10,10 @@ module utils
     type :: table_reader
         character(MAX_NAME_LEN)  :: header_cols(MAX_TABLE_COLS) = ''  !array of header column names
         character(MAX_NAME_LEN)  :: row_field(MAX_TABLE_COLS) = '' !array of data fields in a data row of data
-        character(len=MAX_LINE_LEN)   :: line = ''   ! character string used to read in lines from data table
+        character(len=MAX_LINE_LEN)   :: line = ''        ! character string used to read in lines from data table
         character(len=:), allocatable :: left_str    ! portion of line left of comment delimiter '#'
         character(len=:), allocatable :: file_name   ! name of the file being read
+        character(len=:), allocatable :: min_cols! string of minimum required column names
         character (len=80)     :: titldum = ""       ! first line in data file that that will be ignored 
         integer                :: nrow = 0           ! data row number
         integer                :: ncols = 0          ! number of header columns   
@@ -34,6 +35,8 @@ module utils
         procedure              :: output_column_warning
         procedure              :: get_row_idx
         procedure              :: get_col_count
+        procedure              :: min_header_cols
+        procedure              :: min_req_cols
 
     end type table_reader
 
@@ -46,6 +49,9 @@ subroutine init(self, unit, file_name, start_row_numbr)
     character(len=*), optional :: file_name
     integer, intent(in), optional                       :: start_row_numbr    
 
+    self%left_str  = ''
+    self%file_name = ''
+    self%min_cols = ''
     if (present(unit)) self%unit = unit
     if (present(file_name)) self%file_name = file_name
     if (present(start_row_numbr)) then
@@ -566,6 +572,33 @@ function get_num_data_lines(self) result(imax)
     return
 end function get_num_data_lines
 
+subroutine min_req_cols(self, min_cols)
+    class(table_reader), intent(inout) :: self
+    character(len=*), intent(in) :: min_cols
+    self%min_cols = min_cols
+end subroutine min_req_cols
+
+subroutine min_header_cols(self, min_cols)
+    class(table_reader), intent(inout) :: self
+    character(len=*), intent(in) :: min_cols
+    character(MAX_NAME_LEN)  :: min_hdr_cols(MAX_TABLE_COLS) = ''  !array of header column names
+    integer :: i, ncols 
+    character(len=:), allocatable :: min_col
+    logical :: found_col
+
+    call split_line(min_cols, min_hdr_cols, ncols) ! process into header columns
+
+    ! Check if all minimum required columns are present in the header
+    found_col = .false.
+    do i = 1, ncols
+        min_col = trim(adjustl(min_hdr_cols(i)))
+        if (index(self%line, min_col) == 0) then
+            write(9001, '(4A)') "Error: Required column ", min_col, " not found in ", self%file_name
+            print *, "Error: Required column ", min_col, " not found in ", self%file_name
+            stop
+        end if
+    end do
+end subroutine min_header_cols
 
 subroutine get_header_columns(self, eof)
 !===============================================================================
@@ -670,6 +703,7 @@ subroutine get_header_columns(self, eof)
         end do
         allocate (self%col_okay(self%ncols))
         self%col_okay = .true.
+        call min_header_cols(self, self%min_cols)
     end if
     return
 end subroutine get_header_columns
