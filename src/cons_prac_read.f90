@@ -22,8 +22,9 @@ else
   allocate (cons_prac(0:imax))
 
   if (imax /= 0) then
-
-    call lu_tbl%min_req_cols("pfac name curv_no")! optional call to set minimum required columns
+    
+    ! optional call to set minimum required columns
+    call lu_tbl%min_req_cols("name pfac sl_len_mx")
 
     ! get the column headers
     call lu_tbl%get_header_columns(eof)

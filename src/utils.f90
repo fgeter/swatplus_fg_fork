@@ -575,7 +575,7 @@ end function get_num_data_lines
 subroutine min_req_cols(self, min_cols)
     class(table_reader), intent(inout) :: self
     character(len=*), intent(in) :: min_cols
-    self%min_cols = min_cols
+    self%min_cols = trim(adjustl(min_cols))
 end subroutine min_req_cols
 
 subroutine min_header_cols(self, min_cols)
@@ -703,7 +703,7 @@ subroutine get_header_columns(self, eof)
         end do
         allocate (self%col_okay(self%ncols))
         self%col_okay = .true.
-        call min_header_cols(self, self%min_cols)
+        if (len(self%min_cols) > 0) call min_header_cols(self, self%min_cols)
     end if
     return
 end subroutine get_header_columns
