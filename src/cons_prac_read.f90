@@ -24,7 +24,7 @@ else
   if (imax /= 0) then
     
     ! optional call to set minimum required columns
-    call lu_tbl%min_req_cols("name pfac sl_len_mx")
+    call lu_tbl%min_req_cols("name usle_p  slp_len_max")
 
     ! get the column headers
     call lu_tbl%get_header_columns(eof)
@@ -40,9 +40,9 @@ else
           select case (lu_tbl%header_cols(i))
             case ("name")
                 cons_prac(lu_tbl%get_row_idx())%name = trim(lu_tbl%row_field(i))
-            case ("pfac")
+            case ("usle_p")
                 read(lu_tbl%row_field(i), *) cons_prac(lu_tbl%get_row_idx())%pfac
-            case ("sl_len_mx")
+            case ("slp_len_max")
                 read(lu_tbl%row_field(i), *) cons_prac(lu_tbl%get_row_idx())%sl_len_mx
             case default
               ! Output warning for unknown column header
