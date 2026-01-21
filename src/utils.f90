@@ -664,8 +664,11 @@ subroutine get_header_columns(self, eof)
     class(table_reader), intent(inout) :: self
     integer                     :: i
     integer                     :: eof
+    logical                     :: ignore_last_col
+
 
     eof = 0
+    ignore_last_col = .false.
 
     rewind (self%unit)  ! reset file position to beginning
 
@@ -702,8 +705,12 @@ subroutine get_header_columns(self, eof)
                 call split_line(self%line, self%header_cols, self%ncols) ! process header row into header columns
                 do i = 1 , self%ncols
                     self%header_cols(i) = to_lower(trim(adjustl(self%header_cols(i))))
+                    if (i == self.ncols .and. self%header_cols(i) == "description") then
+                        ignore_last_col = .true.
+                    endif
                 end do
                 self%skipped_rows = self%skipped_rows + 1
+                if (ignore_last_col) self.ncols = self.ncols -1
                 exit
             end if
         end do
@@ -777,8 +784,10 @@ subroutine get_row_fields(self, eof)
             self%row_field(i) = trim(adjustl(self%row_field(i)))
         end do
         
+        if (self%nfields > self.ncols) self%nfields = self.ncols
+
         ! check for correct number of columns and if incorrect skip row with warning
-        if (self%ncols /= self%nfields) then
+        if (self%ncols < self%nfields) then
             self%skipped_rows = self%skipped_rows + 1
             write(9001,'(A,I3, 3A)') 'Warning: Row ', self%nrow + self%skipped_rows, ' in the input file ', &
                                       self%file_name, ' has the wrong number of columns: skipping'
