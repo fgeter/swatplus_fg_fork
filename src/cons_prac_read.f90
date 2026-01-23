@@ -13,7 +13,7 @@ integer :: i
 
 type(table_reader) :: lu_tbl
 call lu_tbl%init(unit=107, file_name=in_lum%cons_prac_lum)
-! call lu_tbl%init(unit=107, file_name=in_lum%cons_prac_lum, start_row_numbr=4)
+! call lu_tbl%init(unit=107, file_name=in_lum%cons_prac_lum, start_row_numbr=1, start_data_row_numbr=4)
 
 if (lu_tbl%file_exists .eqv. .false.) then
   allocate (cons_prac(0:0))
