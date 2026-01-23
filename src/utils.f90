@@ -861,8 +861,3 @@ subroutine output_column_warning(self, i)
     return
 end subroutine output_column_warning
 end module utils
-
-
-
-
-
