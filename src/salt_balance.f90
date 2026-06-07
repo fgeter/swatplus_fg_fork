@@ -17,6 +17,7 @@
       use res_salt_module, only : wetsalt_d,ressalt_d
       use ch_salt_module, only : chsalt_d
       use gwflow_module, only : gw_solute_flag,gwsol_ss,ncell,gw_state,gwsol_state
+      use basin_module, only : pco
 
       implicit none
       

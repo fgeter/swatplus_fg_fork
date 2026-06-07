@@ -3,7 +3,8 @@
      use hydrograph_module
      use soil_nutcarb_module
      use output_path_module
-     
+     use basin_module, only : pco
+
      implicit none 
 
 !!write all organic carbon for the soil profile

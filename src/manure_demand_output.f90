@@ -3,7 +3,8 @@
       use time_module
       use hydrograph_module
       use manure_allocation_module
-      
+      use basin_module, only : pco
+
       implicit none
       
       integer, intent (in) :: imallo        !             |
