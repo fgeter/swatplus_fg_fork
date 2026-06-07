@@ -46,27 +46,27 @@
 
       !daily print
       if (pco%cs_hru%d == "y") then
-        write (6021,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         (hcsb_d(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
-                         (hcsb_d(j)%cs(ics)%surq,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%latq,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%urbq,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%wetq,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%tile,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%perc,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%rain,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                         (hcsb_d(j)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+        !write (6021,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                         !(hcsb_d(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
+                         !(hcsb_d(j)%cs(ics)%surq,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%latq,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%urbq,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%wetq,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%tile,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%perc,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%rain,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                         !(hcsb_d(j)%cs(ics)%srbd,ics=1,cs_db%num_cs)
         if (pco%csvout == "y") then
           write (6022,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                                                              (hcsb_d(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
@@ -125,27 +125,27 @@
           hcsb_m(j)%cs(ics)%srbd = hcsb_m(j)%cs(ics)%srbd / const
         enddo
         if (pco%cs_hru%m == "y") then
-          write (6023,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           (hcsb_m(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
-                           (hcsb_m(j)%cs(ics)%surq,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%latq,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%urbq,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%wetq,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%tile,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%perc,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%rain,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                           (hcsb_m(j)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+          !write (6023,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           !(hcsb_m(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
+                           !(hcsb_m(j)%cs(ics)%surq,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%latq,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%urbq,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%wetq,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%tile,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%perc,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%rain,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                           !(hcsb_m(j)%cs(ics)%srbd,ics=1,cs_db%num_cs)
           if (pco%csvout == "y") then
             write (6024,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                          (hcsb_m(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
@@ -227,27 +227,27 @@
           hcsb_y(j)%cs(ics)%srbd = hcsb_y(j)%cs(ics)%srbd / const
         enddo
         if (pco%cs_hru%y == "y") then
-          write (6025,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           (hcsb_y(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
-                           (hcsb_y(j)%cs(ics)%surq,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%latq,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%urbq,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%wetq,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%tile,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%perc,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%rain,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                           (hcsb_y(j)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+          !write (6025,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           !(hcsb_y(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
+                           !(hcsb_y(j)%cs(ics)%surq,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%latq,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%urbq,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%wetq,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%tile,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%perc,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%rain,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                           !(hcsb_y(j)%cs(ics)%srbd,ics=1,cs_db%num_cs)
           if (pco%csvout == "y") then
             write (6026,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                          (hcsb_y(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
@@ -322,27 +322,27 @@
           hcsb_a(j)%cs(ics)%conc = hcsb_a(j)%cs(ics)%conc / time%nbyr
           hcsb_a(j)%cs(ics)%srbd = hcsb_a(j)%cs(ics)%srbd / time%nbyr
         enddo
-        write (6027,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                        (hcsb_a(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
-                        (hcsb_a(j)%cs(ics)%surq,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%latq,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%urbq,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%wetq,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%tile,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%perc,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%rain,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                        (hcsb_a(j)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+        !write (6027,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                        !(hcsb_a(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 
+                        !(hcsb_a(j)%cs(ics)%surq,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%latq,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%urbq,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%wetq,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%tile,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%perc,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%rain,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                        !(hcsb_a(j)%cs(ics)%srbd,ics=1,cs_db%num_cs)
         if (pco%csvout == "y") then
           write (6028,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (hcsb_a(j)%cs(ics)%soil,ics=1,cs_db%num_cs), & 

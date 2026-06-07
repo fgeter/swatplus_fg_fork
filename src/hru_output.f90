@@ -59,8 +59,8 @@
       !! daily print
          if (pco%day_print == "y" .and. pco%int_day_cur == pco%int_day) then
           if (pco%wb_hru%d == "y") then
-             write (2000,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hwb_d(j),      &
-                                                                           lum(ilu)%plant_cov, lum(ilu)%mgt_ops     !! water bal day
+             !write (2000,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hwb_d(j),      &
+                                                                           !lum(ilu)%plant_cov, lum(ilu)%mgt_ops     !! water bal day
              if (pco%csvout == "y") then
                !! changed write unit below (2004 to write file data)
                write (2004,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
@@ -71,16 +71,16 @@
           hwb_d(j)%sno_init = hwb_d(j)%sno_final
           
           if (pco%nb_hru%d == "y") then
-            write (2020,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_d(j),         &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops      !! nutrient bal day
+            !write (2020,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_d(j),         &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops      !! nutrient bal day
             if (pco%csvout == "y") then
                 write (2024,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                     hnb_d(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
                 end if
           end if
           if (pco%ls_hru%d == "y") then
-            write (2030,108) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hls_d(j),         &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_d(j)%percn       !! losses day
+            !write (2030,108) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hls_d(j),         &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_d(j)%percn       !! losses day
             if (pco%csvout == "y") then
                 write (2034,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                     hls_d(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_d(j)%percn   
@@ -88,8 +88,8 @@
           end if
           if (pco%pw_hru%d == "y") then
             hpw_d(j)%bm_max = hpw_d(j)%bioms
-            write (2040,101) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_d(j),                  & 
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather day 
+            !write (2040,101) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_d(j),                  & 
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather day 
               if (pco%csvout == "y") then 
                 write (2044,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,           &
                                                                 hpw_d(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
@@ -118,8 +118,8 @@
            hwb_m(j)%sno_final = hwb_d(j)%sno_final
            
            if (pco%wb_hru%m == "y") then
-             write (2001,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hwb_m(j),        &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops           !! water bal mon
+             !write (2001,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hwb_m(j),        &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops           !! water bal mon
                if (pco%csvout == "y") then
                  write (2005,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                           hwb_m(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops 
@@ -127,8 +127,8 @@
            end if
            
            if (pco%nb_hru%m == "y") then
-             write (2021,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_m(j),        &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops           !! nutrient bal mon
+             !write (2021,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_m(j),        &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops           !! nutrient bal mon
              if (pco%csvout == "y") then
                  write (2025,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                           hnb_m(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops 
@@ -136,8 +136,8 @@
            end if
            
            if (pco%ls_hru%m == "y") then
-             write (2031,108) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hls_m(j),        &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_m(j)%percn            !! losses mon
+             !write (2031,108) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hls_m(j),        &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_m(j)%percn            !! losses mon
              if (pco%csvout == "y") then 
                  write (2035,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                           hls_m(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_m(j)%percn  
@@ -147,8 +147,8 @@
            if (pco%pw_hru%m == "y") then
              hpw_m(j)%nplnt = pl_mass(j)%tot_com%n
              hpw_m(j)%pplnt = pl_mass(j)%tot_com%p
-             write (2041,101) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_m(j),         &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather mon
+             !write (2041,101) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_m(j),         &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather mon
                if (pco%csvout == "y") then 
                  write (2045,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,  &
                                                                 hpw_m(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
@@ -189,8 +189,8 @@
              hru(j)%irr = 1
            end if
           if (pco%wb_hru%y == "y") then
-             write (2002,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hwb_y(j),          &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops           !! water balance yr
+             !write (2002,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hwb_y(j),          &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops           !! water balance yr
                if (pco%csvout == "y") then
                  write (2006,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,   &
                                                                           hwb_y(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops 
@@ -198,8 +198,8 @@
           end if
           
            if (pco%nb_hru%y == "y") then
-             write (2022,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_y(j),          &
-                                                                                lum(ilu)%plant_cov, lum(ilu)%mgt_ops     !! nutrient balance yr
+             !write (2022,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_y(j),          &
+                                                                                !lum(ilu)%plant_cov, lum(ilu)%mgt_ops     !! nutrient balance yr
              if (pco%csvout == "y") then
                  write (2026,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,   &
                                                                           hnb_y(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops 
@@ -207,8 +207,8 @@
            end if
            
            if (pco%ls_hru%y == "y") then
-             write (2032,108) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hls_y(j),          &
-                                                                           lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_y(j)%percn            !! losses yr
+             !write (2032,108) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hls_y(j),          &
+                                                                           !lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_y(j)%percn            !! losses yr
              if (pco%csvout == "y") then
                  write (2036,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,   &
                                                                           hls_y(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops, hpw_y(j)%percn  
@@ -218,8 +218,8 @@
            if (pco%pw_hru%y == "y") then
              hpw_y(j)%nplnt = pl_mass(j)%tot_com%n
              hpw_y(j)%pplnt = pl_mass(j)%tot_com%p
-             write (2042,101) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_y(j),        &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather yr             
+             !write (2042,101) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_y(j),        &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather yr             
                if (pco%csvout == "y") then 
                  write (2046,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                 hpw_y(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
@@ -241,8 +241,8 @@
            hwb_a(j)%sno_init = sno_init
            hwb_a(j)%sno_final = hwb_d(j)%sno_final
            if (pco%wb_hru%a == "y") then
-             write (2003,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hwb_a(j),       &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops       !! water balance ann
+             !write (2003,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hwb_a(j),       &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops       !! water balance ann
              if (pco%csvout == "y") then
                write (2007,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,  &
                                                                         hwb_a(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops
@@ -263,8 +263,8 @@
         
          if (time%end_sim == 1 .and. pco%nb_hru%a == "y") then 
            hnb_a(j) = hnb_a(j) / time%yrs_prt
-           write (2023,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_a(j),        &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops      !! nutrient bal ann
+           !write (2023,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_a(j),        &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops      !! nutrient bal ann
            if (pco%csvout == "y") then 
                write (2027,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                         hnb_a(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops
@@ -275,8 +275,8 @@
          if (time%end_sim == 1 .and. pco%ls_hru%a == "y") then
            hls_a(j) = hls_a(j) / time%yrs_prt 
            percn_aa = hpw_a(j)%percn / time%yrs_prt
-           write (2033,107) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hls_a(j),        &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops, percn_aa       !! losses ann
+           !write (2033,107) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hls_a(j),        &
+                                                                          !lum(ilu)%plant_cov, lum(ilu)%mgt_ops, percn_aa       !! losses ann
              if (pco%csvout == "y") then 
                write (2037,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                         hls_a(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops, percn_aa 
@@ -290,8 +290,8 @@
            hpw_a(j)%nplnt = pl_mass(j)%tot_com%n
            hpw_a(j)%pplnt = pl_mass(j)%tot_com%p
            hpw_a(j)%bm_max = bm_max_a   ! Restore bm_max_a
-           write (2043,102) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_a(j),           &
-                                                                        lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather ann
+           !write (2043,102) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_a(j),           &
+                                                                        !lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather ann
              if (pco%csvout == "y") then 
                write (2047,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,    &
                                                               hpw_a(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
@@ -314,7 +314,7 @@
                if (pcom(j)%plcur(ipl)%harv_num > 0) then 
                  pl_mass(j)%yield_tot(ipl) = pl_mass(j)%yield_tot(ipl) / float(pcom(j)%plcur(ipl)%harv_num)
               endif
-              write (4008,103) time%day, time%mo, time%day_mo, time%yrc, j,pldb(idp)%plantnm, pl_mass(j)%yield_tot(ipl)
+              !write (4008,103) time%day, time%mo, time%day_mo, time%yrc, j,pldb(idp)%plantnm, pl_mass(j)%yield_tot(ipl)
               if (pco%csvout == "y") then
                 write (4009,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j,pldb(idp)%plantnm, pl_mass(j)%yield_tot(ipl) 
               end if

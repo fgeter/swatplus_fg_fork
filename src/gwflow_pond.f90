@@ -327,27 +327,27 @@
 					!recharge pond water balance - output
           write(pond_name,'(a5,i4.4)') 'pond_',r
           if(gwflag_flux == 1) then
-					write(out_pond_bal,8100) time%day,time%mo,time%day_mo,time%yrc, &
-					    r,r,pond_name, &
-					    gw_pond_info(r)%area, &
-					    gw_pond_info(r)%stor, &
-					    pond_rain, &
-					    div_added, &
-					    pond_evap, &
-					    pond_recharge, &
-					    gw_pond_info(r)%div, &
-					    gw_pond_info(r)%div_uns
+					!write(out_pond_bal,8100) time%day,time%mo,time%day_mo,time%yrc, &
+					    !r,r,pond_name, &
+					    !gw_pond_info(r)%area, &
+					    !gw_pond_info(r)%stor, &
+					    !pond_rain, &
+					    !div_added, &
+					    !pond_evap, &
+					    !pond_recharge, &
+					    !gw_pond_info(r)%div, &
+					    !gw_pond_info(r)%div_uns
 
 					!recharge pond solute mass balance - output
 					do s=1,gw_nsolute
-					  write(out_pond_sol,8101) time%day,time%mo,time%day_mo,time%yrc, &
-					      r,r,pond_name, &
-					      gw_pond_info(r)%area, &
-					      gw_pond_info(r)%stor, &
-					      gwsol_nm(s), &
-					      gw_pond_info(r)%sol_mass(s), &
-					      div_mass(s), &
-					      rech_mass(s)
+					  !write(out_pond_sol,8101) time%day,time%mo,time%day_mo,time%yrc, &
+					      !r,r,pond_name, &
+					      !gw_pond_info(r)%area, &
+					      !gw_pond_info(r)%stor, &
+					      !gwsol_nm(s), &
+					      !gw_pond_info(r)%sol_mass(s), &
+					      !div_mass(s), &
+					      !rech_mass(s)
 					enddo
           endif !gwflag_flux
 
@@ -356,7 +356,7 @@
         !write out mass (kg) and concentration (g/m3) for each pond
         if(gwflag_flux == 1) then
 				!no3
-				write(out_pond_mass,102) time%yrc,time%mo,time%day,gwsol_nm(1),(gw_pond_info(r)%sol_mass(1),r=1,gw_npond)
+				!write(out_pond_mass,102) time%yrc,time%mo,time%day,gwsol_nm(1),(gw_pond_info(r)%sol_mass(1),r=1,gw_npond)
 				do r=1,gw_npond
 					if(gw_pond_info(r)%stor > 0) then
 						gw_pond_info(r)%sol_conc(1) = (gw_pond_info(r)%sol_mass(1)*1000.) / gw_pond_info(r)%stor
@@ -364,9 +364,9 @@
 						gw_pond_info(r)%sol_conc(1) = 0.
 					endif
 				enddo
-				write(out_pond_conc,102) time%yrc,time%mo,time%day,gwsol_nm(1),(gw_pond_info(r)%sol_conc(1),r=1,gw_npond)
+				!write(out_pond_conc,102) time%yrc,time%mo,time%day,gwsol_nm(1),(gw_pond_info(r)%sol_conc(1),r=1,gw_npond)
 				!p
-				write(out_pond_mass,102) time%yrc,time%mo,time%day,gwsol_nm(2),(gw_pond_info(r)%sol_mass(2),r=1,gw_npond)
+				!write(out_pond_mass,102) time%yrc,time%mo,time%day,gwsol_nm(2),(gw_pond_info(r)%sol_mass(2),r=1,gw_npond)
 				do r=1,gw_npond
 					if(gw_pond_info(r)%stor > 0) then
 						gw_pond_info(r)%sol_conc(2) = (gw_pond_info(r)%sol_mass(2)*1000.) / gw_pond_info(r)%stor
@@ -374,13 +374,13 @@
 						gw_pond_info(r)%sol_conc(2) = 0.
 					endif
 				enddo
-				write(out_pond_conc,102) time%yrc,time%mo,time%day,gwsol_nm(2),(gw_pond_info(r)%sol_conc(2),r=1,gw_npond)
+				!write(out_pond_conc,102) time%yrc,time%mo,time%day,gwsol_nm(2),(gw_pond_info(r)%sol_conc(2),r=1,gw_npond)
 				!salt ions
 				sol_index = 2
 				if (gwsol_salt == 1) then
 					do isalt=1,cs_db%num_salts
 						sol_index = sol_index + 1
-						write(out_pond_mass,102) time%yrc,time%mo,time%day,gwsol_nm(sol_index),(gw_pond_info(r)%sol_mass(sol_index),r=1,gw_npond)
+						!write(out_pond_mass,102) time%yrc,time%mo,time%day,gwsol_nm(sol_index),(gw_pond_info(r)%sol_mass(sol_index),r=1,gw_npond)
 						do r=1,gw_npond
 							if(gw_pond_info(r)%stor > 0) then
 								gw_pond_info(r)%sol_conc(sol_index) = (gw_pond_info(r)%sol_mass(sol_index)*1000.) / gw_pond_info(r)%stor
@@ -388,14 +388,14 @@
 								gw_pond_info(r)%sol_conc(sol_index) = 0.
 							endif
 						enddo
-						write(out_pond_conc,102) time%yrc,time%mo,time%day,gwsol_nm(sol_index),(gw_pond_info(r)%sol_conc(sol_index),r=1,gw_npond)
+						!write(out_pond_conc,102) time%yrc,time%mo,time%day,gwsol_nm(sol_index),(gw_pond_info(r)%sol_conc(sol_index),r=1,gw_npond)
 					enddo
 				endif
 				!constituents
 				if (gwsol_cons == 1) then
 					do ics=1,cs_db%num_cs
 						sol_index = sol_index + 1
-						write(out_pond_mass,102) time%yrc,time%mo,time%day,gwsol_nm(sol_index),(gw_pond_info(r)%sol_mass(sol_index),r=1,gw_npond)
+						!write(out_pond_mass,102) time%yrc,time%mo,time%day,gwsol_nm(sol_index),(gw_pond_info(r)%sol_mass(sol_index),r=1,gw_npond)
 						do r=1,gw_npond
 							if(gw_pond_info(r)%stor > 0) then
 								gw_pond_info(r)%sol_conc(sol_index) = (gw_pond_info(r)%sol_mass(sol_index)*1000.) / gw_pond_info(r)%stor
@@ -403,7 +403,7 @@
 								gw_pond_info(r)%sol_conc(sol_index) = 0.
 							endif
 						enddo
-						write(out_pond_conc,102) time%yrc,time%mo,time%day,gwsol_nm(sol_index),(gw_pond_info(r)%sol_conc(sol_index),r=1,gw_npond)
+						!write(out_pond_conc,102) time%yrc,time%mo,time%day,gwsol_nm(sol_index),(gw_pond_info(r)%sol_conc(sol_index),r=1,gw_npond)
 					enddo
 				endif
         endif !gwflag_flux

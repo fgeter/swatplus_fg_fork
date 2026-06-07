@@ -45,23 +45,23 @@
       
       !daily print
       if (pco%salt_ru%d == "y") then
-        write (5070,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                         (rusaltb_d(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (rusaltb_d(iru)%hd(2)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (rusaltb_d(iru)%hd(3)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (rusaltb_d(iru)%hd(4)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (rusaltb_d(iru)%hd(5)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%wtsp,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%irsw,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%irgw,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%irwo,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%rain,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%dryd,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%road,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%amnd,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_d(iru)%salt(isalt)%uptk,isalt=1,cs_db%num_salts), &
-                          ru_hru_saltb_d(iru)%salt(1)%diss       
+        !write (5070,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                         !(rusaltb_d(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(rusaltb_d(iru)%hd(2)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(rusaltb_d(iru)%hd(3)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(rusaltb_d(iru)%hd(4)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(rusaltb_d(iru)%hd(5)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%wtsp,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%irsw,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%irgw,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%irwo,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%rain,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%dryd,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%road,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%amnd,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_d(iru)%salt(isalt)%uptk,isalt=1,cs_db%num_salts), &
+                          !ru_hru_saltb_d(iru)%salt(1)%diss       
         if (pco%csvout == "y") then
           write (5071,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                                                             (rusaltb_d(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
@@ -120,23 +120,23 @@
         enddo
         ru_hru_saltb_y(iru)%salt(1)%diss = ru_hru_saltb_y(iru)%salt(1)%diss + ru_hru_saltb_m(iru)%salt(1)%diss
         if (pco%salt_ru%m == "y") then
-          write (5072,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                           (rusaltb_m(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (rusaltb_m(iru)%hd(2)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (rusaltb_m(iru)%hd(3)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (rusaltb_m(iru)%hd(4)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (rusaltb_m(iru)%hd(5)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%wtsp,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%irsw,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%irgw,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%irwo,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%rain,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%dryd,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%road,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%amnd,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_m(iru)%salt(isalt)%uptk,isalt=1,cs_db%num_salts), &
-                            ru_hru_saltb_m(iru)%salt(1)%diss
+          !write (5072,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                           !(rusaltb_m(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(rusaltb_m(iru)%hd(2)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(rusaltb_m(iru)%hd(3)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(rusaltb_m(iru)%hd(4)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(rusaltb_m(iru)%hd(5)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%wtsp,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%irsw,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%irgw,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%irwo,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%rain,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%dryd,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%road,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%amnd,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_m(iru)%salt(isalt)%uptk,isalt=1,cs_db%num_salts), &
+                            !ru_hru_saltb_m(iru)%salt(1)%diss
           if (pco%csvout == "y") then
             write (5073,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                           (rusaltb_m(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
@@ -195,23 +195,23 @@
         enddo
         ru_hru_saltb_a(iru)%salt(1)%diss = ru_hru_saltb_a(iru)%salt(1)%diss + ru_hru_saltb_y(iru)%salt(1)%diss
         if (pco%salt_ru%y == "y") then
-          write (5074,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                           (rusaltb_y(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (rusaltb_y(iru)%hd(2)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (rusaltb_y(iru)%hd(3)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (rusaltb_y(iru)%hd(4)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (rusaltb_y(iru)%hd(5)%salt(isalt),isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%wtsp,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%irsw,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%irgw,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%irwo,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%rain,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%dryd,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%road,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%amnd,isalt=1,cs_db%num_salts), &
-                           (ru_hru_saltb_y(iru)%salt(isalt)%uptk,isalt=1,cs_db%num_salts), &
-                            ru_hru_saltb_y(iru)%salt(1)%diss
+          !write (5074,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                           !(rusaltb_y(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(rusaltb_y(iru)%hd(2)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(rusaltb_y(iru)%hd(3)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(rusaltb_y(iru)%hd(4)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(rusaltb_y(iru)%hd(5)%salt(isalt),isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%wtsp,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%irsw,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%irgw,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%irwo,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%rain,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%dryd,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%road,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%amnd,isalt=1,cs_db%num_salts), &
+                           !(ru_hru_saltb_y(iru)%salt(isalt)%uptk,isalt=1,cs_db%num_salts), &
+                            !ru_hru_saltb_y(iru)%salt(1)%diss
           if (pco%csvout == "y") then
             write (5075,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                           (rusaltb_y(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
@@ -268,23 +268,23 @@
           ru_hru_saltb_a(iru)%salt(isalt)%amnd = ru_hru_saltb_a(iru)%salt(isalt)%amnd / time%nbyr
           ru_hru_saltb_a(iru)%salt(isalt)%uptk = ru_hru_saltb_a(iru)%salt(isalt)%uptk / time%nbyr
         enddo
-        write (5076,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                         (rusaltb_a(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (rusaltb_a(iru)%hd(2)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (rusaltb_a(iru)%hd(3)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (rusaltb_a(iru)%hd(4)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (rusaltb_a(iru)%hd(5)%salt(isalt),isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%wtsp,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%irsw,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%irgw,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%irwo,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%rain,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%dryd,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%road,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%amnd,isalt=1,cs_db%num_salts), &
-                         (ru_hru_saltb_a(iru)%salt(isalt)%uptk,isalt=1,cs_db%num_salts), &
-                          ru_hru_saltb_a(iru)%salt(1)%diss
+        !write (5076,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                         !(rusaltb_a(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(rusaltb_a(iru)%hd(2)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(rusaltb_a(iru)%hd(3)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(rusaltb_a(iru)%hd(4)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(rusaltb_a(iru)%hd(5)%salt(isalt),isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%wtsp,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%irsw,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%irgw,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%irwo,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%rain,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%dryd,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%road,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%amnd,isalt=1,cs_db%num_salts), &
+                         !(ru_hru_saltb_a(iru)%salt(isalt)%uptk,isalt=1,cs_db%num_salts), &
+                          !ru_hru_saltb_a(iru)%salt(1)%diss
         if (pco%csvout == "y") then
           write (5077,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                         (rusaltb_a(iru)%hd(1)%salt(isalt),isalt=1,cs_db%num_salts), &

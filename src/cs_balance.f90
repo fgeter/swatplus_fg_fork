@@ -501,7 +501,7 @@
       !write out results; sum for month, year, avg annual -------------------------------------------------------------
       
       !write out basin-wide constituent fluxes to file (kg)
-      write(6080,7000) time%yrc,time%mo,time%day,(cs_basin(i),i=1,87)
+      !write(6080,7000) time%yrc,time%mo,time%day,(cs_basin(i),i=1,87)
       
       !save fluxes for monthly, yearly, and ave annual output
       do i=1,87
@@ -526,7 +526,7 @@
         cs_basin_mo(80) = cs_basin_mo(80) / num_days
         cs_basin_mo(86) = cs_basin_mo(86) / num_days
         cs_basin_mo(87) = cs_basin_mo(87) / num_days
-        write(6082,7000) time%yrc,time%mo,time%day,(cs_basin_mo(i),i=1,87)
+        !write(6082,7000) time%yrc,time%mo,time%day,(cs_basin_mo(i),i=1,87)
         cs_basin_mo = 0.
       endif
       
@@ -546,7 +546,7 @@
         cs_basin_yr(80) = cs_basin_yr(80) / num_days
         cs_basin_yr(86) = cs_basin_yr(86) / num_days
         cs_basin_yr(87) = cs_basin_yr(87) / num_days
-        write(6084,7000) time%yrc,time%mo,time%day,(cs_basin_yr(i),i=1,87)
+        !write(6084,7000) time%yrc,time%mo,time%day,(cs_basin_yr(i),i=1,87)
         cs_basin_yr = 0.
       endif
       
@@ -583,7 +583,7 @@
         cs_basin_aa(77) = cs_basin_aa(77) / num_days
         cs_basin_aa(83) = cs_basin_aa(83) / num_days
         cs_basin_aa(84) = cs_basin_aa(84) / num_days
-        write(6086,7000) time%yrc,time%mo,time%day,(cs_basin_aa(i),i=1,87)
+        !write(6086,7000) time%yrc,time%mo,time%day,(cs_basin_aa(i),i=1,87)
       endif
       
       

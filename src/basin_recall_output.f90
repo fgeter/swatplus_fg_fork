@@ -20,7 +20,7 @@
         !! daily print - BASIN RECALL
         if (pco%day_print == "y" .and. pco%int_day_cur == pco%int_day) then
           if (pco%recall_bsn%d == "y") then
-            write (4500,*) time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_d
+            !write (4500,*) time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_d
             if (pco%csvout == "y") then
               write (4504,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_d
             end if
@@ -31,7 +31,7 @@
         if (time%end_mo == 1) then
           brec_y = brec_y + brec_m
           if (pco%recall_bsn%m == "y") then
-            write (4501,*) time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_m
+            !write (4501,*) time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_m
             if (pco%csvout == "y") then
               write (4505,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_m
             endif
@@ -43,7 +43,7 @@
         if (time%end_yr == 1) then
           brec_a = brec_a + brec_y
           if (pco%recall_bsn%y == "y") then
-            write (4502,*) time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_y
+            !write (4502,*) time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_y
             if (pco%csvout == "y") then
               write (4506,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_y 
             end if
@@ -56,7 +56,7 @@
 
       if (time%end_sim == 1 .and. pco%recall_bsn%a == "y") then
         brec_a = brec_a / time%yrs_prt
-        write (4503,*) time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_a
+        !write (4503,*) time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_a
         if (pco%csvout == "y") then 
           write (4507,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, bsn%name, brec_a 
         end if 

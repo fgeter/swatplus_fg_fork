@@ -30,10 +30,10 @@
              
       !! daily print
       if (pco%nb_hru%d == "y") then
-        write (4520,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_d(j)    !! soil carbon gain/loss
-        write (4530,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_d(j)    !! residue carbon gain/loss
-        write (4540,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_d(j)    !! plant carbon gain/loss
-        write (4550,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_d(j)   !! soil transformations
+        !write (4520,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_d(j)    !! soil carbon gain/loss
+        !write (4530,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_d(j)    !! residue carbon gain/loss
+        !write (4540,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_d(j)    !! plant carbon gain/loss
+        !write (4550,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_d(j)   !! soil transformations
 
         if (pco%csvout == "y") then
           write (4524,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_d(j)    !! soil carbon gain/loss
@@ -53,10 +53,10 @@
           
         !! monthly print
         if (pco%nb_hru%m == "y") then
-          write (4521,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_m(j)    !! soil carbon gain/loss
-          write (4531,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_m(j)    !! residue carbon gain/loss
-          write (4541,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_m(j)    !! plant carbon gain/loss
-          write (4551,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_m(j)   !! soil transformations
+          !write (4521,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_m(j)    !! soil carbon gain/loss
+          !write (4531,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_m(j)    !! residue carbon gain/loss
+          !write (4541,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_m(j)    !! plant carbon gain/loss
+          !write (4551,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_m(j)   !! soil transformations
 
           if (pco%csvout == "y") then
             write (4525,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_m(j)    !! soil carbon gain/loss
@@ -81,10 +81,10 @@
         
         !! yearly print
         if (pco%nb_hru%y == "y") then
-          write (4522,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_y(j)    !! soil carbon gain/loss
-          write (4532,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_y(j)    !! residue carbon gain/loss
-          write (4542,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_y(j)    !! residue carbon gain/loss
-          write (4552,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_y(j)   !! soil transformations
+          !write (4522,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_y(j)    !! soil carbon gain/loss
+          !write (4532,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_y(j)    !! residue carbon gain/loss
+          !write (4542,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_y(j)    !! residue carbon gain/loss
+          !write (4552,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_y(j)   !! soil transformations
 
           if (pco%csvout == "y") then
           write (4526,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_y(j)    !! soil carbon gain/loss
@@ -107,10 +107,10 @@
           hrc_a(j) = hrc_a(j) / time%yrs_prt 
           hpc_a(j) = hpc_a(j) / time%yrs_prt 
           hscf_a(j) = hscf_a(j) / time%yrs_prt
-          write (4523,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_a(j)    !! soil carbon gain/loss
-          write (4533,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_a(j)    !! residue carbon gain/loss
-          write (4543,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_a(j)    !! plant carbon gain/loss
-          write (4553,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_a(j)   !! soil transformations
+          !write (4523,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_a(j)    !! soil carbon gain/loss
+          !write (4533,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_a(j)    !! residue carbon gain/loss
+          !write (4543,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_a(j)    !! plant carbon gain/loss
+          !write (4553,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_a(j)   !! soil transformations
 
           if (pco%csvout == "y") then 
             write (4527,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_a(j)    !! soil carbon gain/loss

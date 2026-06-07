@@ -33,15 +33,15 @@
       
       !daily print
       if (pco%salt_aqu%d == "y") then
-        write (5060,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
-                         (asaltb_d(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
-                         (asaltb_d(iaq)%salt(isalt)%rchrg,isalt=1,cs_db%num_salts), &
-                         (asaltb_d(iaq)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                         (asaltb_d(iaq)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
-                         (asaltb_d(iaq)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                         (asaltb_d(iaq)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                         (asaltb_d(iaq)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                          asaltb_d(iaq)%salt(1)%diss
+        !write (5060,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
+                         !(asaltb_d(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
+                         !(asaltb_d(iaq)%salt(isalt)%rchrg,isalt=1,cs_db%num_salts), &
+                         !(asaltb_d(iaq)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                         !(asaltb_d(iaq)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
+                         !(asaltb_d(iaq)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                         !(asaltb_d(iaq)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                         !(asaltb_d(iaq)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                          !asaltb_d(iaq)%salt(1)%diss
         if (pco%csvout == "y") then
           write (5061,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
                                                                             (asaltb_d(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
@@ -75,15 +75,15 @@
           asaltb_m(iaq)%salt(isalt)%conc = asaltb_m(iaq)%salt(isalt)%conc / const
         enddo
         if (pco%salt_aqu%m == "y") then
-          write (5062,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
-                           (asaltb_m(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
-                           (asaltb_m(iaq)%salt(isalt)%rchrg,isalt=1,cs_db%num_salts), &
-                           (asaltb_m(iaq)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                           (asaltb_m(iaq)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
-                           (asaltb_m(iaq)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                           (asaltb_m(iaq)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                           (asaltb_m(iaq)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                            asaltb_m(iaq)%salt(1)%diss
+          !write (5062,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
+                           !(asaltb_m(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
+                           !(asaltb_m(iaq)%salt(isalt)%rchrg,isalt=1,cs_db%num_salts), &
+                           !(asaltb_m(iaq)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                           !(asaltb_m(iaq)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
+                           !(asaltb_m(iaq)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                           !(asaltb_m(iaq)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                           !(asaltb_m(iaq)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                            !asaltb_m(iaq)%salt(1)%diss
           if (pco%csvout == "y") then
             write (5063,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
                                           (asaltb_m(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
@@ -128,15 +128,15 @@
           asaltb_y(iaq)%salt(isalt)%conc = asaltb_y(iaq)%salt(isalt)%conc / const
         enddo
         if (pco%salt_aqu%y == "y") then
-          write (5064,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
-                           (asaltb_y(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
-                           (asaltb_y(iaq)%salt(isalt)%rchrg,isalt=1,cs_db%num_salts), &
-                           (asaltb_y(iaq)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                           (asaltb_y(iaq)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
-                           (asaltb_y(iaq)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                           (asaltb_y(iaq)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                           (asaltb_y(iaq)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                            asaltb_y(iaq)%salt(1)%diss
+          !write (5064,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
+                           !(asaltb_y(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
+                           !(asaltb_y(iaq)%salt(isalt)%rchrg,isalt=1,cs_db%num_salts), &
+                           !(asaltb_y(iaq)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                           !(asaltb_y(iaq)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
+                           !(asaltb_y(iaq)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                           !(asaltb_y(iaq)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                           !(asaltb_y(iaq)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                            !asaltb_y(iaq)%salt(1)%diss
           if (pco%csvout == "y") then
             write (5065,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
                                           (asaltb_y(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
@@ -174,15 +174,15 @@
           asaltb_a(iaq)%salt(isalt)%mass = asaltb_a(iaq)%salt(isalt)%mass / time%nbyr
           asaltb_a(iaq)%salt(isalt)%conc = asaltb_a(iaq)%salt(isalt)%conc / time%nbyr
         enddo
-        write (5066,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
-                         (asaltb_a(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
-                         (asaltb_a(iaq)%salt(isalt)%rchrg,isalt=1,cs_db%num_salts), &
-                         (asaltb_a(iaq)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                         (asaltb_a(iaq)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
-                         (asaltb_a(iaq)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                         (asaltb_a(iaq)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                         (asaltb_a(iaq)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                          asaltb_a(iaq)%salt(1)%diss
+        !write (5066,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
+                         !(asaltb_a(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &
+                         !(asaltb_a(iaq)%salt(isalt)%rchrg,isalt=1,cs_db%num_salts), &
+                         !(asaltb_a(iaq)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                         !(asaltb_a(iaq)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
+                         !(asaltb_a(iaq)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                         !(asaltb_a(iaq)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                         !(asaltb_a(iaq)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                          !asaltb_a(iaq)%salt(1)%diss
         if (pco%csvout == "y") then
           write (5067,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
                                         (asaltb_a(iaq)%salt(isalt)%saltgw,isalt=1,cs_db%num_salts), &

@@ -39,15 +39,15 @@
       
       !daily print
       if (pco%salt_chn%d == "y") then
-        write (5030,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                         (chsalt_d(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
-                         (chsalt_d(iru)%salt(isalt)%gw_in,isalt=1,cs_db%num_salts), &
-                         (chsalt_d(iru)%salt(isalt)%tot_out,isalt=1,cs_db%num_salts), &
-                         (chsalt_d(iru)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                         (chsalt_d(iru)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
-                         (chsalt_d(iru)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                         (chsalt_d(iru)%salt(isalt)%water,isalt=1,cs_db%num_salts), &
-                         (chsalt_d(iru)%salt(isalt)%conc,isalt=1,cs_db%num_salts)
+        !write (5030,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                         !(chsalt_d(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
+                         !(chsalt_d(iru)%salt(isalt)%gw_in,isalt=1,cs_db%num_salts), &
+                         !(chsalt_d(iru)%salt(isalt)%tot_out,isalt=1,cs_db%num_salts), &
+                         !(chsalt_d(iru)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                         !(chsalt_d(iru)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
+                         !(chsalt_d(iru)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                         !(chsalt_d(iru)%salt(isalt)%water,isalt=1,cs_db%num_salts), &
+                         !(chsalt_d(iru)%salt(isalt)%conc,isalt=1,cs_db%num_salts)
         if (pco%csvout == "y") then
           write (5031,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                         (chsalt_d(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
@@ -81,15 +81,15 @@
           chsalt_m(iru)%salt(isalt)%conc = chsalt_m(iru)%salt(isalt)%conc / const
         enddo
         if (pco%salt_chn%m == "y") then
-          write (5032,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                           (chsalt_m(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
-                           (chsalt_m(iru)%salt(isalt)%gw_in,isalt=1,cs_db%num_salts), &
-                           (chsalt_m(iru)%salt(isalt)%tot_out,isalt=1,cs_db%num_salts), &
-                           (chsalt_m(iru)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                           (chsalt_m(iru)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
-                           (chsalt_m(iru)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                           (chsalt_m(iru)%salt(isalt)%water,isalt=1,cs_db%num_salts), &
-                           (chsalt_m(iru)%salt(isalt)%conc,isalt=1,cs_db%num_salts)
+          !write (5032,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                           !(chsalt_m(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
+                           !(chsalt_m(iru)%salt(isalt)%gw_in,isalt=1,cs_db%num_salts), &
+                           !(chsalt_m(iru)%salt(isalt)%tot_out,isalt=1,cs_db%num_salts), &
+                           !(chsalt_m(iru)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                           !(chsalt_m(iru)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
+                           !(chsalt_m(iru)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                           !(chsalt_m(iru)%salt(isalt)%water,isalt=1,cs_db%num_salts), &
+                           !(chsalt_m(iru)%salt(isalt)%conc,isalt=1,cs_db%num_salts)
           if (pco%csvout == "y") then
             write (5033,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                           (chsalt_m(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
@@ -134,15 +134,15 @@
           chsalt_y(iru)%salt(isalt)%conc = chsalt_y(iru)%salt(isalt)%conc / const
         enddo
         if (pco%salt_chn%y == "y") then
-          write (5034,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                           (chsalt_y(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
-                           (chsalt_y(iru)%salt(isalt)%gw_in,isalt=1,cs_db%num_salts), &
-                           (chsalt_y(iru)%salt(isalt)%tot_out,isalt=1,cs_db%num_salts), &
-                           (chsalt_y(iru)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                           (chsalt_y(iru)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
-                           (chsalt_y(iru)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                           (chsalt_y(iru)%salt(isalt)%water,isalt=1,cs_db%num_salts), &
-                           (chsalt_y(iru)%salt(isalt)%conc,isalt=1,cs_db%num_salts)
+          !write (5034,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                           !(chsalt_y(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
+                           !(chsalt_y(iru)%salt(isalt)%gw_in,isalt=1,cs_db%num_salts), &
+                           !(chsalt_y(iru)%salt(isalt)%tot_out,isalt=1,cs_db%num_salts), &
+                           !(chsalt_y(iru)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                           !(chsalt_y(iru)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
+                           !(chsalt_y(iru)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                           !(chsalt_y(iru)%salt(isalt)%water,isalt=1,cs_db%num_salts), &
+                           !(chsalt_y(iru)%salt(isalt)%conc,isalt=1,cs_db%num_salts)
           if (pco%csvout == "y") then
             write (5035,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                           (chsalt_y(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
@@ -181,15 +181,15 @@
           chsalt_a(iru)%salt(isalt)%water = chsalt_a(iru)%salt(isalt)%water / time%nbyr 
           chsalt_a(iru)%salt(isalt)%conc = chsalt_a(iru)%salt(isalt)%conc / time%nbyr
         enddo
-        write (5036,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                         (chsalt_a(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
-                         (chsalt_a(iru)%salt(isalt)%gw_in,isalt=1,cs_db%num_salts), &
-                         (chsalt_a(iru)%salt(isalt)%tot_out,isalt=1,cs_db%num_salts), &
-                         (chsalt_a(iru)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                         (chsalt_a(iru)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
-                         (chsalt_a(iru)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                         (chsalt_a(iru)%salt(isalt)%water,isalt=1,cs_db%num_salts), &
-                         (chsalt_a(iru)%salt(isalt)%conc,isalt=1,cs_db%num_salts)
+        !write (5036,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                         !(chsalt_a(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &
+                         !(chsalt_a(iru)%salt(isalt)%gw_in,isalt=1,cs_db%num_salts), &
+                         !(chsalt_a(iru)%salt(isalt)%tot_out,isalt=1,cs_db%num_salts), &
+                         !(chsalt_a(iru)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                         !(chsalt_a(iru)%salt(isalt)%irr,isalt=1,cs_db%num_salts), &
+                         !(chsalt_a(iru)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                         !(chsalt_a(iru)%salt(isalt)%water,isalt=1,cs_db%num_salts), &
+                         !(chsalt_a(iru)%salt(isalt)%conc,isalt=1,cs_db%num_salts)
         if (pco%csvout == "y") then
           write (5037,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                         (chsalt_a(iru)%salt(isalt)%tot_in,isalt=1,cs_db%num_salts), &

@@ -19,14 +19,14 @@
       
 !!! BASIN CROP YIELDS
       if (sp_ob%hru > 0 .and. (pco%crop_yld == "y" .or. pco%crop_yld == "b")) then
-        call open_output_file(5100, "basin_crop_yld_yr.txt", 800)
-        write (5100,*) bsn%name, prog
-        write (5100,*) bsn_yld_hdr
-        write (9000,*) "BASIN_CROP_YLD            basin_crop_yld_yr.txt"
-        call open_output_file(5101, "basin_crop_yld_aa.txt", 800)
-        write (5101,*) bsn%name, prog
-        write (5101,*) bsn_yld_hdr
-        write (9000,*) "BASIN_CROP_YLD            basin_crop_yld_aa.txt"
+        !call open_output_file(5100, "basin_crop_yld_yr.txt", 800)
+        !write (5100,*) bsn%name, prog
+        !write (5100,*) bsn_yld_hdr
+        !write (9000,*) "BASIN_CROP_YLD            basin_crop_yld_yr.txt"
+        !call open_output_file(5101, "basin_crop_yld_aa.txt", 800)
+        !write (5101,*) bsn%name, prog
+        !write (5101,*) bsn_yld_hdr
+        !write (9000,*) "BASIN_CROP_YLD            basin_crop_yld_aa.txt"
       end if
       
       return

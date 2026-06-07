@@ -38,16 +38,16 @@
 
       !daily print
       if (pco%salt_res%d == "y") then
-        write (5040,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         (ressalt_d(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
-                         (ressalt_d(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
-                         (ressalt_d(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                         (ressalt_d(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                         (ressalt_d(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
-                         (ressalt_d(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                         (ressalt_d(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                         (ressalt_d(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                          ressalt_d(j)%salt(1)%volm
+        !write (5040,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                         !(ressalt_d(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
+                         !(ressalt_d(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
+                         !(ressalt_d(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                         !(ressalt_d(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                         !(ressalt_d(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
+                         !(ressalt_d(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                         !(ressalt_d(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                         !(ressalt_d(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                          !ressalt_d(j)%salt(1)%volm
         if (pco%csvout == "y") then
           write (5041,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (ressalt_d(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
@@ -83,16 +83,16 @@
         enddo
         ressalt_m(j)%salt(1)%volm = ressalt_m(j)%salt(1)%volm / const
         if (pco%salt_res%m == "y") then
-          write (5042,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           (ressalt_m(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
-                           (ressalt_m(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
-                           (ressalt_m(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                           (ressalt_m(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                           (ressalt_m(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
-                           (ressalt_m(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                           (ressalt_m(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                           (ressalt_m(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                            ressalt_m(j)%salt(1)%volm
+          !write (5042,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           !(ressalt_m(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
+                           !(ressalt_m(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
+                           !(ressalt_m(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                           !(ressalt_m(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                           !(ressalt_m(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
+                           !(ressalt_m(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                           !(ressalt_m(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                           !(ressalt_m(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                            !ressalt_m(j)%salt(1)%volm
           if (pco%csvout == "y") then
             write (5043,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                           (ressalt_m(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
@@ -141,16 +141,16 @@
         enddo
         ressalt_y(j)%salt(1)%volm = ressalt_y(j)%salt(1)%volm / const
         if (pco%salt_res%y == "y") then
-          write (5044,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           (ressalt_y(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
-                           (ressalt_y(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
-                           (ressalt_y(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                           (ressalt_y(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                           (ressalt_y(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
-                           (ressalt_y(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                           (ressalt_y(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                           (ressalt_y(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                            ressalt_y(j)%salt(1)%volm
+          !write (5044,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           !(ressalt_y(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
+                           !(ressalt_y(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
+                           !(ressalt_y(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                           !(ressalt_y(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                           !(ressalt_y(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
+                           !(ressalt_y(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                           !(ressalt_y(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                           !(ressalt_y(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                            !ressalt_y(j)%salt(1)%volm
           if (pco%csvout == "y") then
             write (5045,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                           (ressalt_y(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
@@ -192,16 +192,16 @@
           ressalt_a(j)%salt(isalt)%conc = ressalt_a(j)%salt(isalt)%conc / time%nbyr
         enddo
         ressalt_a(j)%salt(1)%volm = ressalt_a(j)%salt(1)%volm / time%nbyr
-        write (5046,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         (ressalt_a(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
-                         (ressalt_a(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
-                         (ressalt_a(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                         (ressalt_a(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                         (ressalt_a(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
-                         (ressalt_a(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                         (ressalt_a(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                         (ressalt_a(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                          ressalt_a(j)%salt(1)%volm
+        !write (5046,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                         !(ressalt_a(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
+                         !(ressalt_a(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
+                         !(ressalt_a(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                         !(ressalt_a(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                         !(ressalt_a(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
+                         !(ressalt_a(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                         !(ressalt_a(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                         !(ressalt_a(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                          !ressalt_a(j)%salt(1)%volm
         if (pco%csvout == "y") then
           write (5047,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (ressalt_a(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &

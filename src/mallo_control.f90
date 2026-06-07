@@ -67,10 +67,10 @@
           mallo(imallo)%trn(itrn)%withdr(isrc) = frt_kg
 
           if (pco%mgtout == "y") then
-            write (2612, *) j, time%yrc, time%mo, time%day_mo, fertdb(ifrt)%fertnm, "    MANU",       &
-                  phubase(j),pcom(j)%plcur(ipl)%phuacc, soil(j)%sw, pl_mass(j)%tot(ipl)%m,            &
-                  pl_mass(j)%rsd_tot%m, sol_sumno3(j), sol_sumsolp(j), frt_kg, fertno3, fertnh3,        &
-                  fertorgn, fertsolp, fertorgp
+            !write (2612, *) j, time%yrc, time%mo, time%day_mo, fertdb(ifrt)%fertnm, "    MANU",       &
+                  !phubase(j),pcom(j)%plcur(ipl)%phuacc, soil(j)%sw, pl_mass(j)%tot(ipl)%m,            &
+                  !pl_mass(j)%rsd_tot%m, sol_sumno3(j), sol_sumsolp(j), frt_kg, fertno3, fertnh3,        &
+                  !fertorgn, fertsolp, fertorgp
           endif
         end if
 

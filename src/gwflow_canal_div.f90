@@ -197,12 +197,12 @@
         do i=1,gw_ncanal
           write(canal_name,'(a6,i4.4)') 'canal_',i
           if(gwflag_flux == 1) then
-					write(out_canal_bal,8100) time%day,time%mo,time%day_mo,time%yrc, &
-					    i,i,canal_name, &
-					    gw_canl_div_info(i)%div, &
-					    gw_canl_div_info(i)%stor, &
-					    gw_canl_div_info(i)%out_pond, &
-					    gw_canl_div_info(i)%out_seep
+					!write(out_canal_bal,8100) time%day,time%mo,time%day_mo,time%yrc, &
+					    !i,i,canal_name, &
+					    !gw_canl_div_info(i)%div, &
+					    !gw_canl_div_info(i)%stor, &
+					    !gw_canl_div_info(i)%out_pond, &
+					    !gw_canl_div_info(i)%out_seep
           endif !gwflag_flux
 
 					!write solute mass balance (seepage mass only, irrigation handled by wallo)
@@ -218,9 +218,9 @@
 								mass_pond = (gw_canl_div_info(i)%out_pond * canal_conc) / 1000.
 								mass_seep = (gw_canl_div_info(i)%out_seep * canal_conc) / 1000.
 								if(gwflag_flux == 1) then
-								write(out_canal_sol,8101) time%day,time%mo,time%day_mo,time%yrc, &
-								    i,i,canal_name,gwsol_nm(sol_index), &
-								    mass_div,mass_stor,mass_pond,mass_seep
+								!write(out_canal_sol,8101) time%day,time%mo,time%day_mo,time%yrc, &
+								    !i,i,canal_name,gwsol_nm(sol_index), &
+								    !mass_div,mass_stor,mass_pond,mass_seep
 								endif
               enddo
             endif
@@ -233,9 +233,9 @@
 								mass_pond = (gw_canl_div_info(i)%out_pond * canal_conc) / 1000.
 								mass_seep = (gw_canl_div_info(i)%out_seep * canal_conc) / 1000.
 								if(gwflag_flux == 1) then
-								write(out_canal_sol,8101) time%day,time%mo,time%day_mo,time%yrc, &
-								    i,i,canal_name,gwsol_nm(sol_index), &
-								    mass_div,mass_stor,mass_pond,mass_seep
+								!write(out_canal_sol,8101) time%day,time%mo,time%day_mo,time%yrc, &
+								    !i,i,canal_name,gwsol_nm(sol_index), &
+								    !mass_div,mass_stor,mass_pond,mass_seep
 								endif
               enddo
             endif

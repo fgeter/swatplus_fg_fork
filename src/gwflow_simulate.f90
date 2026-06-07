@@ -116,8 +116,8 @@
         do i=1,num_hru_pump_obs
           hru_pump_obs(i) = hru_pump(hru_pump_ids(i))
         enddo
-        write(out_hru_pump_obs,119) time%yrc,time%day, &
-                                   (hru_pump_obs(i),i=1,num_hru_pump_obs)
+        !write(out_hru_pump_obs,119) time%yrc,time%day, &
+                                   !(hru_pump_obs(i),i=1,num_hru_pump_obs)
       endif
       hru_pump = 0.
 
@@ -159,13 +159,13 @@
           enddo
           if(gwflag_flux == 1) then
             if(gw_solute_flag == 1) then
-              write(out_tile_cells,8130) time%day,time%mo,time%day_mo,time%yrc, &
-                                       (sum_tile(i),i=1,gw_tile_num_group), &
-                                       (c_tile(i,1),i=1,gw_tile_num_group), &
-                                       (c_tile(i,2),i=1,gw_tile_num_group)
+              !write(out_tile_cells,8130) time%day,time%mo,time%day_mo,time%yrc, &
+                                       !(sum_tile(i),i=1,gw_tile_num_group), &
+                                       !(c_tile(i,1),i=1,gw_tile_num_group), &
+                                       !(c_tile(i,2),i=1,gw_tile_num_group)
             else
-              write(out_tile_cells,8130) time%day,time%mo,time%day_mo,time%yrc, &
-                                       (sum_tile(i),i=1,gw_tile_num_group)
+              !write(out_tile_cells,8130) time%day,time%mo,time%day_mo,time%yrc, &
+                                       !(sum_tile(i),i=1,gw_tile_num_group)
             endif
           endif
         endif
@@ -232,7 +232,7 @@
           enddo
         enddo
         if(gwflag_flux == 1) then
-          write(out_gwsw_groups,8130) time%day,time%mo,time%day_mo,time%yrc,(gwsw_sum(i),i=1,gw_gwsw_ngroup)
+          !write(out_gwsw_groups,8130) time%day,time%mo,time%day_mo,time%yrc,(gwsw_sum(i),i=1,gw_gwsw_ngroup)
         endif
       endif
 
@@ -245,13 +245,13 @@
           obs_vals(i) = gw_hyd_ss(cell_id)%gwsw + gw_hyd_ss(cell_id)%swgw + gw_hyd_ss(cell_id)%satx
         enddo
         if(gwflag_flux == 1) then
-          write(out_gwsw_chanobs_flow,8130) time%day,time%mo,time%day_mo,time%yrc,(obs_vals(i),i=1,gw_chan_nobs)
+          !write(out_gwsw_chanobs_flow,8130) time%day,time%mo,time%day_mo,time%yrc,(obs_vals(i),i=1,gw_chan_nobs)
           if(gw_solute_flag == 1) then
             do i=1,gw_chan_nobs
               cell_id = gw_chan_obs_cell(i)
               obs_vals(i) = gwsol_ss(cell_id)%solute(1)%gwsw + gwsol_ss(cell_id)%solute(1)%swgw + gwsol_ss(cell_id)%solute(1)%satx
             enddo
-            write(out_gwsw_chanobs_no3,8130) time%day,time%mo,time%day_mo,time%yrc,(obs_vals(i),i=1,gw_chan_nobs)
+            !write(out_gwsw_chanobs_no3,8130) time%day,time%mo,time%day_mo,time%yrc,(obs_vals(i),i=1,gw_chan_nobs)
           endif
         endif
       endif

@@ -751,34 +751,34 @@
       allocate(gw_obs_head(gw_num_obs_wells), source = 0.)
       !open file for writing out daily head values
       if(gwflag_obs == 1) then
-        open(out_gwobs,file='gwflow_obs_day.txt')
-        write(out_gwobs,*) 'gwflow observation well daily output (-99 = not simulated)'
-        write(out_gwobs,'(4a6,2a8,a18,5a13)') &
-          'jday','mon','day','yr','unit','gis_id','name', &
-          'head','wt_depth','temperature','no3','p'
-        write(out_gwobs,'(4a6,2a8,a18,5a13)') &
-          '','','','','','','','m','m','degC','mg/L','mg/L'
-        open(out_gwobs_mon,file='gwflow_obs_mon.txt')
-        write(out_gwobs_mon,*) 'gwflow observation well monthly avg (-99 = not simulated)'
-        write(out_gwobs_mon,'(4a6,2a8,a18,5a13)') &
-          'jday','mon','day','yr','unit','gis_id','name', &
-          'head','wt_depth','temperature','no3','p'
-        write(out_gwobs_mon,'(4a6,2a8,a18,5a13)') &
-          '','','','','','','','m','m','degC','mg/L','mg/L'
-        open(out_gwobs_yr,file='gwflow_obs_yr.txt')
-        write(out_gwobs_yr,*) 'gwflow observation well annual avg (-99 = not simulated)'
-        write(out_gwobs_yr,'(4a6,2a8,a18,5a13)') &
-          'jday','mon','day','yr','unit','gis_id','name', &
-          'head','wt_depth','temperature','no3','p'
-        write(out_gwobs_yr,'(4a6,2a8,a18,5a13)') &
-          '','','','','','','','m','m','degC','mg/L','mg/L'
-        open(out_gwobs_aa,file='gwflow_obs_aa.txt')
-        write(out_gwobs_aa,*) 'gwflow observation well avg annual (-99 = not simulated)'
-        write(out_gwobs_aa,'(4a6,2a8,a18,5a13)') &
-          'jday','mon','day','yr','unit','gis_id','name', &
-          'head','wt_depth','temperature','no3','p'
-        write(out_gwobs_aa,'(4a6,2a8,a18,5a13)') &
-          '','','','','','','','m','m','degC','mg/L','mg/L'
+        !open(out_gwobs,file='gwflow_obs_day.txt')
+        !write(out_gwobs,*) 'gwflow observation well daily output (-99 = not simulated)'
+        !write(out_gwobs,'(4a6,2a8,a18,5a13)') &
+          !'jday','mon','day','yr','unit','gis_id','name', &
+          !'head','wt_depth','temperature','no3','p'
+        !write(out_gwobs,'(4a6,2a8,a18,5a13)') &
+          !'','','','','','','','m','m','degC','mg/L','mg/L'
+        !open(out_gwobs_mon,file='gwflow_obs_mon.txt')
+        !write(out_gwobs_mon,*) 'gwflow observation well monthly avg (-99 = not simulated)'
+        !write(out_gwobs_mon,'(4a6,2a8,a18,5a13)') &
+          !'jday','mon','day','yr','unit','gis_id','name', &
+          !'head','wt_depth','temperature','no3','p'
+        !write(out_gwobs_mon,'(4a6,2a8,a18,5a13)') &
+          !'','','','','','','','m','m','degC','mg/L','mg/L'
+        !open(out_gwobs_yr,file='gwflow_obs_yr.txt')
+        !write(out_gwobs_yr,*) 'gwflow observation well annual avg (-99 = not simulated)'
+        !write(out_gwobs_yr,'(4a6,2a8,a18,5a13)') &
+          !'jday','mon','day','yr','unit','gis_id','name', &
+          !'head','wt_depth','temperature','no3','p'
+        !write(out_gwobs_yr,'(4a6,2a8,a18,5a13)') &
+          !'','','','','','','','m','m','degC','mg/L','mg/L'
+        !open(out_gwobs_aa,file='gwflow_obs_aa.txt')
+        !write(out_gwobs_aa,*) 'gwflow observation well avg annual (-99 = not simulated)'
+        !write(out_gwobs_aa,'(4a6,2a8,a18,5a13)') &
+          !'jday','mon','day','yr','unit','gis_id','name', &
+          !'head','wt_depth','temperature','no3','p'
+        !write(out_gwobs_aa,'(4a6,2a8,a18,5a13)') &
+          !'','','','','','','','m','m','degC','mg/L','mg/L'
       endif
       gw_output_index = 1
       !if structured grid, then convert cell ids
@@ -1064,30 +1064,30 @@
       hru_pump_yr = 0.
       hru_pump_aa = 0.
       if(gwflag_pump == 1) then
-        open(out_hru_pump_day,file='gwflow_hru_pump_day.txt')
-        write(out_hru_pump_day,*) 'gwflow HRU pumping for irrigation (m3/day)'
-        write(out_hru_pump_day,'(4a6,2a8,a18,a13)') &
-          'jday','mon','day','yr','unit','gis_id','name','pump_allo'
-        write(out_hru_pump_day,'(4a6,2a8,a18,a13)') &
-          '','','','','','','','m3/day'
-        open(out_hru_pump_mo,file='gwflow_hru_pump_mon.txt')
-        write(out_hru_pump_mo,*) 'gwflow HRU pumping for irrigation monthly total (m3)'
-        write(out_hru_pump_mo,'(4a6,2a8,a18,a13)') &
-          'jday','mon','day','yr','unit','gis_id','name','pump_allo'
-        write(out_hru_pump_mo,'(4a6,2a8,a18,a13)') &
-          '','','','','','','','m3'
-        open(out_hru_pump_yr,file='gwflow_hru_pump_yr.txt')
-        write(out_hru_pump_yr,*) 'gwflow HRU pumping for irrigation annual total (m3)'
-        write(out_hru_pump_yr,'(4a6,2a8,a18,a13)') &
-          'jday','mon','day','yr','unit','gis_id','name','pump_allo'
-        write(out_hru_pump_yr,'(4a6,2a8,a18,a13)') &
-          '','','','','','','','m3'
-        open(out_hru_pump_aa,file='gwflow_hru_pump_aa.txt')
-        write(out_hru_pump_aa,*) 'gwflow HRU pumping for irrigation avg annual (m3/yr)'
-        write(out_hru_pump_aa,'(4a6,2a8,a18,a13)') &
-          'jday','mon','day','yr','unit','gis_id','name','pump_allo'
-        write(out_hru_pump_aa,'(4a6,2a8,a18,a13)') &
-          '','','','','','','','m3/yr'
+        !open(out_hru_pump_day,file='gwflow_hru_pump_day.txt')
+        !write(out_hru_pump_day,*) 'gwflow HRU pumping for irrigation (m3/day)'
+        !write(out_hru_pump_day,'(4a6,2a8,a18,a13)') &
+          !'jday','mon','day','yr','unit','gis_id','name','pump_allo'
+        !write(out_hru_pump_day,'(4a6,2a8,a18,a13)') &
+          !'','','','','','','','m3/day'
+        !open(out_hru_pump_mo,file='gwflow_hru_pump_mon.txt')
+        !write(out_hru_pump_mo,*) 'gwflow HRU pumping for irrigation monthly total (m3)'
+        !write(out_hru_pump_mo,'(4a6,2a8,a18,a13)') &
+          !'jday','mon','day','yr','unit','gis_id','name','pump_allo'
+        !write(out_hru_pump_mo,'(4a6,2a8,a18,a13)') &
+          !'','','','','','','','m3'
+        !open(out_hru_pump_yr,file='gwflow_hru_pump_yr.txt')
+        !write(out_hru_pump_yr,*) 'gwflow HRU pumping for irrigation annual total (m3)'
+        !write(out_hru_pump_yr,'(4a6,2a8,a18,a13)') &
+          !'jday','mon','day','yr','unit','gis_id','name','pump_allo'
+        !write(out_hru_pump_yr,'(4a6,2a8,a18,a13)') &
+          !'','','','','','','','m3'
+        !open(out_hru_pump_aa,file='gwflow_hru_pump_aa.txt')
+        !write(out_hru_pump_aa,*) 'gwflow HRU pumping for irrigation avg annual (m3/yr)'
+        !write(out_hru_pump_aa,'(4a6,2a8,a18,a13)') &
+          !'jday','mon','day','yr','unit','gis_id','name','pump_allo'
+        !write(out_hru_pump_aa,'(4a6,2a8,a18,a13)') &
+          !'','','','','','','','m3/yr'
       endif
       inquire(file='gwflow.hru_pump_observe',exist=i_exist)
       if(hru_pump_flag == 1) then
@@ -1100,10 +1100,10 @@
         enddo
         allocate(hru_pump_obs(num_hru_pump_obs))
         hru_pump_obs = 0.
-        open(out_hru_pump_obs,file='gwflow_cell_wb_ppag_obs_day.txt')
-        write(out_hru_pump_obs,*) 'Daily groundwater pumping (m3) for specified HRUs'
-        write(out_hru_pump_obs,*) 'Columns = HRUs (same order as in gwflow.hru_pump_observe)'
-        write(out_hru_pump_obs,*) 'Time(day)    Daily pumping (m3)'
+        !open(out_hru_pump_obs,file='gwflow_cell_wb_ppag_obs_day.txt')
+        !write(out_hru_pump_obs,*) 'Daily groundwater pumping (m3) for specified HRUs'
+        !write(out_hru_pump_obs,*) 'Columns = HRUs (same order as in gwflow.hru_pump_observe)'
+        !write(out_hru_pump_obs,*) 'Time(day)    Daily pumping (m3)'
       endif
 
       !groundwater pumping (specified) ------------------------------------------------------------
@@ -1218,8 +1218,8 @@
             enddo
           enddo
           if(gwflag_flux == 1) then
-            open(out_tile_cells,file='gwflow_tile_group_day.txt')
-            write(out_tile_cells,*) 'gwflow daily tile drain flow (m3/sec) per cell group'
+            !open(out_tile_cells,file='gwflow_tile_group_day.txt')
+            !write(out_tile_cells,*) 'gwflow daily tile drain flow (m3/sec) per cell group'
           endif
         endif
         !read in tile cell flag (0=no tile; 1=tiles are present)
@@ -1545,22 +1545,22 @@
         !flux output file
         if(gwflag_flux == 1) then
         !canal water balance file (daily)
-        open(out_canal_bal,file='gwflow_canal_wb_day.txt')
-        write(out_canal_bal,*) 'gwflow canal daily water balance (m3)'
-        write(out_canal_bal,8000) 'jday','mon','day','yr','unit','gis_id', &
-          'name','diversion','storage','pond_xfer','seepage'
-        write(out_canal_bal,8000) '','','','','','','', &
-          'm3','m3','m3','m3'
+        !open(out_canal_bal,file='gwflow_canal_wb_day.txt')
+        !write(out_canal_bal,*) 'gwflow canal daily water balance (m3)'
+        !write(out_canal_bal,8000) 'jday','mon','day','yr','unit','gis_id', &
+          !'name','diversion','storage','pond_xfer','seepage'
+        !write(out_canal_bal,8000) '','','','','','','', &
+          !'m3','m3','m3','m3'
         !canal solute mass balance file (daily)
-        open(out_canal_sol,file='gwflow_canal_sol_day.txt')
-        write(out_canal_sol,*) 'gwflow canal daily solute mass balance (kg)'
-        write(out_canal_sol,'(4a6,2a8,a18,a13,4a13)') &
-          'jday','mon','day','yr','unit','gis_id', &
-          'name','solute','div_mass','storage','pond_mass', &
-          'seep_mass'
-        write(out_canal_sol,'(4a6,2a8,a18,a13,4a13)') &
-          '','','','','','','','', &
-          'kg','kg','kg','kg'
+        !open(out_canal_sol,file='gwflow_canal_sol_day.txt')
+        !write(out_canal_sol,*) 'gwflow canal daily solute mass balance (kg)'
+        !write(out_canal_sol,'(4a6,2a8,a18,a13,4a13)') &
+          !'jday','mon','day','yr','unit','gis_id', &
+          !'name','solute','div_mass','storage','pond_mass', &
+          !'seep_mass'
+        !write(out_canal_sol,'(4a6,2a8,a18,a13,4a13)') &
+          !'','','','','','','','', &
+          !'kg','kg','kg','kg'
         endif !gwflag_flux
       else
         write(out_gw,*) '          gwflow_canal.con not found (canal seepage not simulated)'
@@ -2184,27 +2184,27 @@
         !flux output file
         if(gwflag_flux == 1) then
         !pond water balance file
-        open(out_pond_bal,file='gwflow_pond_wb_day.txt')
-        write(out_pond_bal,*) 'gwflow recharge pond daily water balance'
-        write(out_pond_bal,8000) 'jday','mon','day','yr','unit','gis_id', &
-          'name','area','storage','rain','div_added','evap', &
-          'recharge','div_spec','div_unsat'
-        write(out_pond_bal,8000) '','','','','','','', &
-          'm2','m3','m3','m3','m3','m3','m3','m3'
+        !open(out_pond_bal,file='gwflow_pond_wb_day.txt')
+        !write(out_pond_bal,*) 'gwflow recharge pond daily water balance'
+        !write(out_pond_bal,8000) 'jday','mon','day','yr','unit','gis_id', &
+          !'name','area','storage','rain','div_added','evap', &
+          !'recharge','div_spec','div_unsat'
+        !write(out_pond_bal,8000) '','','','','','','', &
+          !'m2','m3','m3','m3','m3','m3','m3','m3'
         !pond solute mass balance file
-        open(out_pond_sol,file='gwflow_pond_sol_day.txt')
-        write(out_pond_sol,*) 'gwflow recharge pond daily solute mass balance (kg)'
-        write(out_pond_sol,8000) 'jday','mon','day','yr','unit','gis_id', &
-          'name','area','storage','solute','mass','div_added', &
-          'recharge'
-        write(out_pond_sol,8000) '','','','','','','', &
-          'm2','m3','','kg','kg','kg'
+        !open(out_pond_sol,file='gwflow_pond_sol_day.txt')
+        !write(out_pond_sol,*) 'gwflow recharge pond daily solute mass balance (kg)'
+        !write(out_pond_sol,8000) 'jday','mon','day','yr','unit','gis_id', &
+          !'name','area','storage','solute','mass','div_added', &
+          !'recharge'
+        !write(out_pond_sol,8000) '','','','','','','', &
+          !'m2','m3','','kg','kg','kg'
         !pond mass for each day
-        open(out_pond_mass,file='gwflow_pond_mass_day.txt')
-        write(out_pond_mass,*) 'gwflow recharge pond daily solute mass (kg), one column per pond'
+        !open(out_pond_mass,file='gwflow_pond_mass_day.txt')
+        !write(out_pond_mass,*) 'gwflow recharge pond daily solute mass (kg), one column per pond'
         !pond concentration for each day
-        open(out_pond_conc,file='gwflow_pond_conc_day.txt')
-        write(out_pond_conc,*) 'gwflow recharge pond daily concentration (g/m3), one column per pond'
+        !open(out_pond_conc,file='gwflow_pond_conc_day.txt')
+        !write(out_pond_conc,*) 'gwflow recharge pond daily concentration (g/m3), one column per pond'
         endif !gwflag_flux
       endif
 
@@ -2576,8 +2576,8 @@
           enddo
         enddo
         if(gwflag_flux == 1) then
-          open(out_gwsw_groups,file='gwflow_gwsw_group_day.txt')
-          write(out_gwsw_groups,*) 'gwflow daily gw-sw exchange volume (m3) per cell group'
+          !open(out_gwsw_groups,file='gwflow_gwsw_group_day.txt')
+          !write(out_gwsw_groups,*) 'gwflow daily gw-sw exchange volume (m3) per cell group'
         endif
         close(1235)
       endif
@@ -2601,11 +2601,11 @@
         enddo
         close(1235)
         if(gwflag_flux == 1) then
-          open(out_gwsw_chanobs_flow,file='gwflow_chan_obs_flow_day.txt')
-          write(out_gwsw_chanobs_flow,*) 'gwflow daily gw-channel exchange volume (m3) at observation cells'
+          !open(out_gwsw_chanobs_flow,file='gwflow_chan_obs_flow_day.txt')
+          !write(out_gwsw_chanobs_flow,*) 'gwflow daily gw-channel exchange volume (m3) at observation cells'
           if(gw_solute_flag == 1) then
-            open(out_gwsw_chanobs_no3,file='gwflow_chan_obs_no3_day.txt')
-            write(out_gwsw_chanobs_no3,*) 'gwflow daily gw-channel NO3 mass (g) at observation cells'
+            !open(out_gwsw_chanobs_no3,file='gwflow_chan_obs_no3_day.txt')
+            !write(out_gwsw_chanobs_no3,*) 'gwflow daily gw-channel NO3 mass (g) at observation cells'
           endif
         endif
       endif
@@ -2615,15 +2615,15 @@
       hydsep_flag = 1  !enable hydrograph separation output for all channels
       allocate(chan_hyd_sep(sp_ob%chandeg,6))
       chan_hyd_sep = 0.
-      open(out_hyd_sep,file='gwflow_chan_hydsep_day.txt')
-      write(out_hyd_sep,*) 'gwflow channel hydrograph separation (m3/sec)'
-      write(out_hyd_sep,'(4a6,2a8,a18,7a13)') &
-        'jday','mon','day','yr','unit','gis_id','name', &
-        'surf_runoff','lateral','gw_discharge','stream_seep', &
-        'satex_gw','satex_sw','tile_drain'
-      write(out_hyd_sep,'(4a6,2a8,a18,7a13)') &
-        '','','','','','','', &
-        'm3/s','m3/s','m3/s','m3/s','m3/s','m3/s','m3/s'
+      !open(out_hyd_sep,file='gwflow_chan_hydsep_day.txt')
+      !write(out_hyd_sep,*) 'gwflow channel hydrograph separation (m3/sec)'
+      !write(out_hyd_sep,'(4a6,2a8,a18,7a13)') &
+        !'jday','mon','day','yr','unit','gis_id','name', &
+        !'surf_runoff','lateral','gw_discharge','stream_seep', &
+        !'satex_gw','satex_sw','tile_drain'
+      !write(out_hyd_sep,'(4a6,2a8,a18,7a13)') &
+        !'','','','','','','', &
+        !'m3/s','m3/s','m3/s','m3/s','m3/s','m3/s','m3/s'
 
       !gwflow record file (skip line)
       write(out_gw,*)

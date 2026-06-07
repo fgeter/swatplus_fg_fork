@@ -35,7 +35,7 @@
      &          "@CMAKE_Fortran_COMPILER_ID@ (@CMAKE_Fortran_COMPILER_VERSION@), @ISO@, @CMAKE_HOST_SYSTEM_NAME@",/,             &
      &          "    Program reading . . . executing",/)
       
-      open (888,file="erosion.txt",recl = 1500)
+      ! open (888,file="erosion.txt",recl = 1500)
       
       call proc_bsn   
       call proc_date_time
