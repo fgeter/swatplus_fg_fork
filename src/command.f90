@@ -638,9 +638,11 @@
       do i_chan=1,sp_ob%chandeg
         if(hydsep_flag(i_chan) == 1) then
           iob_chan = sp_ob1%chandeg + i_chan - 1
-          !write(out_hyd_sep,8102) time%day,time%mo,time%day_mo,time%yrc, &
-            !i_chan,ob(iob_chan)%gis_id,ob(iob_chan)%name, &
-            !(hyd_sep_array(i_chan,i_count),i_count=1,7)
+          if (pco%csvout == "n") then
+            write(out_hyd_sep,8102) time%day,time%mo,time%day_mo,time%yrc, &
+              i_chan,ob(iob_chan)%gis_id,ob(iob_chan)%name, &
+              (hyd_sep_array(i_chan,i_count),i_count=1,7)
+          end if
         endif
       enddo
       endif

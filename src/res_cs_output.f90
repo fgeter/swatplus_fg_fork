@@ -41,19 +41,21 @@
 
       !daily print
       if (pco%cs_res%d == "y") then
-        !write (6040,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         !(rescs_d(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%div,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                         !(rescs_d(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                          !rescs_d(j)%cs(1)%volm
+        if (pco%csvout == "n") then
+          write (6040,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           (rescs_d(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%div,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                           (rescs_d(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                            rescs_d(j)%cs(1)%volm
+        end if
         if (pco%csvout == "y") then
           write (6041,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (rescs_d(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
@@ -95,19 +97,21 @@
         enddo
         rescs_m(j)%cs(1)%volm = rescs_m(j)%cs(1)%volm / const
         if (pco%cs_res%m == "y") then
-          !write (6042,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           !(rescs_m(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%div,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                           !(rescs_m(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                            !rescs_m(j)%cs(1)%volm
+          if (pco%csvout == "n") then
+            write (6042,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                             (rescs_m(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%div,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                             (rescs_m(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                              rescs_m(j)%cs(1)%volm
+          end if
           if (pco%csvout == "y") then
             write (6043,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                           (rescs_m(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
@@ -165,19 +169,21 @@
         enddo
         rescs_y(j)%cs(1)%volm = rescs_y(j)%cs(1)%volm / const
         if (pco%cs_res%y == "y") then
-          !write (6044,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           !(rescs_y(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%div,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                           !(rescs_y(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                            !rescs_y(j)%cs(1)%volm
+          if (pco%csvout == "n") then
+            write (6044,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                             (rescs_y(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%div,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                             (rescs_y(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                              rescs_y(j)%cs(1)%volm
+          end if
           if (pco%csvout == "y") then
             write (6045,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                           (rescs_y(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
@@ -228,19 +234,21 @@
           rescs_a(j)%cs(ics)%conc = rescs_a(j)%cs(ics)%conc / time%nbyr
         enddo
         rescs_a(j)%cs(1)%volm = rescs_a(j)%cs(1)%volm / time%nbyr
-        !write (6046,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         !(rescs_a(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%div,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                         !(rescs_a(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                          !rescs_a(j)%cs(1)%volm
+        if (pco%csvout == "n") then
+          write (6046,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           (rescs_a(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%div,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                           (rescs_a(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                            rescs_a(j)%cs(1)%volm
+        end if
         if (pco%csvout == "y") then
           write (6047,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (rescs_a(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &

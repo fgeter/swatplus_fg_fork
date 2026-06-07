@@ -36,17 +36,19 @@
       
       !daily print
       if (pco%cs_aqu%d == "y") then
-        !write (6060,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
-                         !(acsb_d(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%rchrg,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%irr,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%div,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                         !(acsb_d(iaq)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+        if (pco%csvout == "n") then
+          write (6060,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
+                           (acsb_d(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%rchrg,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%irr,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%div,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                           (acsb_d(iaq)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+        end if
         if (pco%csvout == "y") then
           write (6061,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
                                                                            (acsb_d(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
@@ -85,17 +87,19 @@
           acsb_m(iaq)%cs(ics)%srbd = acsb_m(iaq)%cs(ics)%srbd / const
         enddo
         if (pco%cs_aqu%m == "y") then
-          !write (6062,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
-                           !(acsb_m(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%rchrg,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%irr,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%div,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                           !(acsb_m(iaq)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+          if (pco%csvout == "n") then
+            write (6062,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
+                             (acsb_m(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%rchrg,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%irr,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%div,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                             (acsb_m(iaq)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+          end if
           if (pco%csvout == "y") then
             write (6063,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
                                          (acsb_m(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
@@ -147,17 +151,19 @@
           acsb_y(iaq)%cs(ics)%srbd = acsb_y(iaq)%cs(ics)%srbd / const
         enddo
         if (pco%cs_aqu%y == "y") then
-          !write (6064,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
-                           !(acsb_y(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%rchrg,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%irr,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%div,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                           !(acsb_y(iaq)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+          if (pco%csvout == "n") then
+            write (6064,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
+                             (acsb_y(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%rchrg,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%irr,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%div,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                             (acsb_y(iaq)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+          end if
           if (pco%csvout == "y") then
             write (6065,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
                                          (acsb_y(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
@@ -202,17 +208,19 @@
           acsb_a(iaq)%cs(ics)%conc = acsb_a(iaq)%cs(ics)%conc / time%nbyr
           acsb_a(iaq)%cs(ics)%srbd = acsb_a(iaq)%cs(ics)%srbd / time%nbyr
         enddo
-        !write (6066,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
-                        !(acsb_a(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%rchrg,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%irr,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%div,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                        !(acsb_a(iaq)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+        if (pco%csvout == "n") then
+          write (6066,100) time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
+                          (acsb_a(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%rchrg,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%irr,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%div,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%sorb,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                          (acsb_a(iaq)%cs(ics)%srbd,ics=1,cs_db%num_cs)
+        end if
         if (pco%csvout == "y") then
           write (6067,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iaq, ob(iob)%gis_id, & 
                                         (acsb_a(iaq)%cs(ics)%csgw,ics=1,cs_db%num_cs), &

@@ -18,7 +18,9 @@
 !!!!! daily print
        if (pco%day_print == "y" .and. pco%int_day_cur == pco%int_day) then
         if (pco%hyd%d == "y") then
-            !write (2700,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ht1
+            if (pco%csvout == "n") then
+              write (2700,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ht1
+            end if
           if (pco%csvout == "y") then
             write (2704,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ht1
           end if 
@@ -30,8 +32,10 @@
 !!!!! monthly print
       if (time%end_mo == 1) then
         if (pco%hyd%m == "y") then
-            !write (2701,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ,     &
-              !ob(icmd)%hdep_m
+            if (pco%csvout == "n") then
+              write (2701,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ,     &
+                ob(icmd)%hdep_m
+            end if
           if (pco%csvout == "y") then
             write (2705,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ,     &
               ob(icmd)%hdep_m
@@ -44,8 +48,10 @@
 !!!!! yearly print
       if (time%end_yr == 1) then
         if (pco%hyd%y == "y") then
-            !write (2702,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ,     &
-              !ob(icmd)%hdep_y
+            if (pco%csvout == "n") then
+              write (2702,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ,     &
+                ob(icmd)%hdep_y
+            end if
  !                         ob(icmd)%hin_y
           if (pco%csvout == "y") then
             write (2706,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ,     &
@@ -60,8 +66,10 @@
 !!!!! average annual print
         if (time%end_sim == 1 .and. pco%hyd%a == "y") then
           ob(icmd)%hdep_a = ob(icmd)%hdep_a / time%yrs_prt
-          !write (2703,*) time%day, time%mo, time%day_mo, time%yrc,   ob(icmd)%name,      &
-             !ob(icmd)%typ, ob(icmd)%hdep_a
+          if (pco%csvout == "n") then
+            write (2703,*) time%day, time%mo, time%day_mo, time%yrc,   ob(icmd)%name,      &
+               ob(icmd)%typ, ob(icmd)%hdep_a
+          end if
            if (pco%csvout == "y") then
              write (2707,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name,      &
               ob(icmd)%typ, ob(icmd)%hdep_a

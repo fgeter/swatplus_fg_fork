@@ -77,58 +77,66 @@
 
       !open file to track daily groundwater water balance
       if(gwflag_day.eq.1) then
-        !open(out_gwbal,file='gwflow_basin_wb_day.txt')
-        !write(out_gwbal,*) 'Groundwater watershed-wide fluxes for each day (mm)'
-        !write(out_gwbal,8000) 'jday','mon','day','yr','unit','gis_id', &
-          !'name','ts','vbef','vaft','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral','boundary','pump_allo','pump_ext', &
-          !'tile','reservoir','wetland','canal','floodplain','pond', &
-          !'phytorem','error','sat_frac','wt_depth','pump_def'
-        !write(out_gwbal,8000) '','','','','','','','---','mm','mm', &
-          !'mm','mm','mm','mm','mm','mm','mm','mm','mm','mm', &
-          !'mm','mm','mm','mm','mm','mm','mm','%','frac','m','mm'
+        if (pco%csvout == "n") then
+          open(out_gwbal,file='gwflow_basin_wb_day.txt')
+          write(out_gwbal,*) 'Groundwater watershed-wide fluxes for each day (mm)'
+          write(out_gwbal,8000) 'jday','mon','day','yr','unit','gis_id', &
+            'name','ts','vbef','vaft','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral','boundary','pump_allo','pump_ext', &
+            'tile','reservoir','wetland','canal','floodplain','pond', &
+            'phytorem','error','sat_frac','wt_depth','pump_def'
+          write(out_gwbal,8000) '','','','','','','','---','mm','mm', &
+            'mm','mm','mm','mm','mm','mm','mm','mm','mm','mm', &
+            'mm','mm','mm','mm','mm','mm','mm','%','frac','m','mm'
+        end if
       endif
 
       !open file to track monthly groundwater water balance
       if(gwflag_mon.eq.1) then
-        !open(out_gwbal_mon,file='gwflow_basin_wb_mon.txt')
-        !write(out_gwbal_mon,*) 'Groundwater watershed-wide fluxes for each month (mm)'
-        !write(out_gwbal_mon,8000) 'jday','mon','day','yr','unit','gis_id', &
-          !'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral','boundary','pump_allo','pump_ext', &
-          !'tile','reservoir','wetland','canal','floodplain','pond', &
-          !'phytorem','pump_def'
-        !write(out_gwbal_mon,8000) '','','','','','','','mm','mm','mm', &
-          !'mm','mm','mm','mm','mm','mm','mm','mm','mm','mm', &
-          !'mm','mm','mm','mm','mm','mm'
+        if (pco%csvout == "n") then
+          open(out_gwbal_mon,file='gwflow_basin_wb_mon.txt')
+          write(out_gwbal_mon,*) 'Groundwater watershed-wide fluxes for each month (mm)'
+          write(out_gwbal_mon,8000) 'jday','mon','day','yr','unit','gis_id', &
+            'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral','boundary','pump_allo','pump_ext', &
+            'tile','reservoir','wetland','canal','floodplain','pond', &
+            'phytorem','pump_def'
+          write(out_gwbal_mon,8000) '','','','','','','','mm','mm','mm', &
+            'mm','mm','mm','mm','mm','mm','mm','mm','mm','mm', &
+            'mm','mm','mm','mm','mm','mm'
+        end if
       endif
 
       !open file to track yearly groundwater water balance
       if(gwflag_yr.eq.1) then
-        !open(out_gwbal_yr,file='gwflow_basin_wb_yr.txt')
-        !write(out_gwbal_yr,*) 'Groundwater watershed-wide fluxes for each year (mm)'
-        !write(out_gwbal_yr,8000) 'jday','mon','day','yr','unit','gis_id', &
-          !'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral','boundary','pump_allo','pump_ext', &
-          !'tile','reservoir','wetland','canal','floodplain','pond', &
-          !'phytorem','pump_def'
-        !write(out_gwbal_yr,8000) '','','','','','','','mm','mm','mm', &
-          !'mm','mm','mm','mm','mm','mm','mm','mm','mm','mm', &
-          !'mm','mm','mm','mm','mm','mm'
+        if (pco%csvout == "n") then
+          open(out_gwbal_yr,file='gwflow_basin_wb_yr.txt')
+          write(out_gwbal_yr,*) 'Groundwater watershed-wide fluxes for each year (mm)'
+          write(out_gwbal_yr,8000) 'jday','mon','day','yr','unit','gis_id', &
+            'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral','boundary','pump_allo','pump_ext', &
+            'tile','reservoir','wetland','canal','floodplain','pond', &
+            'phytorem','pump_def'
+          write(out_gwbal_yr,8000) '','','','','','','','mm','mm','mm', &
+            'mm','mm','mm','mm','mm','mm','mm','mm','mm','mm', &
+            'mm','mm','mm','mm','mm','mm'
+        end if
       endif
 
       !open file to write out average annual groundwater water balance
         if(gwflag_aa.eq.1) then
-        !open(out_gwbal_aa,file='gwflow_basin_wb_aa.txt')
-        !write(out_gwbal_aa,*) 'Average annual groundwater watershed-wide fluxes (mm)'
-        !write(out_gwbal_aa,8000) 'jday','mon','day','yr','unit','gis_id', &
-          !'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral','boundary','pump_allo','pump_ext', &
-          !'tile','reservoir','wetland','canal','floodplain','pond', &
-          !'phytorem','pump_def'
-        !write(out_gwbal_aa,8000) '','','','','','','','mm','mm','mm', &
-          !'mm','mm','mm','mm','mm','mm','mm','mm','mm','mm', &
-          !'mm','mm','mm','mm','mm','mm'
+        if (pco%csvout == "n") then
+          open(out_gwbal_aa,file='gwflow_basin_wb_aa.txt')
+          write(out_gwbal_aa,*) 'Average annual groundwater watershed-wide fluxes (mm)'
+          write(out_gwbal_aa,8000) 'jday','mon','day','yr','unit','gis_id', &
+            'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral','boundary','pump_allo','pump_ext', &
+            'tile','reservoir','wetland','canal','floodplain','pond', &
+            'phytorem','pump_def'
+          write(out_gwbal_aa,8000) '','','','','','','','mm','mm','mm', &
+            'mm','mm','mm','mm','mm','mm','mm','mm','mm','mm', &
+            'mm','mm','mm','mm','mm','mm'
+        end if
         endif
 
       !open files to track daily groundwater water balance for selected groups of cells
@@ -188,44 +196,50 @@
 
       !open file to track daily groundwater heat balance
       if(gwflag_day.eq.1) then
-        !open(out_heatbal_dy,file='gwflow_basin_heat_day.txt')
-        !write(out_heatbal_dy,*) 'Groundwater watershed-wide heat fluxes for each day (MJ)'
-        !write(out_heatbal_dy,8000) 'jday','mon','day','yr','unit','gis_id', &
-          !'name','ts','hbef','haft','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral','dispersion','boundary', &
-          !'pump_allo','pump_ext','tile','reservoir','wetland','canal', &
-          !'floodplain','pond','error','tavg'
-        !write(out_heatbal_dy,8000) '','','','','','','','---', &
-          !'MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ', &
-          !'MJ','MJ','MJ','MJ','MJ','MJ','MJ','%','degC'
+        if (pco%csvout == "n") then
+          open(out_heatbal_dy,file='gwflow_basin_heat_day.txt')
+          write(out_heatbal_dy,*) 'Groundwater watershed-wide heat fluxes for each day (MJ)'
+          write(out_heatbal_dy,8000) 'jday','mon','day','yr','unit','gis_id', &
+            'name','ts','hbef','haft','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral','dispersion','boundary', &
+            'pump_allo','pump_ext','tile','reservoir','wetland','canal', &
+            'floodplain','pond','error','tavg'
+          write(out_heatbal_dy,8000) '','','','','','','','---', &
+            'MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ', &
+            'MJ','MJ','MJ','MJ','MJ','MJ','MJ','%','degC'
+        end if
       endif
 
       !open file to track yearly groundwater heat balance
       if(gwflag_yr.eq.1) then
-        !open(out_heatbal_yr,file='gwflow_basin_heat_yr.txt')
-        !write(out_heatbal_yr,*) 'Groundwater watershed-wide heat fluxes for each year (MJ)'
-        !write(out_heatbal_yr,8000) 'jday','mon','day','yr','unit','gis_id', &
-          !'name','hdel','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral','dispersion','boundary', &
-          !'pump_allo','pump_ext','tile','reservoir','wetland','canal', &
-          !'floodplain','pond'
-        !write(out_heatbal_yr,8000) '','','','','','','','MJ','MJ','MJ', &
-          !'MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ', &
-          !'MJ','MJ','MJ'
+        if (pco%csvout == "n") then
+          open(out_heatbal_yr,file='gwflow_basin_heat_yr.txt')
+          write(out_heatbal_yr,*) 'Groundwater watershed-wide heat fluxes for each year (MJ)'
+          write(out_heatbal_yr,8000) 'jday','mon','day','yr','unit','gis_id', &
+            'name','hdel','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral','dispersion','boundary', &
+            'pump_allo','pump_ext','tile','reservoir','wetland','canal', &
+            'floodplain','pond'
+          write(out_heatbal_yr,8000) '','','','','','','','MJ','MJ','MJ', &
+            'MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ', &
+            'MJ','MJ','MJ'
+        end if
       endif
 
       !open file to write out average annual groundwater heat balance
       if(gwflag_aa.eq.1) then
-        !open(out_heatbal_aa,file='gwflow_basin_heat_aa.txt')
-        !write(out_heatbal_aa,*) 'Groundwater watershed-wide heat fluxes average annual (MJ)'
-        !write(out_heatbal_aa,8000) 'jday','mon','day','yr','unit','gis_id', &
-          !'name','hdel','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral','dispersion','boundary', &
-          !'pump_allo','pump_ext','tile','reservoir','wetland','canal', &
-          !'floodplain','pond'
-        !write(out_heatbal_aa,8000) '','','','','','','','MJ','MJ','MJ', &
-          !'MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ', &
-          !'MJ','MJ','MJ'
+        if (pco%csvout == "n") then
+          open(out_heatbal_aa,file='gwflow_basin_heat_aa.txt')
+          write(out_heatbal_aa,*) 'Groundwater watershed-wide heat fluxes average annual (MJ)'
+          write(out_heatbal_aa,8000) 'jday','mon','day','yr','unit','gis_id', &
+            'name','hdel','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral','dispersion','boundary', &
+            'pump_allo','pump_ext','tile','reservoir','wetland','canal', &
+            'floodplain','pond'
+          write(out_heatbal_aa,8000) '','','','','','','','MJ','MJ','MJ', &
+            'MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ','MJ', &
+            'MJ','MJ','MJ'
+        end if
       endif
 
       endif
@@ -306,23 +320,31 @@
           !daily solute mass balance
           if(gwflag_day.eq.1) then
             !prepare solute mass balance output files (daily output)
-            !file_name(1) = 'gwflow_basin_sol_no3_day.txt'
-            !file_name(2) = 'gwflow_basin_sol_p_day.txt'
+            if (pco%csvout == "n") then
+              file_name(1) = 'gwflow_basin_sol_no3_day.txt'
+              file_name(2) = 'gwflow_basin_sol_p_day.txt'
+            end if
             if(cs_db%num_salts > 0) then
-              !file_name(3) = 'gwflow_basin_sol_so4_day.txt'
-              !file_name(4) = 'gwflow_basin_sol_ca_day.txt'
-              !file_name(5) = 'gwflow_basin_sol_mg_day.txt'
-              !file_name(6) = 'gwflow_basin_sol_na_day.txt'
-              !file_name(7) = 'gwflow_basin_sol_k_day.txt'
-              !file_name(8) = 'gwflow_basin_sol_cl_day.txt'
-              !file_name(9) = 'gwflow_basin_sol_co3_day.txt'
-              !file_name(10) = 'gwflow_basin_sol_hco3_day.txt'
+              if (pco%csvout == "n") then
+                file_name(3) = 'gwflow_basin_sol_so4_day.txt'
+                file_name(4) = 'gwflow_basin_sol_ca_day.txt'
+                file_name(5) = 'gwflow_basin_sol_mg_day.txt'
+                file_name(6) = 'gwflow_basin_sol_na_day.txt'
+                file_name(7) = 'gwflow_basin_sol_k_day.txt'
+                file_name(8) = 'gwflow_basin_sol_cl_day.txt'
+                file_name(9) = 'gwflow_basin_sol_co3_day.txt'
+                file_name(10) = 'gwflow_basin_sol_hco3_day.txt'
+              end if
             endif
             if(cs_db%num_cs > 0) then
-              !file_name(11) = 'gwflow_basin_sol_seo4_day.txt'
-              !file_name(12) = 'gwflow_basin_sol_seo3_day.txt'
+              if (pco%csvout == "n") then
+                file_name(11) = 'gwflow_basin_sol_seo4_day.txt'
+                file_name(12) = 'gwflow_basin_sol_seo3_day.txt'
+              end if
             endif
-            !open(out_solbal_dy+n,file=file_name(n))
+            if (pco%csvout == "n") then
+              open(out_solbal_dy+n,file=file_name(n))
+            end if
             write(out_solbal_dy+n,*) 'Solute basin daily loads (kg):',gwsol_nm(n)
             write(out_solbal_dy+n,8000) 'jday','mon','day','yr','unit', &
               'gis_id','name','ts','mbef','maft','recharge','gw_sw', &
@@ -338,23 +360,31 @@
           !monthly solute mass balance
           if(gwflag_mon.eq.1) then
             !prepare solute mass balance output files (monthly output)
-            !file_name(1) = 'gwflow_basin_sol_no3_mon.txt'
-            !file_name(2) = 'gwflow_basin_sol_p_mon.txt'
+            if (pco%csvout == "n") then
+              file_name(1) = 'gwflow_basin_sol_no3_mon.txt'
+              file_name(2) = 'gwflow_basin_sol_p_mon.txt'
+            end if
             if(cs_db%num_salts > 0) then
-              !file_name(3) = 'gwflow_basin_sol_so4_mon.txt'
-              !file_name(4) = 'gwflow_basin_sol_ca_mon.txt'
-              !file_name(5) = 'gwflow_basin_sol_mg_mon.txt'
-              !file_name(6) = 'gwflow_basin_sol_na_mon.txt'
-              !file_name(7) = 'gwflow_basin_sol_k_mon.txt'
-              !file_name(8) = 'gwflow_basin_sol_cl_mon.txt'
-              !file_name(9) = 'gwflow_basin_sol_co3_mon.txt'
-              !file_name(10) = 'gwflow_basin_sol_hco3_mon.txt'
+              if (pco%csvout == "n") then
+                file_name(3) = 'gwflow_basin_sol_so4_mon.txt'
+                file_name(4) = 'gwflow_basin_sol_ca_mon.txt'
+                file_name(5) = 'gwflow_basin_sol_mg_mon.txt'
+                file_name(6) = 'gwflow_basin_sol_na_mon.txt'
+                file_name(7) = 'gwflow_basin_sol_k_mon.txt'
+                file_name(8) = 'gwflow_basin_sol_cl_mon.txt'
+                file_name(9) = 'gwflow_basin_sol_co3_mon.txt'
+                file_name(10) = 'gwflow_basin_sol_hco3_mon.txt'
+              end if
             endif
             if(cs_db%num_cs > 0) then
-              !file_name(11) = 'gwflow_basin_sol_seo4_mon.txt'
-              !file_name(12) = 'gwflow_basin_sol_seo3_mon.txt'
+              if (pco%csvout == "n") then
+                file_name(11) = 'gwflow_basin_sol_seo4_mon.txt'
+                file_name(12) = 'gwflow_basin_sol_seo3_mon.txt'
+              end if
             endif
-            !open(out_solbal_mo+n,file=file_name(n))
+            if (pco%csvout == "n") then
+              open(out_solbal_mo+n,file=file_name(n))
+            end if
             write(out_solbal_mo+n,*) 'Solute basin monthly loads (kg):',gwsol_nm(n)
             write(out_solbal_mo+n,8000) 'jday','mon','day','yr','unit', &
               'gis_id','name','delm','recharge','gw_sw','sw_gw', &
@@ -390,23 +420,31 @@
           !yearly solute mass balance
           if(gwflag_yr.eq.1) then
             !prepare solute mass balance output files (yearly output)
-            !file_name(1) = 'gwflow_basin_sol_no3_yr.txt'
-            !file_name(2) = 'gwflow_basin_sol_p_yr.txt'
+            if (pco%csvout == "n") then
+              file_name(1) = 'gwflow_basin_sol_no3_yr.txt'
+              file_name(2) = 'gwflow_basin_sol_p_yr.txt'
+            end if
             if(cs_db%num_salts > 0) then
-              !file_name(3) = 'gwflow_basin_sol_so4_yr.txt'
-              !file_name(4) = 'gwflow_basin_sol_ca_yr.txt'
-              !file_name(5) = 'gwflow_basin_sol_mg_yr.txt'
-              !file_name(6) = 'gwflow_basin_sol_na_yr.txt'
-              !file_name(7) = 'gwflow_basin_sol_k_yr.txt'
-              !file_name(8) = 'gwflow_basin_sol_cl_yr.txt'
-              !file_name(9) = 'gwflow_basin_sol_co3_yr.txt'
-              !file_name(10) = 'gwflow_basin_sol_hco3_yr.txt'
+              if (pco%csvout == "n") then
+                file_name(3) = 'gwflow_basin_sol_so4_yr.txt'
+                file_name(4) = 'gwflow_basin_sol_ca_yr.txt'
+                file_name(5) = 'gwflow_basin_sol_mg_yr.txt'
+                file_name(6) = 'gwflow_basin_sol_na_yr.txt'
+                file_name(7) = 'gwflow_basin_sol_k_yr.txt'
+                file_name(8) = 'gwflow_basin_sol_cl_yr.txt'
+                file_name(9) = 'gwflow_basin_sol_co3_yr.txt'
+                file_name(10) = 'gwflow_basin_sol_hco3_yr.txt'
+              end if
             endif
             if(cs_db%num_cs > 0) then
-              !file_name(11) = 'gwflow_basin_sol_seo4_yr.txt'
-              !file_name(12) = 'gwflow_basin_sol_seo3_yr.txt'
+              if (pco%csvout == "n") then
+                file_name(11) = 'gwflow_basin_sol_seo4_yr.txt'
+                file_name(12) = 'gwflow_basin_sol_seo3_yr.txt'
+              end if
             endif
-            !open(out_solbal_yr+n,file=file_name(n))
+            if (pco%csvout == "n") then
+              open(out_solbal_yr+n,file=file_name(n))
+            end if
             write(out_solbal_yr+n,*) 'Solute basin annual loads (kg):',gwsol_nm(n)
             write(out_solbal_yr+n,8000) 'jday','mon','day','yr','unit', &
               'gis_id','name','delm','recharge','gw_sw','sw_gw', &
@@ -442,23 +480,31 @@
           !average annual solute mass balance
           if(gwflag_aa.eq.1) then
             !prepare solute mass balance output files (average annual output)
-            !file_name(1) = 'gwflow_basin_sol_no3_aa.txt'
-            !file_name(2) = 'gwflow_basin_sol_p_aa.txt'
+            if (pco%csvout == "n") then
+              file_name(1) = 'gwflow_basin_sol_no3_aa.txt'
+              file_name(2) = 'gwflow_basin_sol_p_aa.txt'
+            end if
             if(cs_db%num_salts > 0) then
-              !file_name(3) = 'gwflow_basin_sol_so4_aa.txt'
-              !file_name(4) = 'gwflow_basin_sol_ca_aa.txt'
-              !file_name(5) = 'gwflow_basin_sol_mg_aa.txt'
-              !file_name(6) = 'gwflow_basin_sol_na_aa.txt'
-              !file_name(7) = 'gwflow_basin_sol_k_aa.txt'
-              !file_name(8) = 'gwflow_basin_sol_cl_aa.txt'
-              !file_name(9) = 'gwflow_basin_sol_co3_aa.txt'
-              !file_name(10) = 'gwflow_basin_sol_hco3_aa.txt'
+              if (pco%csvout == "n") then
+                file_name(3) = 'gwflow_basin_sol_so4_aa.txt'
+                file_name(4) = 'gwflow_basin_sol_ca_aa.txt'
+                file_name(5) = 'gwflow_basin_sol_mg_aa.txt'
+                file_name(6) = 'gwflow_basin_sol_na_aa.txt'
+                file_name(7) = 'gwflow_basin_sol_k_aa.txt'
+                file_name(8) = 'gwflow_basin_sol_cl_aa.txt'
+                file_name(9) = 'gwflow_basin_sol_co3_aa.txt'
+                file_name(10) = 'gwflow_basin_sol_hco3_aa.txt'
+              end if
             endif
             if(cs_db%num_cs > 0) then
-              !file_name(11) = 'gwflow_basin_sol_seo4_aa.txt'
-              !file_name(12) = 'gwflow_basin_sol_seo3_aa.txt'
+              if (pco%csvout == "n") then
+                file_name(11) = 'gwflow_basin_sol_seo4_aa.txt'
+                file_name(12) = 'gwflow_basin_sol_seo3_aa.txt'
+              end if
             endif
-            !open(out_solbal_aa+n,file=file_name(n))
+            if (pco%csvout == "n") then
+              open(out_solbal_aa+n,file=file_name(n))
+            end if
             write(out_solbal_aa+n,*) 'Solute basin average annual loads (kg):',gwsol_nm(n)
             write(out_solbal_aa+n,8000) 'jday','mon','day','yr','unit', &
               'gis_id','name','delm','recharge','gw_sw','sw_gw', &
@@ -498,51 +544,59 @@
 
       !open cell-level long-format output files -----------------------------------------
       if(gwflag_day.eq.1) then
-        !open(out_gwcell_day,file='gwflow_cell_wb_day.txt')
-        !write(out_gwcell_day,*) 'gwflow cell-level daily output'
-        !write(out_gwcell_day,*) 'fluxes in m3/day; head and wtdepth in m'
-        !write(out_gwcell_day,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
-          !'jday','mon','day','yr','unit','gis_id','name', &
-          !'head','wt_depth','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral', &
-          !'pump_allo','pump_ext','tile','reservoir','wetland', &
-          !'floodplain','canal','pond','phytorem'
+        if (pco%csvout == "n") then
+          open(out_gwcell_day,file='gwflow_cell_wb_day.txt')
+          write(out_gwcell_day,*) 'gwflow cell-level daily output'
+          write(out_gwcell_day,*) 'fluxes in m3/day; head and wtdepth in m'
+          write(out_gwcell_day,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
+            'jday','mon','day','yr','unit','gis_id','name', &
+            'head','wt_depth','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral', &
+            'pump_allo','pump_ext','tile','reservoir','wetland', &
+            'floodplain','canal','pond','phytorem'
+        end if
       endif
       if(gwflag_mon.eq.1) then
-        !open(out_gwcell_mon,file='gwflow_cell_wb_mon.txt')
-        !write(out_gwcell_mon,*) 'gwflow cell-level monthly output'
-        !write(out_gwcell_mon,*) 'values are monthly average daily rates' &
-          !//' (m3/day for fluxes, m for head/wtdepth)'
-        !write(out_gwcell_mon,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
-          !'jday','mon','day','yr','unit','gis_id','name', &
-          !'head','wt_depth','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral', &
-          !'pump_allo','pump_ext','tile','reservoir','wetland', &
-          !'floodplain','canal','pond','phytorem'
+        if (pco%csvout == "n") then
+          open(out_gwcell_mon,file='gwflow_cell_wb_mon.txt')
+          write(out_gwcell_mon,*) 'gwflow cell-level monthly output'
+          write(out_gwcell_mon,*) 'values are monthly average daily rates' &
+            //' (m3/day for fluxes, m for head/wtdepth)'
+          write(out_gwcell_mon,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
+            'jday','mon','day','yr','unit','gis_id','name', &
+            'head','wt_depth','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral', &
+            'pump_allo','pump_ext','tile','reservoir','wetland', &
+            'floodplain','canal','pond','phytorem'
+        end if
       endif
       if(gwflag_yr.eq.1) then
-        !open(out_gwcell_yr,file='gwflow_cell_wb_yr.txt')
-        !write(out_gwcell_yr,*) 'gwflow cell-level annual output'
-        !write(out_gwcell_yr,*) 'values are annual average daily rates' &
-          !//' (m3/day for fluxes, m for head/wtdepth)'
-        !write(out_gwcell_yr,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
-          !'jday','mon','day','yr','unit','gis_id','name', &
-          !'head','wt_depth','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral', &
-          !'pump_allo','pump_ext','tile','reservoir','wetland', &
-          !'floodplain','canal','pond','phytorem'
+        if (pco%csvout == "n") then
+          open(out_gwcell_yr,file='gwflow_cell_wb_yr.txt')
+          write(out_gwcell_yr,*) 'gwflow cell-level annual output'
+          write(out_gwcell_yr,*) 'values are annual average daily rates' &
+            //' (m3/day for fluxes, m for head/wtdepth)'
+          write(out_gwcell_yr,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
+            'jday','mon','day','yr','unit','gis_id','name', &
+            'head','wt_depth','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral', &
+            'pump_allo','pump_ext','tile','reservoir','wetland', &
+            'floodplain','canal','pond','phytorem'
+        end if
       endif
       if(gwflag_aa.eq.1) then
-        !open(out_gwcell_aa,file='gwflow_cell_wb_aa.txt')
-        !write(out_gwcell_aa,*) 'gwflow cell-level average annual output'
-        !write(out_gwcell_aa,*) 'values are avg annual daily rates' &
-          !//' (m3/day for fluxes, m for head/wtdepth)'
-        !write(out_gwcell_aa,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
-          !'jday','mon','day','yr','unit','gis_id','name', &
-          !'head','wt_depth','recharge','gw_et','gw_sw','sw_gw', &
-          !'sat_excess','soil','lateral', &
-          !'pump_allo','pump_ext','tile','reservoir','wetland', &
-          !'floodplain','canal','pond','phytorem'
+        if (pco%csvout == "n") then
+          open(out_gwcell_aa,file='gwflow_cell_wb_aa.txt')
+          write(out_gwcell_aa,*) 'gwflow cell-level average annual output'
+          write(out_gwcell_aa,*) 'values are avg annual daily rates' &
+            //' (m3/day for fluxes, m for head/wtdepth)'
+          write(out_gwcell_aa,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
+            'jday','mon','day','yr','unit','gis_id','name', &
+            'head','wt_depth','recharge','gw_et','gw_sw','sw_gw', &
+            'sat_excess','soil','lateral', &
+            'pump_allo','pump_ext','tile','reservoir','wetland', &
+            'floodplain','canal','pond','phytorem'
+        end if
       endif
 
 
@@ -564,7 +618,7 @@
       use hydrograph_module
       use sd_channel_module
       use time_module
-      use basin_module, only : bsn
+      use basin_module, only : pco, bsn
 
       implicit none
 
@@ -710,11 +764,13 @@
             obs_p = gw_obs_solute(k,2)
           endif
           write(obs_name,'(a4,i4.4)') 'obs_',k
-          !write(out_gwobs,8102) time%day,time%mo,time%day_mo,time%yrc, &
-            !k,gw_obs_cells(k),obs_name, &
-            !gw_obs_head(k), &
-            !gw_state(gw_obs_cells(k))%elev - gw_obs_head(k), &
-            !obs_temp, obs_no3, obs_p
+          if (pco%csvout == "n") then
+            write(out_gwobs,8102) time%day,time%mo,time%day_mo,time%yrc, &
+              k,gw_obs_cells(k),obs_name, &
+              gw_obs_head(k), &
+              gw_state(gw_obs_cells(k))%elev - gw_obs_head(k), &
+              obs_temp, obs_no3, obs_p
+          end if
         enddo
       endif
 
@@ -889,12 +945,14 @@
       phyt_grid = (phyt_grid / (bsn%area_tot_ha*10000.)) * 1000.
       frac_sat = real(satx_count) / real(num_active)
       if(gwflag_day == 1) then
-        !write(out_gwbal,8100) time%day,time%mo,time%day_mo,time%yrc, &
-          !"       1","       1",bsn%name,gw_time_step, &
-          !vbef_grid,vaft_grid,rech_grid,gwet_grid,gwsw_grid,swgw_grid, &
-          !satx_grid,soil_grid,latl_grid,bndr_grid,ppag_grid,ppex_grid, &
-          !tile_grid,resv_grid,wetl_grid,canl_grid,fpln_grid,pond_grid, &
-          !phyt_grid,mass_error,frac_sat,depth_wt_avg,ppdf_grid
+        if (pco%csvout == "n") then
+          write(out_gwbal,8100) time%day,time%mo,time%day_mo,time%yrc, &
+            "       1","       1",bsn%name,gw_time_step, &
+            vbef_grid,vaft_grid,rech_grid,gwet_grid,gwsw_grid,swgw_grid, &
+            satx_grid,soil_grid,latl_grid,bndr_grid,ppag_grid,ppex_grid, &
+            tile_grid,resv_grid,wetl_grid,canl_grid,fpln_grid,pond_grid, &
+            phyt_grid,mass_error,frac_sat,depth_wt_avg,ppdf_grid
+        end if
       endif
 
       !add daily water balance volumes to monthly values
@@ -1030,14 +1088,16 @@
         heat_fpln_grid = heat_fpln_grid / 1000000.
         heat_pond_grid = heat_pond_grid / 1000000.
         if(gwflag_day == 1) then
-          !write(out_heatbal_dy,8100) time%day,time%mo,time%day_mo, &
-            !time%yrc,"       1","       1",bsn%name,gw_time_step, &
-            !heat_hbef_grid,heat_haft_grid,heat_rech_grid,heat_gwet_grid, &
-            !heat_gwsw_grid,heat_swgw_grid,heat_satx_grid,heat_soil_grid, &
-            !heat_latl_grid,heat_disp_grid,heat_bndr_grid,heat_ppag_grid, &
-            !heat_ppex_grid,heat_tile_grid,heat_resv_grid,heat_wetl_grid, &
-            !heat_canl_grid,heat_fpln_grid,heat_pond_grid, &
-            !mass_error,temp_avg
+          if (pco%csvout == "n") then
+            write(out_heatbal_dy,8100) time%day,time%mo,time%day_mo, &
+              time%yrc,"       1","       1",bsn%name,gw_time_step, &
+              heat_hbef_grid,heat_haft_grid,heat_rech_grid,heat_gwet_grid, &
+              heat_gwsw_grid,heat_swgw_grid,heat_satx_grid,heat_soil_grid, &
+              heat_latl_grid,heat_disp_grid,heat_bndr_grid,heat_ppag_grid, &
+              heat_ppex_grid,heat_tile_grid,heat_resv_grid,heat_wetl_grid, &
+              heat_canl_grid,heat_fpln_grid,heat_pond_grid, &
+              mass_error,temp_avg
+          end if
         endif
         !add daily heat fluxes to yearly values
         gw_heat_grid_yr%chng = gw_heat_grid_yr%chng + (heat_haft_grid-heat_hbef_grid)
@@ -1229,20 +1289,22 @@
             else
               gis_id = i
             endif
-            !write(out_gwcell_day,140) time%day, time%mo, time%day_mo, &
-              !time%yrc, i, gis_id, &
-              !'gw_', i, &
-              !gw_state(i)%head, &
-              !gw_state(i)%elev - gw_state(i)%head, &
-              !gw_hyd_ss(i)%rech, gw_hyd_ss(i)%gwet, &
-              !gw_hyd_ss(i)%gwsw, gw_hyd_ss(i)%swgw, &
-              !gw_hyd_ss(i)%satx, gw_hyd_ss(i)%soil, &
-              !gw_hyd_ss(i)%latl, &
-              !gw_hyd_ss(i)%ppag, gw_hyd_ss(i)%ppex, &
-              !gw_hyd_ss(i)%tile, gw_hyd_ss(i)%resv, &
-              !gw_hyd_ss(i)%wetl, gw_hyd_ss(i)%fpln, &
-              !gw_hyd_ss(i)%canl, gw_hyd_ss(i)%pond, &
-              !gw_hyd_ss(i)%phyt
+            if (pco%csvout == "n") then
+              write(out_gwcell_day,140) time%day, time%mo, time%day_mo, &
+                time%yrc, i, gis_id, &
+                'gw_', i, &
+                gw_state(i)%head, &
+                gw_state(i)%elev - gw_state(i)%head, &
+                gw_hyd_ss(i)%rech, gw_hyd_ss(i)%gwet, &
+                gw_hyd_ss(i)%gwsw, gw_hyd_ss(i)%swgw, &
+                gw_hyd_ss(i)%satx, gw_hyd_ss(i)%soil, &
+                gw_hyd_ss(i)%latl, &
+                gw_hyd_ss(i)%ppag, gw_hyd_ss(i)%ppex, &
+                gw_hyd_ss(i)%tile, gw_hyd_ss(i)%resv, &
+                gw_hyd_ss(i)%wetl, gw_hyd_ss(i)%fpln, &
+                gw_hyd_ss(i)%canl, gw_hyd_ss(i)%pond, &
+                gw_hyd_ss(i)%phyt
+            end if
           endif
         enddo
       endif
@@ -1253,8 +1315,10 @@
         do i=1,sp_ob%hru
           if(hru_pump(i) > 0.) then
             iob = sp_ob1%hru + i - 1
-            !write(out_hru_pump_day,8101) time%day,time%mo,time%day_mo, &
-              !time%yrc,i,ob(iob)%gis_id,ob(iob)%name,hru_pump(i)
+            if (pco%csvout == "n") then
+              write(out_hru_pump_day,8101) time%day,time%mo,time%day_mo, &
+                time%yrc,i,ob(iob)%gis_id,ob(iob)%name,hru_pump(i)
+            end if
           endif
         enddo
       endif
@@ -1282,7 +1346,7 @@
       use hydrograph_module
       use sd_channel_module
       use time_module
-      use basin_module, only : bsn
+      use basin_module, only : pco, bsn
 
       implicit none
 
@@ -1330,8 +1394,10 @@
           do i=1,sp_ob%hru
             if(hru_pump_mo(i) > 0.) then
               iob = sp_ob1%hru + i - 1
-              !write(out_hru_pump_mo,8101) time%day,time%mo,time%day_mo, &
-                !time%yrc,i,ob(iob)%gis_id,ob(iob)%name,hru_pump_mo(i)
+              if (pco%csvout == "n") then
+                write(out_hru_pump_mo,8101) time%day,time%mo,time%day_mo, &
+                  time%yrc,i,ob(iob)%gis_id,ob(iob)%name,hru_pump_mo(i)
+              end if
             endif
           enddo
         endif
@@ -1369,19 +1435,21 @@
                 gis_id = i
               endif
               wtdepth = gw_state(i)%elev - gw_state(i)%hdmo
-              !write(out_gwcell_mon,140) time%day, time%mo, &
-                !time%day_mo, time%yrc, i, gis_id, &
-                !'gw_', i, &
-                !gw_state(i)%hdmo, wtdepth, &
-                !gw_hyd_ss_mo(i)%rech, gw_hyd_ss_mo(i)%gwet, &
-                !gw_hyd_ss_mo(i)%gwsw, gw_hyd_ss_mo(i)%swgw, &
-                !gw_hyd_ss_mo(i)%satx, gw_hyd_ss_mo(i)%soil, &
-                !gw_hyd_ss_mo(i)%latl, &
-                !gw_hyd_ss_mo(i)%ppag, gw_hyd_ss_mo(i)%ppex, &
-                !gw_hyd_ss_mo(i)%tile, gw_hyd_ss_mo(i)%resv, &
-                !gw_hyd_ss_mo(i)%wetl, gw_hyd_ss_mo(i)%fpln, &
-                !gw_hyd_ss_mo(i)%canl, gw_hyd_ss_mo(i)%pond, &
-                !gw_hyd_ss_mo(i)%phyt
+              if (pco%csvout == "n") then
+                write(out_gwcell_mon,140) time%day, time%mo, &
+                  time%day_mo, time%yrc, i, gis_id, &
+                  'gw_', i, &
+                  gw_state(i)%hdmo, wtdepth, &
+                  gw_hyd_ss_mo(i)%rech, gw_hyd_ss_mo(i)%gwet, &
+                  gw_hyd_ss_mo(i)%gwsw, gw_hyd_ss_mo(i)%swgw, &
+                  gw_hyd_ss_mo(i)%satx, gw_hyd_ss_mo(i)%soil, &
+                  gw_hyd_ss_mo(i)%latl, &
+                  gw_hyd_ss_mo(i)%ppag, gw_hyd_ss_mo(i)%ppex, &
+                  gw_hyd_ss_mo(i)%tile, gw_hyd_ss_mo(i)%resv, &
+                  gw_hyd_ss_mo(i)%wetl, gw_hyd_ss_mo(i)%fpln, &
+                  gw_hyd_ss_mo(i)%canl, gw_hyd_ss_mo(i)%pond, &
+                  gw_hyd_ss_mo(i)%phyt
+              end if
             endif
           enddo
         endif
@@ -1397,10 +1465,12 @@
               obs_p = gwsol_state(i)%solute(2)%cnmo
             endif
             write(obs_name,'(a4,i4.4)') 'obs_',k
-            !write(out_gwobs_mon,8102) time%day,time%mo,time%day_mo, &
-              !time%yrc,k,gw_obs_cells(k),obs_name, &
-              !gw_state(i)%hdmo, gw_state(i)%elev - gw_state(i)%hdmo, &
-              !obs_temp, obs_no3, obs_p
+            if (pco%csvout == "n") then
+              write(out_gwobs_mon,8102) time%day,time%mo,time%day_mo, &
+                time%yrc,k,gw_obs_cells(k),obs_name, &
+                gw_state(i)%hdmo, gw_state(i)%elev - gw_state(i)%hdmo, &
+                obs_temp, obs_no3, obs_p
+            end if
           enddo
         endif
 
@@ -1456,16 +1526,18 @@
 
         !monthly groundwater balance (basin) --------------------------------------------
         if(gwflag_mon == 1) then
-          !write(out_gwbal_mon,8100) time%day,time%mo,time%day_mo, &
-            !time%yrc,"       1","       1",bsn%name, &
-            !gw_hyd_grid_mo%chng,gw_hyd_grid_mo%rech,gw_hyd_grid_mo%gwet, &
-            !gw_hyd_grid_mo%gwsw,gw_hyd_grid_mo%swgw, &
-            !gw_hyd_grid_mo%satx,gw_hyd_grid_mo%soil,gw_hyd_grid_mo%latl, &
-            !gw_hyd_grid_mo%bndr,gw_hyd_grid_mo%ppag, &
-            !gw_hyd_grid_mo%ppex,gw_hyd_grid_mo%tile,gw_hyd_grid_mo%resv, &
-            !gw_hyd_grid_mo%wetl,gw_hyd_grid_mo%canl, &
-            !gw_hyd_grid_mo%fpln,gw_hyd_grid_mo%pond,gw_hyd_grid_mo%phyt, &
-            !gw_hyd_grid_mo%ppdf
+          if (pco%csvout == "n") then
+            write(out_gwbal_mon,8100) time%day,time%mo,time%day_mo, &
+              time%yrc,"       1","       1",bsn%name, &
+              gw_hyd_grid_mo%chng,gw_hyd_grid_mo%rech,gw_hyd_grid_mo%gwet, &
+              gw_hyd_grid_mo%gwsw,gw_hyd_grid_mo%swgw, &
+              gw_hyd_grid_mo%satx,gw_hyd_grid_mo%soil,gw_hyd_grid_mo%latl, &
+              gw_hyd_grid_mo%bndr,gw_hyd_grid_mo%ppag, &
+              gw_hyd_grid_mo%ppex,gw_hyd_grid_mo%tile,gw_hyd_grid_mo%resv, &
+              gw_hyd_grid_mo%wetl,gw_hyd_grid_mo%canl, &
+              gw_hyd_grid_mo%fpln,gw_hyd_grid_mo%pond,gw_hyd_grid_mo%phyt, &
+              gw_hyd_grid_mo%ppdf
+          end if
         endif
         !zero out basin monthly accumulators
         gw_hyd_grid_mo%chng = 0.
@@ -1553,7 +1625,7 @@
       use hydrograph_module
       use sd_channel_module
       use time_module
-      use basin_module, only : bsn
+      use basin_module, only : pco, bsn
 
       implicit none
 
@@ -1630,19 +1702,21 @@
               gis_id = i
             endif
             wtdepth = gw_state(i)%elev - gw_state(i)%hdyr
-            !write(out_gwcell_yr,140) time%day, time%mo, &
-              !time%day_mo, time%yrc, i, gis_id, &
-              !'gw_', i, &
-              !gw_state(i)%hdyr, wtdepth, &
-              !gw_hyd_ss_yr(i)%rech, gw_hyd_ss_yr(i)%gwet, &
-              !gw_hyd_ss_yr(i)%gwsw, gw_hyd_ss_yr(i)%swgw, &
-              !gw_hyd_ss_yr(i)%satx, gw_hyd_ss_yr(i)%soil, &
-              !gw_hyd_ss_yr(i)%latl, &
-              !gw_hyd_ss_yr(i)%ppag, gw_hyd_ss_yr(i)%ppex, &
-              !gw_hyd_ss_yr(i)%tile, gw_hyd_ss_yr(i)%resv, &
-              !gw_hyd_ss_yr(i)%wetl, gw_hyd_ss_yr(i)%fpln, &
-              !gw_hyd_ss_yr(i)%canl, gw_hyd_ss_yr(i)%pond, &
-              !gw_hyd_ss_yr(i)%phyt
+            if (pco%csvout == "n") then
+              write(out_gwcell_yr,140) time%day, time%mo, &
+                time%day_mo, time%yrc, i, gis_id, &
+                'gw_', i, &
+                gw_state(i)%hdyr, wtdepth, &
+                gw_hyd_ss_yr(i)%rech, gw_hyd_ss_yr(i)%gwet, &
+                gw_hyd_ss_yr(i)%gwsw, gw_hyd_ss_yr(i)%swgw, &
+                gw_hyd_ss_yr(i)%satx, gw_hyd_ss_yr(i)%soil, &
+                gw_hyd_ss_yr(i)%latl, &
+                gw_hyd_ss_yr(i)%ppag, gw_hyd_ss_yr(i)%ppex, &
+                gw_hyd_ss_yr(i)%tile, gw_hyd_ss_yr(i)%resv, &
+                gw_hyd_ss_yr(i)%wetl, gw_hyd_ss_yr(i)%fpln, &
+                gw_hyd_ss_yr(i)%canl, gw_hyd_ss_yr(i)%pond, &
+                gw_hyd_ss_yr(i)%phyt
+            end if
           endif
         enddo
       endif
@@ -1684,10 +1758,12 @@
             gw_obs_sol_aa(k,2) = gw_obs_sol_aa(k,2) + obs_p
           endif
           write(obs_name,'(a4,i4.4)') 'obs_',k
-          !write(out_gwobs_yr,8102) time%day,time%mo,time%day_mo, &
-            !time%yrc,k,gw_obs_cells(k),obs_name, &
-            !gw_state(i)%hdyr, gw_state(i)%elev - gw_state(i)%hdyr, &
-            !obs_temp, obs_no3, obs_p
+          if (pco%csvout == "n") then
+            write(out_gwobs_yr,8102) time%day,time%mo,time%day_mo, &
+              time%yrc,k,gw_obs_cells(k),obs_name, &
+              gw_state(i)%hdyr, gw_state(i)%elev - gw_state(i)%hdyr, &
+              obs_temp, obs_no3, obs_p
+          end if
         enddo
       endif
 
@@ -1750,8 +1826,10 @@
         do i=1,sp_ob%hru
           if(hru_pump_yr(i) > 0.) then
             iob = sp_ob1%hru + i - 1
-            !write(out_hru_pump_yr,8101) time%day,time%mo,time%day_mo, &
-              !time%yrc,i,ob(iob)%gis_id,ob(iob)%name,hru_pump_yr(i)
+            if (pco%csvout == "n") then
+              write(out_hru_pump_yr,8101) time%day,time%mo,time%day_mo, &
+                time%yrc,i,ob(iob)%gis_id,ob(iob)%name,hru_pump_yr(i)
+            end if
           endif
         enddo
       endif
@@ -1836,16 +1914,18 @@
 
       !yearly water balance (basin) -------------------------------------------------------------
       if(gwflag_yr == 1) then
-        !write(out_gwbal_yr,8100) time%day,time%mo,time%day_mo, &
-          !time%yrc,"       1","       1",bsn%name, &
-          !gw_hyd_grid_yr%chng,gw_hyd_grid_yr%rech,gw_hyd_grid_yr%gwet, &
-          !gw_hyd_grid_yr%gwsw,gw_hyd_grid_yr%swgw, &
-          !gw_hyd_grid_yr%satx,gw_hyd_grid_yr%soil,gw_hyd_grid_yr%latl, &
-          !gw_hyd_grid_yr%bndr,gw_hyd_grid_yr%ppag, &
-          !gw_hyd_grid_yr%ppex,gw_hyd_grid_yr%tile,gw_hyd_grid_yr%resv, &
-          !gw_hyd_grid_yr%wetl,gw_hyd_grid_yr%canl, &
-          !gw_hyd_grid_yr%fpln,gw_hyd_grid_yr%pond,gw_hyd_grid_yr%phyt, &
-          !gw_hyd_grid_yr%ppdf
+        if (pco%csvout == "n") then
+          write(out_gwbal_yr,8100) time%day,time%mo,time%day_mo, &
+            time%yrc,"       1","       1",bsn%name, &
+            gw_hyd_grid_yr%chng,gw_hyd_grid_yr%rech,gw_hyd_grid_yr%gwet, &
+            gw_hyd_grid_yr%gwsw,gw_hyd_grid_yr%swgw, &
+            gw_hyd_grid_yr%satx,gw_hyd_grid_yr%soil,gw_hyd_grid_yr%latl, &
+            gw_hyd_grid_yr%bndr,gw_hyd_grid_yr%ppag, &
+            gw_hyd_grid_yr%ppex,gw_hyd_grid_yr%tile,gw_hyd_grid_yr%resv, &
+            gw_hyd_grid_yr%wetl,gw_hyd_grid_yr%canl, &
+            gw_hyd_grid_yr%fpln,gw_hyd_grid_yr%pond,gw_hyd_grid_yr%phyt, &
+            gw_hyd_grid_yr%ppdf
+        end if
       endif
 
       !zero out annual basin arrays
@@ -1872,20 +1952,22 @@
       !heat flux values (basin) -----------------------------------------------------------------
       if(gw_heat_flag == 1) then
         if(gwflag_yr == 1) then
-          !write(out_heatbal_yr,8100) time%day,time%mo,time%day_mo, &
-            !time%yrc,"       1","       1",bsn%name, &
-            !gw_heat_grid_yr%chng, &
-            !gw_heat_grid_yr%rech,gw_heat_grid_yr%gwet, &
-            !gw_heat_grid_yr%gwsw, &
-            !gw_heat_grid_yr%swgw,gw_heat_grid_yr%satx, &
-            !gw_heat_grid_yr%soil, &
-            !gw_heat_grid_yr%latl,gw_heat_grid_yr%disp, &
-            !gw_heat_grid_yr%bndr, &
-            !gw_heat_grid_yr%ppag,gw_heat_grid_yr%ppex, &
-            !gw_heat_grid_yr%tile, &
-            !gw_heat_grid_yr%resv,gw_heat_grid_yr%wetl, &
-            !gw_heat_grid_yr%canl, &
-            !gw_heat_grid_yr%fpln,gw_heat_grid_yr%pond
+          if (pco%csvout == "n") then
+            write(out_heatbal_yr,8100) time%day,time%mo,time%day_mo, &
+              time%yrc,"       1","       1",bsn%name, &
+              gw_heat_grid_yr%chng, &
+              gw_heat_grid_yr%rech,gw_heat_grid_yr%gwet, &
+              gw_heat_grid_yr%gwsw, &
+              gw_heat_grid_yr%swgw,gw_heat_grid_yr%satx, &
+              gw_heat_grid_yr%soil, &
+              gw_heat_grid_yr%latl,gw_heat_grid_yr%disp, &
+              gw_heat_grid_yr%bndr, &
+              gw_heat_grid_yr%ppag,gw_heat_grid_yr%ppex, &
+              gw_heat_grid_yr%tile, &
+              gw_heat_grid_yr%resv,gw_heat_grid_yr%wetl, &
+              gw_heat_grid_yr%canl, &
+              gw_heat_grid_yr%fpln,gw_heat_grid_yr%pond
+          end if
         endif
         gw_heat_grid_yr%chng = 0.
         gw_heat_grid_yr%rech = 0.
@@ -1975,7 +2057,7 @@
       use hydrograph_module
       use sd_channel_module
       use time_module
-      use basin_module, only : bsn
+      use basin_module, only : pco, bsn
 
       implicit none
 
@@ -2000,8 +2082,10 @@
         do i=1,sp_ob%hru
           if(hru_pump_aa(i) > 0.) then
             iob = sp_ob1%hru + i - 1
-            !write(out_hru_pump_aa,8101) time%day,time%mo,time%day_mo, &
-              !time%yrc,i,ob(iob)%gis_id,ob(iob)%name,hru_pump_aa(i)/nbyr_r
+            if (pco%csvout == "n") then
+              write(out_hru_pump_aa,8101) time%day,time%mo,time%day_mo, &
+                time%yrc,i,ob(iob)%gis_id,ob(iob)%name,hru_pump_aa(i)/nbyr_r
+            end if
           endif
         enddo
       endif
@@ -2017,11 +2101,13 @@
             obs_p = gw_obs_sol_aa(k,2) / nbyr_r
           endif
           write(obs_name,'(a4,i4.4)') 'obs_',k
-          !write(out_gwobs_aa,8102) time%day,time%mo,time%day_mo, &
-            !time%yrc,k,gw_obs_cells(k),obs_name, &
-            !gw_head_sum_aa(i)/nbyr_r, &
-            !gw_state(i)%elev - gw_head_sum_aa(i)/nbyr_r, &
-            !obs_temp, obs_no3, obs_p
+          if (pco%csvout == "n") then
+            write(out_gwobs_aa,8102) time%day,time%mo,time%day_mo, &
+              time%yrc,k,gw_obs_cells(k),obs_name, &
+              gw_head_sum_aa(i)/nbyr_r, &
+              gw_state(i)%elev - gw_head_sum_aa(i)/nbyr_r, &
+              obs_temp, obs_no3, obs_p
+          end if
         enddo
       endif
 
@@ -2037,26 +2123,28 @@
               gis_id = i
             endif
             wtdepth = gw_state(i)%elev - (gw_head_sum_aa(i) / nbyr_r)
-            !write(out_gwcell_aa,140) time%day, time%mo, &
-              !time%day_mo, time%yrc, i, gis_id, &
-              !'gw_', i, &
-              !gw_head_sum_aa(i) / nbyr_r, wtdepth, &
-              !gw_hyd_ss_aa(i)%rech / nbyr_r, &
-              !gw_hyd_ss_aa(i)%gwet / nbyr_r, &
-              !gw_hyd_ss_aa(i)%gwsw / nbyr_r, &
-              !gw_hyd_ss_aa(i)%swgw / nbyr_r, &
-              !gw_hyd_ss_aa(i)%satx / nbyr_r, &
-              !gw_hyd_ss_aa(i)%soil / nbyr_r, &
-              !gw_hyd_ss_aa(i)%latl / nbyr_r, &
-              !gw_hyd_ss_aa(i)%ppag / nbyr_r, &
-              !gw_hyd_ss_aa(i)%ppex / nbyr_r, &
-              !gw_hyd_ss_aa(i)%tile / nbyr_r, &
-              !gw_hyd_ss_aa(i)%resv / nbyr_r, &
-              !gw_hyd_ss_aa(i)%wetl / nbyr_r, &
-              !gw_hyd_ss_aa(i)%fpln / nbyr_r, &
-              !gw_hyd_ss_aa(i)%canl / nbyr_r, &
-              !gw_hyd_ss_aa(i)%pond / nbyr_r, &
-              !gw_hyd_ss_aa(i)%phyt / nbyr_r
+            if (pco%csvout == "n") then
+              write(out_gwcell_aa,140) time%day, time%mo, &
+                time%day_mo, time%yrc, i, gis_id, &
+                'gw_', i, &
+                gw_head_sum_aa(i) / nbyr_r, wtdepth, &
+                gw_hyd_ss_aa(i)%rech / nbyr_r, &
+                gw_hyd_ss_aa(i)%gwet / nbyr_r, &
+                gw_hyd_ss_aa(i)%gwsw / nbyr_r, &
+                gw_hyd_ss_aa(i)%swgw / nbyr_r, &
+                gw_hyd_ss_aa(i)%satx / nbyr_r, &
+                gw_hyd_ss_aa(i)%soil / nbyr_r, &
+                gw_hyd_ss_aa(i)%latl / nbyr_r, &
+                gw_hyd_ss_aa(i)%ppag / nbyr_r, &
+                gw_hyd_ss_aa(i)%ppex / nbyr_r, &
+                gw_hyd_ss_aa(i)%tile / nbyr_r, &
+                gw_hyd_ss_aa(i)%resv / nbyr_r, &
+                gw_hyd_ss_aa(i)%wetl / nbyr_r, &
+                gw_hyd_ss_aa(i)%fpln / nbyr_r, &
+                gw_hyd_ss_aa(i)%canl / nbyr_r, &
+                gw_hyd_ss_aa(i)%pond / nbyr_r, &
+                gw_hyd_ss_aa(i)%phyt / nbyr_r
+            end if
           endif
         enddo
       endif
@@ -2082,16 +2170,18 @@
       gw_hyd_grid_aa%pond = gw_hyd_grid_aa%pond / nbyr_r
       gw_hyd_grid_aa%phyt = gw_hyd_grid_aa%phyt / nbyr_r
       if(gwflag_aa == 1) then
-        !write(out_gwbal_aa,8100) time%day,time%mo,time%day_mo, &
-          !time%yrc,"       1","       1",bsn%name, &
-          !gw_hyd_grid_aa%chng,gw_hyd_grid_aa%rech,gw_hyd_grid_aa%gwet, &
-          !gw_hyd_grid_aa%gwsw,gw_hyd_grid_aa%swgw, &
-          !gw_hyd_grid_aa%satx,gw_hyd_grid_aa%soil,gw_hyd_grid_aa%latl, &
-          !gw_hyd_grid_aa%bndr,gw_hyd_grid_aa%ppag, &
-          !gw_hyd_grid_aa%ppex,gw_hyd_grid_aa%tile,gw_hyd_grid_aa%resv, &
-          !gw_hyd_grid_aa%wetl,gw_hyd_grid_aa%canl, &
-          !gw_hyd_grid_aa%fpln,gw_hyd_grid_aa%pond,gw_hyd_grid_aa%phyt, &
-          !gw_hyd_grid_aa%ppdf
+        if (pco%csvout == "n") then
+          write(out_gwbal_aa,8100) time%day,time%mo,time%day_mo, &
+            time%yrc,"       1","       1",bsn%name, &
+            gw_hyd_grid_aa%chng,gw_hyd_grid_aa%rech,gw_hyd_grid_aa%gwet, &
+            gw_hyd_grid_aa%gwsw,gw_hyd_grid_aa%swgw, &
+            gw_hyd_grid_aa%satx,gw_hyd_grid_aa%soil,gw_hyd_grid_aa%latl, &
+            gw_hyd_grid_aa%bndr,gw_hyd_grid_aa%ppag, &
+            gw_hyd_grid_aa%ppex,gw_hyd_grid_aa%tile,gw_hyd_grid_aa%resv, &
+            gw_hyd_grid_aa%wetl,gw_hyd_grid_aa%canl, &
+            gw_hyd_grid_aa%fpln,gw_hyd_grid_aa%pond,gw_hyd_grid_aa%phyt, &
+            gw_hyd_grid_aa%ppdf
+        end if
       endif
 
       !average annual heat fluxes (basin) -------------------------------------------------------
@@ -2114,15 +2204,17 @@
       gw_heat_grid_aa%fpln = gw_heat_grid_aa%fpln / nbyr_r
       gw_heat_grid_aa%pond = gw_heat_grid_aa%pond / nbyr_r
       if(gwflag_aa == 1) then
-        !write(out_heatbal_aa,8100) time%day,time%mo,time%day_mo, &
-          !time%yrc,"       1","       1",bsn%name, &
-          !gw_heat_grid_aa%chng, &
-          !gw_heat_grid_aa%rech,gw_heat_grid_aa%gwet,gw_heat_grid_aa%gwsw, &
-          !gw_heat_grid_aa%swgw,gw_heat_grid_aa%satx,gw_heat_grid_aa%soil, &
-          !gw_heat_grid_aa%latl,gw_heat_grid_aa%disp,gw_heat_grid_aa%bndr, &
-          !gw_heat_grid_aa%ppag,gw_heat_grid_aa%ppex,gw_heat_grid_aa%tile, &
-          !gw_heat_grid_aa%resv,gw_heat_grid_aa%wetl,gw_heat_grid_aa%canl, &
-          !gw_heat_grid_aa%fpln,gw_heat_grid_aa%pond
+        if (pco%csvout == "n") then
+          write(out_heatbal_aa,8100) time%day,time%mo,time%day_mo, &
+            time%yrc,"       1","       1",bsn%name, &
+            gw_heat_grid_aa%chng, &
+            gw_heat_grid_aa%rech,gw_heat_grid_aa%gwet,gw_heat_grid_aa%gwsw, &
+            gw_heat_grid_aa%swgw,gw_heat_grid_aa%satx,gw_heat_grid_aa%soil, &
+            gw_heat_grid_aa%latl,gw_heat_grid_aa%disp,gw_heat_grid_aa%bndr, &
+            gw_heat_grid_aa%ppag,gw_heat_grid_aa%ppex,gw_heat_grid_aa%tile, &
+            gw_heat_grid_aa%resv,gw_heat_grid_aa%wetl,gw_heat_grid_aa%canl, &
+            gw_heat_grid_aa%fpln,gw_heat_grid_aa%pond
+        end if
       endif
 
       !average annual solute values (basin) -----------------------------------------------------
@@ -2206,21 +2298,28 @@
 !!    Writes gwflow_cell_definition.txt once during initialization.
 !!    Maps cell index to spatial location for all output files.
       use gwflow_module
+      use basin_module, only : pco
       implicit none
       integer :: i
 
-      !open(out_gw_celldef, file='gwflow_cell_definition.txt')
-      !write(out_gw_celldef,'(a)') 'cell_id  row  col        x_coord        y_coord  zone  status          area'
+      if (pco%csvout == "n") then
+        open(out_gw_celldef, file='gwflow_cell_definition.txt')
+        write(out_gw_celldef,'(a)') 'cell_id  row  col        x_coord        y_coord  zone  status          area'
+      end if
       do i=1,ncell
         if(gw_state(i)%stat > 0) then
           if(grid_type == "structured") then
-            !write(out_gw_celldef,'(i8,2i6,2f15.1,2i6,e15.4)') &
-              !i, cell_row(i), cell_col(i), gw_state(i)%xcrd, gw_state(i)%ycrd, &
-              !gw_state(i)%zone, gw_state(i)%stat, gw_state(i)%area
+            if (pco%csvout == "n") then
+              write(out_gw_celldef,'(i8,2i6,2f15.1,2i6,e15.4)') &
+                i, cell_row(i), cell_col(i), gw_state(i)%xcrd, gw_state(i)%ycrd, &
+                gw_state(i)%zone, gw_state(i)%stat, gw_state(i)%area
+            end if
           else
-            !write(out_gw_celldef,'(i8,2i6,2f15.1,2i6,e15.4)') &
-              !i, 0, 0, gw_state(i)%xcrd, gw_state(i)%ycrd, &
-              !gw_state(i)%zone, gw_state(i)%stat, gw_state(i)%area
+            if (pco%csvout == "n") then
+              write(out_gw_celldef,'(i8,2i6,2f15.1,2i6,e15.4)') &
+                i, 0, 0, gw_state(i)%xcrd, gw_state(i)%ycrd, &
+                gw_state(i)%zone, gw_state(i)%stat, gw_state(i)%area
+            end if
           endif
         endif
       enddo

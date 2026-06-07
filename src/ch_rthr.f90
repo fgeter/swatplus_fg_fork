@@ -171,7 +171,9 @@
           end if
 
           !! set volume of water in channel at end of hour
-          !write (2612,*) ii, ttime, scoef, vol, ob(icmd)%tsin(ii), outflo
+          if (pco%csvout == "n") then
+            write (2612,*) ii, ttime, scoef, vol, ob(icmd)%tsin(ii), outflo
+          end if
           vol = vol - outflo !- tl - ev
           ob(icmd)%hyd_flo(1,ii) = outflo
           outflo_sum = outflo_sum + outflo

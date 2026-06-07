@@ -41,18 +41,20 @@
       
       !daily print
       if (pco%cs_res%d == "y") then
-        !write (6090,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         !(wetcs_d(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                         !(wetcs_d(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                          !wetcs_d(j)%cs(1)%volm
+        if (pco%csvout == "n") then
+          write (6090,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           (wetcs_d(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                           (wetcs_d(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                            wetcs_d(j)%cs(1)%volm
+        end if
         if (pco%csvout == "y") then
           write (6091,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (wetcs_d(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
@@ -92,18 +94,20 @@
         enddo
         wetcs_m(j)%cs(1)%volm = wetcs_m(j)%cs(1)%volm / const
         if (pco%cs_res%m == "y") then
-          !write (6092,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           !(wetcs_m(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                           !(wetcs_m(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                            !wetcs_m(j)%cs(1)%volm
+          if (pco%csvout == "n") then
+            write (6092,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                             (wetcs_m(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                             (wetcs_m(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                              wetcs_m(j)%cs(1)%volm
+          end if
           if (pco%csvout == "y") then
             write (6093,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                           (wetcs_m(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
@@ -158,18 +162,20 @@
         enddo
         wetcs_y(j)%cs(1)%volm = wetcs_y(j)%cs(1)%volm / const
         if (pco%cs_res%y == "y") then
-          !write (6094,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           !(wetcs_y(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                           !(wetcs_y(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                            !wetcs_y(j)%cs(1)%volm
+          if (pco%csvout == "n") then
+            write (6094,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                             (wetcs_y(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                             (wetcs_y(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                              wetcs_y(j)%cs(1)%volm
+          end if
           if (pco%csvout == "y") then
             write (6095,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                           (wetcs_y(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
@@ -217,18 +223,20 @@
           wetcs_a(j)%cs(ics)%conc = wetcs_a(j)%cs(ics)%conc / time%nbyr
         enddo
         wetcs_a(j)%cs(1)%volm = wetcs_a(j)%cs(1)%volm / time%nbyr
-        !write (6096,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         !(wetcs_a(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
-                         !(wetcs_a(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
-                          !wetcs_a(j)%cs(1)%volm
+        if (pco%csvout == "n") then
+          write (6096,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           (wetcs_a(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%outflow,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%seep,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%settle,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%prod,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%irrig,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%mass,ics=1,cs_db%num_cs), &
+                           (wetcs_a(j)%cs(ics)%conc,ics=1,cs_db%num_cs), &
+                            wetcs_a(j)%cs(1)%volm
+        end if
         if (pco%csvout == "y") then
           write (6097,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (wetcs_a(j)%cs(ics)%inflow,ics=1,cs_db%num_cs), &

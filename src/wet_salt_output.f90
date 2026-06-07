@@ -39,16 +39,18 @@
       
       !daily print
       if (pco%salt_res%d == "y") then
-        !write (5090,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         !(wetsalt_d(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_d(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_d(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_d(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_d(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_d(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_d(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_d(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                          !wetsalt_d(j)%salt(1)%volm
+        if (pco%csvout == "n") then
+          write (5090,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           (wetsalt_d(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
+                           (wetsalt_d(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
+                           (wetsalt_d(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                           (wetsalt_d(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                           (wetsalt_d(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
+                           (wetsalt_d(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                           (wetsalt_d(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                           (wetsalt_d(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                            wetsalt_d(j)%salt(1)%volm
+        end if
         if (pco%csvout == "y") then
           write (5091,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (wetsalt_d(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
@@ -84,16 +86,18 @@
         enddo
         wetsalt_m(j)%salt(1)%volm = wetsalt_m(j)%salt(1)%volm / const
         if (pco%salt_res%m == "y") then
-          !write (5092,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           !(wetsalt_m(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_m(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_m(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_m(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_m(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_m(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_m(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_m(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                            !wetsalt_m(j)%salt(1)%volm
+          if (pco%csvout == "n") then
+            write (5092,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                             (wetsalt_m(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
+                             (wetsalt_m(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
+                             (wetsalt_m(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                             (wetsalt_m(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                             (wetsalt_m(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
+                             (wetsalt_m(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                             (wetsalt_m(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                             (wetsalt_m(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                              wetsalt_m(j)%salt(1)%volm
+          end if
           if (pco%csvout == "y") then
             write (5093,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                           (wetsalt_m(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
@@ -142,16 +146,18 @@
         enddo
         wetsalt_y(j)%salt(1)%volm = wetsalt_y(j)%salt(1)%volm / const
         if (pco%salt_res%y == "y") then
-          !write (5094,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                           !(wetsalt_y(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_y(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_y(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_y(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_y(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_y(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_y(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                           !(wetsalt_y(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                            !wetsalt_y(j)%salt(1)%volm
+          if (pco%csvout == "n") then
+            write (5094,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                             (wetsalt_y(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
+                             (wetsalt_y(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
+                             (wetsalt_y(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                             (wetsalt_y(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                             (wetsalt_y(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
+                             (wetsalt_y(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                             (wetsalt_y(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                             (wetsalt_y(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                              wetsalt_y(j)%salt(1)%volm
+          end if
           if (pco%csvout == "y") then
             write (5095,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                           (wetsalt_y(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
@@ -193,16 +199,18 @@
           wetsalt_a(j)%salt(isalt)%conc = wetsalt_a(j)%salt(isalt)%conc / time%nbyr
         enddo
         wetsalt_a(j)%salt(1)%volm = wetsalt_a(j)%salt(1)%volm / time%nbyr
-        !write (5096,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
-                         !(wetsalt_a(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_a(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_a(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_a(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_a(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_a(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_a(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
-                         !(wetsalt_a(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
-                          !wetsalt_a(j)%salt(1)%volm
+        if (pco%csvout == "n") then
+          write (5096,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
+                           (wetsalt_a(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &
+                           (wetsalt_a(j)%salt(isalt)%outflow,isalt=1,cs_db%num_salts), &
+                           (wetsalt_a(j)%salt(isalt)%seep,isalt=1,cs_db%num_salts), &
+                           (wetsalt_a(j)%salt(isalt)%fert,isalt=1,cs_db%num_salts), &
+                           (wetsalt_a(j)%salt(isalt)%irrig,isalt=1,cs_db%num_salts), &
+                           (wetsalt_a(j)%salt(isalt)%div,isalt=1,cs_db%num_salts), &
+                           (wetsalt_a(j)%salt(isalt)%mass,isalt=1,cs_db%num_salts), &
+                           (wetsalt_a(j)%salt(isalt)%conc,isalt=1,cs_db%num_salts), &
+                            wetsalt_a(j)%salt(1)%volm
+        end if
         if (pco%csvout == "y") then
           write (5097,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, & 
                                         (wetsalt_a(j)%salt(isalt)%inflow,isalt=1,cs_db%num_salts), &

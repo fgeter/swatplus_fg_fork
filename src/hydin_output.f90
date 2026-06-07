@@ -17,10 +17,12 @@
         !! daily print
          if (pco%day_print == "y" .and. pco%int_day_cur == pco%int_day) then
           if (pco%hyd%d == "y") then
-             !write (2560,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ob(icmd)%obtyp_in(iin),        &
-              !ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_d(iin)
-!            write (2560,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ob(icmd)%obtyp_in(iin),        &
-!              ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_d(iin)
+             if (pco%csvout == "n") then
+               write (2560,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ob(icmd)%obtyp_in(iin),        &
+                ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_d(iin)
+              write (2560,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ob(icmd)%obtyp_in(iin),        &
+                ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_d(iin)
+             end if
               if (pco%csvout == "y") then
                 write (2564,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, &
                  ob(icmd)%obtyp_in(iin), ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin),     &
@@ -35,8 +37,10 @@
         !! monthly print
         if (time%end_mo == 1) then
           if (pco%hyd%m == "y") then
-            !write (2561,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ob(icmd)%obtyp_in(iin),        &
-             !ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_m(iin)
+            if (pco%csvout == "n") then
+              write (2561,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, ob(icmd)%obtyp_in(iin),        &
+               ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_m(iin)
+            end if
               if (pco%csvout == "y") then
                 write (2565,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, &
                     ob(icmd)%obtyp_in(iin), ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin),  &
@@ -50,8 +54,10 @@
         !! yearly print
         if (time%end_yr == 1) then
           if (pco%hyd%y == "y") then
-            !write (2562,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name,  ob(icmd)%typ, ob(icmd)%obtyp_in(iin), &
-             !ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_y(iin)
+            if (pco%csvout == "n") then
+              write (2562,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name,  ob(icmd)%typ, ob(icmd)%obtyp_in(iin), &
+               ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_y(iin)
+            end if
             if (pco%csvout == "y") then
               write (2566,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name,  ob(icmd)%typ, ob(icmd)%num, &
               ob(icmd)%obtyp_in(iin), ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_y(iin)
@@ -64,8 +70,10 @@
         !! average annual print
         if (time%end_sim == 1 .and. pco%hyd%a == "y") then
           ob(icmd)%hin_a(iin) = ob(icmd)%hin_a(iin) / time%yrs_prt
-          !write (2563,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name,  ob(icmd)%typ,  ob(icmd)%obtyp_in(iin), &
-             !ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_a(iin)
+          if (pco%csvout == "n") then
+            write (2563,*) time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name,  ob(icmd)%typ,  ob(icmd)%obtyp_in(iin), &
+               ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_a(iin)
+          end if
             if (pco%csvout == "y") then
               write (2567,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(icmd)%name, ob(icmd)%typ, &
                 ob(icmd)%obtyp_in(iin), ob(icmd)%obtypno_in(iin), ob(icmd)%htyp_in(iin), ob(icmd)%frac_in(iin), ob(icmd)%hin_a(iin)

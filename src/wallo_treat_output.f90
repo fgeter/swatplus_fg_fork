@@ -15,7 +15,9 @@
       
 !!!!! daily print
         if (pco%water_allo%d == "y") then
-          !write (3110,*) time%day, time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omd(itrt)
+          if (pco%csvout == "n") then
+            write (3110,*) time%day, time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omd(itrt)
+          end if
 
           if (pco%csvout == "y") then
           write (3114,'(*(G0.6,:","))') time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omd(itrt)
@@ -31,7 +33,9 @@
           wal_tr_omy(itrt) = wal_tr_omy(itrt) + wal_tr_omm(itrt)
 
           if (pco%water_allo%m == "y") then
-          !write (3111,*) time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omm(itrt)
+          if (pco%csvout == "n") then
+            write (3111,*) time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omm(itrt)
+          end if
  
           if (pco%csvout == "y") then
           write (3115,'(*(G0.6,:","))') time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omm(itrt)
@@ -48,7 +52,9 @@
         wal_tr_oma(itrt) =  wal_tr_oma(itrt) + wal_tr_omy(itrt)
           
         if (pco%water_allo%y == "y") then
-          !write (3112,*) time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omy(itrt)
+          if (pco%csvout == "n") then
+            write (3112,*) time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omy(itrt)
+          end if
   
               if (pco%csvout == "y") then
           write (3116,'(*(G0.6,:","))') time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_omy(itrt)
@@ -65,7 +71,9 @@
         wal_tr_oma(itrt) = wal_tr_oma(itrt) / time%yrs_prt
 
         if (pco%water_allo%a == "y") then
-        !write (3113,*) time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_oma(itrt)
+        if (pco%csvout == "n") then
+          write (3113,*) time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_oma(itrt)
+        end if
 
         if (pco%csvout == "y") then
         write (3117,'(*(G0.6,:","))') time%mo, time%day_mo, time%yrc, itrt, om_treat_name(itrt), wal_tr_oma(itrt)

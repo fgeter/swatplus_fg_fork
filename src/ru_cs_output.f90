@@ -45,23 +45,25 @@
       
       !daily print
       if (pco%cs_ru%d == "y") then
-        !write (6070,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                         !(rucsb_d(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
-                         ! (rucsb_d(iru)%hd(2)%cs(ics),ics=1,cs_db%num_cs), & !percolation
-                         ! (rucsb_d(iru)%hd(3)%cs(ics),ics=1,cs_db%num_cs), & !surface runoff
-                         ! (rucsb_d(iru)%hd(4)%cs(ics),ics=1,cs_db%num_cs), & !soil lateral flow
-                         ! (rucsb_d(iru)%hd(5)%cs(ics),ics=1,cs_db%num_cs), & !tile flow
-                         ! (ru_hru_csb_d(iru)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%rain,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                         ! (ru_hru_csb_d(iru)%cs(ics)%sorb,ics=1,cs_db%num_cs)
+        if (pco%csvout == "n") then
+          write (6070,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                           (rucsb_d(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
+                         (rucsb_d(iru)%hd(2)%cs(ics),ics=1,cs_db%num_cs), & !percolation
+                         (rucsb_d(iru)%hd(3)%cs(ics),ics=1,cs_db%num_cs), & !surface runoff
+                         (rucsb_d(iru)%hd(4)%cs(ics),ics=1,cs_db%num_cs), & !soil lateral flow
+                         (rucsb_d(iru)%hd(5)%cs(ics),ics=1,cs_db%num_cs), & !tile flow
+                         (ru_hru_csb_d(iru)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%rain,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                         (ru_hru_csb_d(iru)%cs(ics)%sorb,ics=1,cs_db%num_cs)
+        end if
         if (pco%csvout == "y") then
           write (6071,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                                                            (rucsb_d(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
@@ -121,23 +123,25 @@
           ru_hru_csb_y(iru)%cs(ics)%sorb = ru_hru_csb_y(iru)%cs(ics)%sorb + ru_hru_csb_m(iru)%cs(ics)%sorb
         enddo
         if (pco%cs_ru%m == "y") then
-          !write (6072,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                           !(rucsb_m(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
-                           ! (rucsb_m(iru)%hd(2)%cs(ics),ics=1,cs_db%num_cs), & !percolation
-                           ! (rucsb_m(iru)%hd(3)%cs(ics),ics=1,cs_db%num_cs), & !surface runoff
-                           ! (rucsb_m(iru)%hd(4)%cs(ics),ics=1,cs_db%num_cs), & !soil lateral flow
-                           ! (rucsb_m(iru)%hd(5)%cs(ics),ics=1,cs_db%num_cs), & !tile flow
-                           ! (ru_hru_csb_m(iru)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%rain,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_m(iru)%cs(ics)%sorb,ics=1,cs_db%num_cs)
+          if (pco%csvout == "n") then
+            write (6072,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                             (rucsb_m(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
+                           (rucsb_m(iru)%hd(2)%cs(ics),ics=1,cs_db%num_cs), & !percolation
+                           (rucsb_m(iru)%hd(3)%cs(ics),ics=1,cs_db%num_cs), & !surface runoff
+                           (rucsb_m(iru)%hd(4)%cs(ics),ics=1,cs_db%num_cs), & !soil lateral flow
+                           (rucsb_m(iru)%hd(5)%cs(ics),ics=1,cs_db%num_cs), & !tile flow
+                           (ru_hru_csb_m(iru)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%rain,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_m(iru)%cs(ics)%sorb,ics=1,cs_db%num_cs)
+          end if
           if (pco%csvout == "y") then
             write (6073,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                          (rucsb_m(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
@@ -197,23 +201,25 @@
           ru_hru_csb_a(iru)%cs(ics)%sorb = ru_hru_csb_a(iru)%cs(ics)%sorb + ru_hru_csb_y(iru)%cs(ics)%sorb
         enddo
         if (pco%cs_ru%y == "y") then
-          !write (6074,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                           !(rucsb_y(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
-                           ! (rucsb_y(iru)%hd(2)%cs(ics),ics=1,cs_db%num_cs), & !percolation
-                           ! (rucsb_y(iru)%hd(3)%cs(ics),ics=1,cs_db%num_cs), & !surface runoff
-                           ! (rucsb_y(iru)%hd(4)%cs(ics),ics=1,cs_db%num_cs), & !soil lateral flow
-                           ! (rucsb_y(iru)%hd(5)%cs(ics),ics=1,cs_db%num_cs), & !tile flow
-                           ! (ru_hru_csb_y(iru)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%rain,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                           ! (ru_hru_csb_y(iru)%cs(ics)%sorb,ics=1,cs_db%num_cs)
+          if (pco%csvout == "n") then
+            write (6074,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                             (rucsb_y(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
+                           (rucsb_y(iru)%hd(2)%cs(ics),ics=1,cs_db%num_cs), & !percolation
+                           (rucsb_y(iru)%hd(3)%cs(ics),ics=1,cs_db%num_cs), & !surface runoff
+                           (rucsb_y(iru)%hd(4)%cs(ics),ics=1,cs_db%num_cs), & !soil lateral flow
+                           (rucsb_y(iru)%hd(5)%cs(ics),ics=1,cs_db%num_cs), & !tile flow
+                           (ru_hru_csb_y(iru)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%rain,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                           (ru_hru_csb_y(iru)%cs(ics)%sorb,ics=1,cs_db%num_cs)
+          end if
           if (pco%csvout == "y") then
             write (6075,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                          (rucsb_y(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
@@ -272,23 +278,25 @@
           ru_hru_csb_a(iru)%cs(ics)%rctn = ru_hru_csb_a(iru)%cs(ics)%rctn / time%nbyr
           ru_hru_csb_a(iru)%cs(ics)%sorb = ru_hru_csb_a(iru)%cs(ics)%sorb / time%nbyr
         enddo
-        !write (6076,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
-                        !(rucsb_a(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
-                        ! (rucsb_a(iru)%hd(2)%cs(ics),ics=1,cs_db%num_cs), & !percolation
-                        ! (rucsb_a(iru)%hd(3)%cs(ics),ics=1,cs_db%num_cs), & !surface runoff
-                        ! (rucsb_a(iru)%hd(4)%cs(ics),ics=1,cs_db%num_cs), & !soil lateral flow
-                        ! (rucsb_a(iru)%hd(5)%cs(ics),ics=1,cs_db%num_cs), & !tile flow
-                        ! (ru_hru_csb_a(iru)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%rain,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%fert,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
-                        ! (ru_hru_csb_a(iru)%cs(ics)%sorb,ics=1,cs_db%num_cs)
+        if (pco%csvout == "n") then
+          write (6076,100) time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
+                          (rucsb_a(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out
+                        (rucsb_a(iru)%hd(2)%cs(ics),ics=1,cs_db%num_cs), & !percolation
+                        (rucsb_a(iru)%hd(3)%cs(ics),ics=1,cs_db%num_cs), & !surface runoff
+                        (rucsb_a(iru)%hd(4)%cs(ics),ics=1,cs_db%num_cs), & !soil lateral flow
+                        (rucsb_a(iru)%hd(5)%cs(ics),ics=1,cs_db%num_cs), & !tile flow
+                        (ru_hru_csb_a(iru)%cs(ics)%sedm,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%wtsp,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%irsw,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%irgw,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%irwo,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%rain,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%dryd,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%fert,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%uptk,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%rctn,ics=1,cs_db%num_cs), &
+                        (ru_hru_csb_a(iru)%cs(ics)%sorb,ics=1,cs_db%num_cs)
+        end if
         if (pco%csvout == "y") then
           write (6077,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, iru, ob(iob)%gis_id, & 
                                         (rucsb_a(iru)%hd(1)%cs(ics),ics=1,cs_db%num_cs), & !total out

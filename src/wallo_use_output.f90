@@ -15,7 +15,9 @@
       
 !!!!! daily print
         if (pco%water_allo%d == "y") then
-          !write (3110,*) time%day, time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omd(iuse)
+          if (pco%csvout == "n") then
+            write (3110,*) time%day, time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omd(iuse)
+          end if
 
           if (pco%csvout == "y") then
           write (3114,'(*(G0.6,:","))') time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omd(iuse)
@@ -31,7 +33,9 @@
           wal_use_omy(iuse) = wal_use_omy(iuse) + wal_use_omm(iuse)
 
           if (pco%water_allo%m == "y") then
-          !write (3111,*) time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omm(iuse)
+          if (pco%csvout == "n") then
+            write (3111,*) time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omm(iuse)
+          end if
  
           if (pco%csvout == "y") then
           write (3115,'(*(G0.6,:","))') time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omm(iuse)
@@ -48,7 +52,9 @@
         wal_use_oma(iuse) =  wal_use_oma(iuse) + wal_use_omy(iuse)
           
         if (pco%water_allo%y == "y") then
-          !write (3112,*) time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omy(iuse)
+          if (pco%csvout == "n") then
+            write (3112,*) time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omy(iuse)
+          end if
   
               if (pco%csvout == "y") then
           write (3116,'(*(G0.6,:","))') time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_omy(iuse)
@@ -65,7 +71,9 @@
         wal_use_oma(iuse) = wal_use_oma(iuse) / time%yrs_prt
 
         if (pco%water_allo%a == "y") then
-        !write (3113,*) time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_oma(iuse)
+        if (pco%csvout == "n") then
+          write (3113,*) time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_oma(iuse)
+        end if
 
         if (pco%csvout == "y") then
         write (3117,'(*(G0.6,:","))') time%mo, time%day_mo, time%yrc, iuse, om_use_name(iuse), wal_use_oma(iuse)

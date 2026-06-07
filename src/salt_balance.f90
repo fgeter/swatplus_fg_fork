@@ -367,7 +367,9 @@
       salt_basin(28) = saltsum
       
       !write out basin-wide salinity fluxes to file
-      !write(5080,7000) time%yrc,time%mo,time%day,(salt_basin(i),i=1,28)
+      if (pco%csvout == "n") then
+        write(5080,7000) time%yrc,time%mo,time%day,(salt_basin(i),i=1,28)
+      end if
       
       !save fluxes for monthly, yearly, and ave annual output
       do i=1,28
@@ -383,7 +385,9 @@
         salt_basin_mo(26) = salt_basin_mo(26) / num_days
         salt_basin_mo(27) = salt_basin_mo(27) / num_days
         salt_basin_mo(28) = salt_basin_mo(28) / num_days
-        !write(5082,7000) time%yrc,time%mo,time%day,(salt_basin_mo(i),i=1,28)
+        if (pco%csvout == "n") then
+          write(5082,7000) time%yrc,time%mo,time%day,(salt_basin_mo(i),i=1,28)
+        end if
         salt_basin_mo = 0.
       endif
       
@@ -394,7 +398,9 @@
         salt_basin_yr(26) = salt_basin_yr(26) / num_days
         salt_basin_yr(27) = salt_basin_yr(27) / num_days
         salt_basin_yr(28) = salt_basin_yr(28) / num_days
-        !write(5084,7000) time%yrc,time%mo,time%day,(salt_basin_yr(i),i=1,28)
+        if (pco%csvout == "n") then
+          write(5084,7000) time%yrc,time%mo,time%day,(salt_basin_yr(i),i=1,28)
+        end if
         salt_basin_yr = 0.
       endif
       
@@ -408,7 +414,9 @@
         salt_basin_aa(26) = salt_basin_aa(26) / num_days
         salt_basin_aa(27) = salt_basin_aa(27) / num_days
         salt_basin_aa(28) = salt_basin_aa(28) / num_days      
-        !write(5086,7000) time%yrc,time%mo,time%day,(salt_basin_aa(i),i=1,28)
+        if (pco%csvout == "n") then
+          write(5086,7000) time%yrc,time%mo,time%day,(salt_basin_aa(i),i=1,28)
+        end if
       endif
       
       

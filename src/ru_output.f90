@@ -21,7 +21,9 @@
         !! daily print - ROUTING UNIT
          if (pco%day_print == "y" .and. pco%int_day_cur == pco%int_day) then
           if (pco%ru%d == "y") then
-            !write (2600,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_d(iru)
+            if (pco%csvout == "n") then
+              write (2600,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_d(iru)
+            end if
             if (pco%csvout == "y") then
               write (2604,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_d(iru)
             end if
@@ -32,7 +34,9 @@
         if (time%end_mo == 1) then
           ru_y(iru) = ru_y(iru) + ru_m(iru)
           if (pco%ru%m == "y") then
-            !write (2601,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_m(iru)
+            if (pco%csvout == "n") then
+              write (2601,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_m(iru)
+            end if
             if (pco%csvout == "y") then
               write (2605,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_m(iru)
             endif
@@ -44,7 +48,9 @@
         if (time%end_yr == 1) then
           ru_a(iru) = ru_a(iru) + ru_y(iru)
           if (pco%ru%y == "y") then
-            !write (2602,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_y(iru)
+            if (pco%csvout == "n") then
+              write (2602,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_y(iru)
+            end if
             if (pco%csvout == "y") then
               write (2606,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_y(iru) 
             end if
@@ -56,7 +62,9 @@
       !! average annual print - ROUTING UNIT
           if (time%end_sim == 1 .and. pco%ru%a == "y") then
           ru_a(iru) = ru_a(iru) / time%yrs_prt
-            !write (2603,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_a(iru)
+            if (pco%csvout == "n") then
+              write (2603,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_a(iru)
+            end if
             if (pco%csvout == "y") then 
               write (2607,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, ru_a(iru)  
             end if 

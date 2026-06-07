@@ -20,7 +20,9 @@
         !! daily print - RECALL
          if (pco%day_print == "y" .and. pco%int_day_cur == pco%int_day) then
           if (pco%recall%d == "y") then
-            !write (4600,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_d(irec)
+            if (pco%csvout == "n") then
+              write (4600,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_d(irec)
+            end if
             if (pco%csvout == "y") then
               write (4604,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_d(irec)
             end if
@@ -31,7 +33,9 @@
         if (time%end_mo == 1) then
           rec_y(irec) = rec_y(irec) + rec_m(irec)
           if (pco%recall%m == "y") then
-            !write (4601,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_m(irec)
+            if (pco%csvout == "n") then
+              write (4601,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_m(irec)
+            end if
             if (pco%csvout == "y") then
               write (4605,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_m(irec)
             endif
@@ -43,7 +47,9 @@
         if (time%end_yr == 1) then
           rec_a(irec) = rec_a(irec) + rec_y(irec)
           if (pco%recall%y == "y") then
-            !write (4602,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_y(irec)
+            if (pco%csvout == "n") then
+              write (4602,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_y(irec)
+            end if
             if (pco%csvout == "y") then
               write (4606,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_y(irec) 
             end if
@@ -55,7 +61,9 @@
       !! average annual print - RECALL
           if (time%end_sim == 1 .and. pco%recall%a == "y") then
           rec_a(irec) = rec_a(irec) / time%yrs_prt
-            !write (4603,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_a(irec)
+            if (pco%csvout == "n") then
+              write (4603,*) time%day, time%mo, time%day_mo, time%yrc, ob(iob)%name, ob(iob)%typ, rec_a(irec)
+            end if
             if (pco%csvout == "y") then 
               write (4607,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, ob(iob)%name, ob(iob)%typ, rec_a(irec)  
             end if 

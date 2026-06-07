@@ -116,9 +116,11 @@
               hru(j)%irr_yr = hru(j)%irr_yr + irrig(j)%applied
             
               if (pco%mgtout == "y") then
-                !write (2612, *) j, time%yrc, time%mo, time%day_mo, wallo(iwallo)%name, "IRRIGATE", phubase(j),  &
-                  !pcom(j)%plcur(1)%phuacc, soil(j)%sw, pl_mass(j)%tot(1)%m, pl_mass(j)%rsd_tot%m,      &
-                  !sol_sumno3(j), sol_sumsolp(j), irrig(j)%applied
+                if (pco%csvout == "n") then
+                  write (2612, *) j, time%yrc, time%mo, time%day_mo, wallo(iwallo)%name, "IRRIGATE", phubase(j),  &
+                    pcom(j)%plcur(1)%phuacc, soil(j)%sw, pl_mass(j)%tot(1)%m, pl_mass(j)%rsd_tot%m,      &
+                    sol_sumno3(j), sol_sumsolp(j), irrig(j)%applied
+                end if
               end if
             end if
             

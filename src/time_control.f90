@@ -279,8 +279,10 @@
           if (time%yrs > pco%nyskip) then
             crop_yld_t_ha = bsn_crop_yld(iplt)%yield / (bsn_crop_yld(iplt)%area_ha + 1.e-6)
             if (pco%crop_yld == "y" .or. pco%crop_yld == "b") then
-              !write (5100,*) time%yrc, iplt, plts_bsn(iplt), bsn_crop_yld(iplt)%area_ha,          &
-                                                  !bsn_crop_yld(iplt)%yield, crop_yld_t_ha
+              if (pco%csvout == "n") then
+                write (5100,*) time%yrc, iplt, plts_bsn(iplt), bsn_crop_yld(iplt)%area_ha,          &
+                                                    bsn_crop_yld(iplt)%yield, crop_yld_t_ha
+              end if
             end if
             bsn_crop_yld_aa(iplt)%area_ha = bsn_crop_yld_aa(iplt)%area_ha + bsn_crop_yld(iplt)%area_ha
             bsn_crop_yld_aa(iplt)%yield = bsn_crop_yld_aa(iplt)%yield + bsn_crop_yld(iplt)%yield
@@ -291,8 +293,10 @@
             bsn_crop_yld_aa(iplt)%area_ha = bsn_crop_yld_aa(iplt)%area_ha / time%yrs_prt
             bsn_crop_yld_aa(iplt)%yield = bsn_crop_yld_aa(iplt)%yield / time%yrs_prt
             if (pco%crop_yld == "y" .or. pco%crop_yld == "b") then
-              !write (5101,*) time%yrc, iplt, plts_bsn(iplt), bsn_crop_yld_aa(iplt)%area_ha,   &
-                                                !bsn_crop_yld_aa(iplt)%yield, crop_yld_t_ha
+              if (pco%csvout == "n") then
+                write (5101,*) time%yrc, iplt, plts_bsn(iplt), bsn_crop_yld_aa(iplt)%area_ha,   &
+                                                  bsn_crop_yld_aa(iplt)%yield, crop_yld_t_ha
+              end if
             end if
             bsn_crop_yld_aa(iplt) = bsn_crop_yld_z
           end if

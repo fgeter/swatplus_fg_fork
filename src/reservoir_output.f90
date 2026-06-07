@@ -17,8 +17,10 @@
 !!!!! daily print
          if (pco%day_print == "y" .and. pco%int_day_cur == pco%int_day) then
           if (pco%res%d == "y") then
-            !write (2540,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, res_wat_d(j), res(j), &
-                !res_in_d(j), res_out_d(j)
+            if (pco%csvout == "n") then
+              write (2540,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, res_wat_d(j), res(j), &
+                  res_in_d(j), res_out_d(j)
+            end if
                if (pco%csvout == "y") then
                  write (2544,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                     res_wat_d(j), res(j), res_in_d(j), res_out_d(j)
@@ -40,8 +42,10 @@
           res_wat_m(j) = res_wat_m(j) // const
           res_wat_y(j) = res_wat_y(j) + res_wat_m(j)
           if (pco%res%m == "y") then
-            !write (2541,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, res_wat_m(j), res(j), &
-                !res_in_m(j), res_out_m(j)
+            if (pco%csvout == "n") then
+              write (2541,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, res_wat_m(j), res(j), &
+                  res_in_m(j), res_out_m(j)
+            end if
               if (pco%csvout == "y") then
                 write (2545,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                     res_wat_m(j), res(j), res_in_m(j), res_out_m(j)
@@ -60,8 +64,10 @@
           res_wat_a(j) = res_wat_a(j) + res_wat_y(j)
           !write (7780,*) res_in_y(j)
           if (pco%res%y == "y") then
-            !write (2542,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, res_wat_y(j), res(j), &
-                !res_in_y(j), res_out_y(j)
+            if (pco%csvout == "n") then
+              write (2542,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, res_wat_y(j), res(j), &
+                  res_in_y(j), res_out_y(j)
+            end if
               if (pco%csvout == "y") then
                 write (2546,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                     res_wat_y(j), res(j), res_in_y(j), res_out_y(j)
@@ -77,8 +83,10 @@
           res_in_a(j) = res_in_a(j) / time%yrs_prt
           res_out_a(j) = res_out_a(j) / time%yrs_prt
           res_wat_a(j) = res_wat_a(j) / time%yrs_prt
-          !write (2543,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, res_wat_a(j), res(j), &
-            !res_in_a(j), res_out_a(j)
+          if (pco%csvout == "n") then
+            write (2543,100) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, res_wat_a(j), res(j), &
+              res_in_a(j), res_out_a(j)
+          end if
           if (pco%csvout == "y") then
             write (2547,'(*(G0.6,:","))')time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                 res_wat_a(j), res(j), res_in_a(j), res_out_a(j)
