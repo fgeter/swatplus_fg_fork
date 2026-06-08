@@ -21,6 +21,7 @@ Makefile
 *.ilk
 *.log
 *.vscode/
+.nvim.lua
 [Bb]in
 [Dd]ebug*/
 *.lib
