@@ -108,8 +108,10 @@
 
        close (107)
        
-       !! Initialize output path (will use current dir if null/empty)
-       call init_output_path(out_path_value)
+       !! Initialize output path from file.cio, unless command line already set it
+       if (.not. cmdline_outpath_set) then
+         call init_output_path(out_path_value)
+       end if
             
        return
       end subroutine readcio_read  

@@ -5,6 +5,7 @@
       use maximum_data_module
       use calibration_data_module
       use hru_module
+      use output_path_module
 
       implicit none
       
@@ -23,11 +24,68 @@
       character*10 b(3)                 !              |
       integer :: iob = 0
       integer, allocatable, dimension(:) :: cmd_next
-    
+
+      !! Command-line argument parsing
+      character(len=512) :: exec_cwd = ""
+      character(len=512) :: in_arg = ""
+      character(len=512) :: out_arg = ""
+      character(len=512) :: cl_arg = ""
+      logical :: got_i = .false., got_o = .false.
+      logical :: dir_exists
+      integer :: nargs, iarg, chdir_status
+
       prog = " SWAT+ @TODAY@        MODULAR Rev @YEAR@.@SWAT_VERSION@"
 
+      !! Get execution directory before any chdir
+      call getcwd(exec_cwd)
+
+      !! Parse command-line arguments
+      nargs = command_argument_count()
+      iarg = 1
+      do while (iarg <= nargs)
+        call get_command_argument(iarg, cl_arg)
+        if (trim(cl_arg) == "-h" .or. trim(cl_arg) == "--help") then
+          write (*,'(a)') "Usage: swatplus [-i <dir>] [-o <dir>]"
+          write (*,'(a)') ""
+          write (*,'(a)') "Options:"
+          write (*,'(a)') "  -i, --input  <dir>  directory containing model input files"
+          write (*,'(a)') "                      (default: current working directory)"
+          write (*,'(a)') "  -o, --output <dir>  directory where output files are written"
+          write (*,'(a)') "                      (default: current working directory)"
+          write (*,'(a)') "  -h, --help          show this help message and exit"
+          stop 0
+        else if (trim(cl_arg) == "-i" .or. trim(cl_arg) == "--input") then
+          iarg = iarg + 1
+          if (iarg <= nargs) then
+            call get_command_argument(iarg, in_arg)
+            got_i = .true.
+          end if
+        else if (trim(cl_arg) == "-o" .or. trim(cl_arg) == "--output") then
+          iarg = iarg + 1
+          if (iarg <= nargs) then
+            call get_command_argument(iarg, out_arg)
+            got_o = .true.
+          end if
+        end if
+        iarg = iarg + 1
+      end do
+
+      !! Resolve and initialise output path (must be absolute before chdir changes CWD)
+      if (got_o) then
+        !! Convert relative -o path to absolute
+        if (out_arg(1:1) /= "/") then
+          out_arg = trim(exec_cwd) // "/" // trim(out_arg)
+        end if
+        call init_output_path(trim(out_arg))
+        cmdline_outpath_set = .true.
+      else if (got_i) then
+        !! -i given but no -o: keep outputs in execution directory
+        call init_output_path(trim(exec_cwd))
+        cmdline_outpath_set = .true.
+      end if
+
       write (*,1000)
-      open (9003,file='simulation.out')
+      call open_output_file(9003, 'simulation.out')
       write (9003,1000)
  1000 format(1x,"                  SWAT+               ",/,             &
      &          "             Revision @SWAT_VERSION@  ",/,             &
@@ -35,9 +93,23 @@
      &          "@CMAKE_Fortran_COMPILER_ID@ (@CMAKE_Fortran_COMPILER_VERSION@), @ISO@, @CMAKE_HOST_SYSTEM_NAME@",/,             &
      &          "    Program reading . . . executing",/)
       
-      open (888,file="erosion.txt",recl = 1500)
-      
-      call proc_bsn   
+      ! open (888,file="erosion.txt",recl = 1500)
+
+      !! Change to input directory if -i was specified
+      if (got_i) then
+        inquire(file=trim(in_arg), exist=dir_exists)
+        if (.not. dir_exists) then
+          write (*,*) "! ERROR: input directory does not exist: ", trim(in_arg)
+          stop 1
+        end if
+        call chdir(trim(in_arg), chdir_status)
+        if (chdir_status /= 0) then
+          write (*,*) "! ERROR: cannot change to input directory: ", trim(in_arg)
+          stop 1
+        end if
+      end if
+
+      call proc_bsn
       call proc_date_time
       call proc_db
       call proc_read
@@ -160,7 +232,7 @@
       !! write successful completion to screen and file
       write (*,1001)
       write (9003,1001)
-      open (107,file="success.fin")
+      call open_output_file(107, "success.fin")
   
       call DATE_AND_TIME (b(1), b(2), b(3), date_time)
       write (*,1234) date_time(2), date_time(3), date_time(1), date_time(5), date_time(6), date_time(7)

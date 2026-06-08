@@ -12,14 +12,15 @@
       use sd_channel_module
       use time_module
       use recall_module
+      use output_path_module
 
       implicit none
-      
+
       external :: copy_file
 #if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER)
       external :: SYSTEM
 #endif
-      
+
       integer :: iaqu = 0
       integer :: icha = 0
       integer :: ires = 0
@@ -31,8 +32,9 @@
       integer :: iob = 0
       integer :: i = 0                              ! loop counter
       integer, parameter :: ifile = 14              ! number of SWAT input files to copy to SWIFT folder
-      character(len=100) :: folderPath = ""
-      character(len=100) :: command = ""
+      character(len=512) :: folderPath = ""
+      character(len=512) :: command = ""
+      character(len=512) :: swift_dir = ""          ! full path to SWIFT output directory
       character(len=25)  :: file_list(ifile) = "" ! list of SWAT input files to copy to SWIFT folder
       logical :: i_exist
       
@@ -64,16 +66,19 @@
       ! 208 format (6xA8, 1xA8, 16x,*(A8,6x))                      ! format of res_dat.swf headers
       208 format (6x,A8,1x,A8,16x,*(A8,6x))                      ! format of res_dat.swf headers
       
+      !! Set up SWIFT output directory under out_path
+      swift_dir = trim(out_path) // "SWIFT"
+
       !! check for file_cio.swf to determine if SWIFT folder exist
-      inquire (file="SWIFT/file_cio.swf", exist=i_exist)
+      inquire (file=trim(swift_dir)//"/file_cio.swf", exist=i_exist)
       if (.not. i_exist) then   ! if not use system-specific command to create SWIFT folder
-        folderPath = "SWIFT"
-        command = 'mkdir ' // trim(folderPath)
-        call SYSTEM(command)
+        folderPath = trim(swift_dir)
+        command = 'mkdir -p "' // trim(folderPath) // '"'
+        call execute_command_line(trim(command), wait=.true.)
       end if
     
       !! write new file.cio
-      open (107,file="SWIFT/file_cio.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/file_cio.swf",recl = 1500)
       write (107, *) "SWIFT file.cio"
       write (107, *) "BASIN         ", in_sim%object_cnt, in_sim%object_prt, in_sim%cs_db
       write (107, *) "CLIMATE       ", "  precip.swf"
@@ -97,12 +102,12 @@
       
       ! Loop through the file list and copy each file to the SWIFT folder
       do i = 1, ifile
-         call copy_file(file_list(i), "SWIFT/" // trim(adjustl(file_list(i))))
+         call copy_file(file_list(i), trim(swift_dir)//"/" // trim(adjustl(file_list(i))))
       end do
 
       
       !! write ave annual precip to SWIFT model
-      open (107,file="SWIFT/precip.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/precip.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) db_mx%wst
       write (107, 201) "iwst ", "name ", "precip_aa/", yrs_print,'yrs', "pet_aa/", yrs_print, 'yrs'
@@ -116,7 +121,7 @@
       close (107)
       
       !! write hru data to SWIFT model
-      open (107,file="SWIFT/hru_dat.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/hru_dat.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) sp_ob%hru
       write (107, *) "iwst ", "name ", "land_use_mgt_c", "slope", "hydgrp", "null", "null"
@@ -128,7 +133,7 @@
       close (107)
       
       !! write hru export coefficients to SWIFT model
-      open (107,file="SWIFT/hru_exco.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/hru_exco.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) sp_ob%hru
       write (107, *) "HRU ", (hru_swift_hdr%hd_type(ihyd), 'wyld_rto', &
@@ -166,7 +171,7 @@
       close(107)
       
       !! write hru wetland inputs to SWIFT model
-      open (107,file="SWIFT/hru_wet.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/hru_wet.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) sp_ob%hru
       write (107, *) "ires", "psa ", "pdep", "esa ", "edep"
@@ -186,7 +191,7 @@
       close (107)
       
       !! write channel data for SWIFT
-      open (107,file="SWIFT/chan_dat.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/chan_dat.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) sd_chd_hdr
       do icha = 1, sp_ob%chandeg
@@ -198,7 +203,7 @@
       close (107)
       
       !! write channel delivery ratios for SWIFT
-      open (107,file="SWIFT/chan_dr.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/chan_dr.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) sp_ob%chandeg
       write (107, *) "icha ", "name ", hru_swift_hdr%dr
@@ -218,7 +223,7 @@
       close (107)
            
       !! write aquifer delivery ratios for SWIFT
-      open (107,file="SWIFT/aqu_dr.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/aqu_dr.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) sp_ob%aqu
       write (107, *) "iaqu ", hru_swift_hdr%dr
@@ -232,7 +237,7 @@
       close (107)
             
       !! write reservoir delivery ratios for SWIFT
-      open (107,file="SWIFT/res_dat.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/res_dat.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) sp_ob%res
       write (107, *) "icha ", "name ", "psa  ", "pvol ", "esa  ", "evol "
@@ -244,7 +249,7 @@
       close (107)
       
       !! write reservoir delivery ratios for SWIFT
-      open (107,file="SWIFT/res_dr.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/res_dr.swf",recl = 1500)
       write (107, *) bsn%name
       write (107, *) sp_ob%res
       write (107, *) "ires ", "name ", hru_swift_hdr%dr
@@ -258,13 +263,13 @@
       close (107)
       
       !! write recal_swift.rec --> change files to average annual and use the object name for the file name
-      open (107,file="SWIFT/recall.swf",recl = 1500)
+      open (107,file=trim(swift_dir)//"/recall.swf",recl = 1500)
       write (107,*)           "         ID            NAME              REC_TYP         FILENAME"
       do irec = 1, db_mx%recalldb_max
         write (107,*) irec, recall_db(irec)%org_min%name, recall_db(irec)%org_min%units, recall_db(irec)%org_min%tstep
         
         !! write to each recall file
-        open (108,file="SWIFT/" // trim(adjustl(recall_db(irec)%name)),recl = 1500)
+        open (108,file=trim(swift_dir)//"/" // trim(adjustl(recall_db(irec)%name)),recl = 1500)
         write (108,*) " AVE ANNUAL RECALL FILE  ", recall_db(irec)%name
         write (108,*) "     1    1    1     1    type    ", recall_db(irec)%name, rec_a(irec)%flo,     &
                 rec_a(irec)%sed, rec_a(irec)%orgn, rec_a(irec)%sedp, rec_a(irec)%no3, rec_a(irec)%solp, &
@@ -279,7 +284,7 @@
         !write (107,*) irec, recall(irec)%name, "   4   ", recall(irec)%name
         
         !! write to each object print file
-        open (108,file="SWIFT/object_prt.swf",recl = 1500)
+        open (108,file=trim(swift_dir)//"/object_prt.swf",recl = 1500)
         write (108,*) " AVE ANNUAL OBJECT OUTPUT FILE  ", ob_out(iobj_out)%filename
         iob = ob_out(iobj_out)%objno
         ihyd = ob_out(iobj_out)%hydno

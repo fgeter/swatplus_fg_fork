@@ -4,6 +4,9 @@
       
       !! Output path for all output files
       character(len=256) :: out_path = ""
+      !! Set to .true. when -o (or -i without -o) was given on the command line;
+      !! prevents readcio_read from overriding with the file.cio out_path setting.
+      logical :: cmdline_outpath_set = .false.
       
       contains
       
@@ -112,7 +115,7 @@
         call execute_command_line(trim(cmd), wait=.true., exitstat=stat)
         
         if (stat /= 0) then
-          write (*,*) "! ERROR: cannot create or access path specified in file.cio (out_path)"
+          write (*,*) "! ERROR: cannot create or access output path"
           write (*,*) "  > Path: ", trim(path_in)
           stop 1
         end if

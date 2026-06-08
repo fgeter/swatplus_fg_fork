@@ -10,6 +10,7 @@
       use time_module
       use constituent_mass_module, only : cs_db
       use basin_module, only : pco, bsn
+      use output_path_module
 
       implicit none
 
@@ -77,7 +78,7 @@
 
       !open file to track daily groundwater water balance
       if(gwflag_day.eq.1) then
-        open(out_gwbal,file='gwflow_basin_wb_day.txt')
+        call open_output_file(out_gwbal,'gwflow_basin_wb_day.txt')
         write(out_gwbal,*) 'Groundwater watershed-wide fluxes for each day (mm)'
         write(out_gwbal,8000) 'jday','mon','day','yr','unit','gis_id', &
           'name','ts','vbef','vaft','recharge','gw_et','gw_sw','sw_gw', &
@@ -91,7 +92,7 @@
 
       !open file to track monthly groundwater water balance
       if(gwflag_mon.eq.1) then
-        open(out_gwbal_mon,file='gwflow_basin_wb_mon.txt')
+        call open_output_file(out_gwbal_mon,'gwflow_basin_wb_mon.txt')
         write(out_gwbal_mon,*) 'Groundwater watershed-wide fluxes for each month (mm)'
         write(out_gwbal_mon,8000) 'jday','mon','day','yr','unit','gis_id', &
           'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
@@ -105,7 +106,7 @@
 
       !open file to track yearly groundwater water balance
       if(gwflag_yr.eq.1) then
-        open(out_gwbal_yr,file='gwflow_basin_wb_yr.txt')
+        call open_output_file(out_gwbal_yr,'gwflow_basin_wb_yr.txt')
         write(out_gwbal_yr,*) 'Groundwater watershed-wide fluxes for each year (mm)'
         write(out_gwbal_yr,8000) 'jday','mon','day','yr','unit','gis_id', &
           'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
@@ -119,7 +120,7 @@
 
       !open file to write out average annual groundwater water balance
         if(gwflag_aa.eq.1) then
-        open(out_gwbal_aa,file='gwflow_basin_wb_aa.txt')
+        call open_output_file(out_gwbal_aa,'gwflow_basin_wb_aa.txt')
         write(out_gwbal_aa,*) 'Average annual groundwater watershed-wide fluxes (mm)'
         write(out_gwbal_aa,8000) 'jday','mon','day','yr','unit','gis_id', &
           'name','dvol','recharge','gw_et','gw_sw','sw_gw', &
@@ -163,7 +164,7 @@
           !open the water balance output file
           write(aString,1091) i
           file_name_scalar = 'gwflow_group_wb_day_'//aString
-          open(out_gwbal_grp+i,file=file_name_scalar)
+          call open_output_file(out_gwbal_grp+i,trim(file_name_scalar))
           write(out_gwbal_grp+i,*) 'Groundwater fluxes for cell group (m3)',i
           write(out_gwbal_grp+i,8000) 'jday','mon','day','yr','unit', &
             'gis_id','name','ts','vbef','vaft','recharge','gw_et', &
@@ -188,7 +189,7 @@
 
       !open file to track daily groundwater heat balance
       if(gwflag_day.eq.1) then
-        open(out_heatbal_dy,file='gwflow_basin_heat_day.txt')
+        call open_output_file(out_heatbal_dy,'gwflow_basin_heat_day.txt')
         write(out_heatbal_dy,*) 'Groundwater watershed-wide heat fluxes for each day (MJ)'
         write(out_heatbal_dy,8000) 'jday','mon','day','yr','unit','gis_id', &
           'name','ts','hbef','haft','recharge','gw_et','gw_sw','sw_gw', &
@@ -202,7 +203,7 @@
 
       !open file to track yearly groundwater heat balance
       if(gwflag_yr.eq.1) then
-        open(out_heatbal_yr,file='gwflow_basin_heat_yr.txt')
+        call open_output_file(out_heatbal_yr,'gwflow_basin_heat_yr.txt')
         write(out_heatbal_yr,*) 'Groundwater watershed-wide heat fluxes for each year (MJ)'
         write(out_heatbal_yr,8000) 'jday','mon','day','yr','unit','gis_id', &
           'name','hdel','recharge','gw_et','gw_sw','sw_gw', &
@@ -216,7 +217,7 @@
 
       !open file to write out average annual groundwater heat balance
       if(gwflag_aa.eq.1) then
-        open(out_heatbal_aa,file='gwflow_basin_heat_aa.txt')
+        call open_output_file(out_heatbal_aa,'gwflow_basin_heat_aa.txt')
         write(out_heatbal_aa,*) 'Groundwater watershed-wide heat fluxes average annual (MJ)'
         write(out_heatbal_aa,8000) 'jday','mon','day','yr','unit','gis_id', &
           'name','hdel','recharge','gw_et','gw_sw','sw_gw', &
@@ -322,7 +323,7 @@
               file_name(11) = 'gwflow_basin_sol_seo4_day.txt'
               file_name(12) = 'gwflow_basin_sol_seo3_day.txt'
             endif
-            open(out_solbal_dy+n,file=file_name(n))
+            call open_output_file(out_solbal_dy+n,trim(file_name(n)))
             write(out_solbal_dy+n,*) 'Solute basin daily loads (kg):',gwsol_nm(n)
             write(out_solbal_dy+n,8000) 'jday','mon','day','yr','unit', &
               'gis_id','name','ts','mbef','maft','recharge','gw_sw', &
@@ -354,7 +355,7 @@
               file_name(11) = 'gwflow_basin_sol_seo4_mon.txt'
               file_name(12) = 'gwflow_basin_sol_seo3_mon.txt'
             endif
-            open(out_solbal_mo+n,file=file_name(n))
+            call open_output_file(out_solbal_mo+n,trim(file_name(n)))
             write(out_solbal_mo+n,*) 'Solute basin monthly loads (kg):',gwsol_nm(n)
             write(out_solbal_mo+n,8000) 'jday','mon','day','yr','unit', &
               'gis_id','name','delm','recharge','gw_sw','sw_gw', &
@@ -406,7 +407,7 @@
               file_name(11) = 'gwflow_basin_sol_seo4_yr.txt'
               file_name(12) = 'gwflow_basin_sol_seo3_yr.txt'
             endif
-            open(out_solbal_yr+n,file=file_name(n))
+            call open_output_file(out_solbal_yr+n,trim(file_name(n)))
             write(out_solbal_yr+n,*) 'Solute basin annual loads (kg):',gwsol_nm(n)
             write(out_solbal_yr+n,8000) 'jday','mon','day','yr','unit', &
               'gis_id','name','delm','recharge','gw_sw','sw_gw', &
@@ -458,7 +459,7 @@
               file_name(11) = 'gwflow_basin_sol_seo4_aa.txt'
               file_name(12) = 'gwflow_basin_sol_seo3_aa.txt'
             endif
-            open(out_solbal_aa+n,file=file_name(n))
+            call open_output_file(out_solbal_aa+n,trim(file_name(n)))
             write(out_solbal_aa+n,*) 'Solute basin average annual loads (kg):',gwsol_nm(n)
             write(out_solbal_aa+n,8000) 'jday','mon','day','yr','unit', &
               'gis_id','name','delm','recharge','gw_sw','sw_gw', &
@@ -498,7 +499,7 @@
 
       !open cell-level long-format output files -----------------------------------------
       if(gwflag_day.eq.1) then
-        open(out_gwcell_day,file='gwflow_cell_wb_day.txt')
+        call open_output_file(out_gwcell_day,'gwflow_cell_wb_day.txt')
         write(out_gwcell_day,*) 'gwflow cell-level daily output'
         write(out_gwcell_day,*) 'fluxes in m3/day; head and wtdepth in m'
         write(out_gwcell_day,'(a8,a6,a6,a8,a8,a10,a12,20a13)') &
@@ -509,7 +510,7 @@
           'floodplain','canal','pond','phytorem'
       endif
       if(gwflag_mon.eq.1) then
-        open(out_gwcell_mon,file='gwflow_cell_wb_mon.txt')
+        call open_output_file(out_gwcell_mon,'gwflow_cell_wb_mon.txt')
         write(out_gwcell_mon,*) 'gwflow cell-level monthly output'
         write(out_gwcell_mon,*) 'values are monthly average daily rates' &
           //' (m3/day for fluxes, m for head/wtdepth)'
@@ -521,7 +522,7 @@
           'floodplain','canal','pond','phytorem'
       endif
       if(gwflag_yr.eq.1) then
-        open(out_gwcell_yr,file='gwflow_cell_wb_yr.txt')
+        call open_output_file(out_gwcell_yr,'gwflow_cell_wb_yr.txt')
         write(out_gwcell_yr,*) 'gwflow cell-level annual output'
         write(out_gwcell_yr,*) 'values are annual average daily rates' &
           //' (m3/day for fluxes, m for head/wtdepth)'
@@ -533,7 +534,7 @@
           'floodplain','canal','pond','phytorem'
       endif
       if(gwflag_aa.eq.1) then
-        open(out_gwcell_aa,file='gwflow_cell_wb_aa.txt')
+        call open_output_file(out_gwcell_aa,'gwflow_cell_wb_aa.txt')
         write(out_gwcell_aa,*) 'gwflow cell-level average annual output'
         write(out_gwcell_aa,*) 'values are avg annual daily rates' &
           //' (m3/day for fluxes, m for head/wtdepth)'
@@ -2206,10 +2207,11 @@
 !!    Writes gwflow_cell_definition.txt once during initialization.
 !!    Maps cell index to spatial location for all output files.
       use gwflow_module
+      use output_path_module
       implicit none
       integer :: i
 
-      open(out_gw_celldef, file='gwflow_cell_definition.txt')
+      call open_output_file(out_gw_celldef,'gwflow_cell_definition.txt')
       write(out_gw_celldef,'(a)') 'cell_id  row  col        x_coord        y_coord  zone  status          area'
       do i=1,ncell
         if(gw_state(i)%stat > 0) then
