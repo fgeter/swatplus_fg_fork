@@ -34,6 +34,33 @@
       logical :: dir_exists
       integer :: nargs, iarg, chdir_status
 
+!!     ~ ~ ~ COMMAND-LINE ARGUMENT HANDLING ~ ~ ~
+!!
+!!     SWAT+ accepts optional -i/--input and -o/--output arguments so that the
+!!     input data folder and output folder can differ from the directory where
+!!     the executable is launched.  Without these arguments, inputs and outputs
+!!     are both expected in the current working directory (original behaviour).
+!!
+!!     Design overview:
+!!       1. getcwd() captures the launch directory (exec_cwd) as an absolute
+!!          path before anything changes the CWD.
+!!       2. -i / -o paths are resolved to absolute using is_absolute(); relative
+!!          paths have exec_cwd prepended so they remain valid after chdir().
+!!       3. init_output_path() stores the output directory in the module-level
+!!          out_path variable (output_path_module) and creates the directory if
+!!          it does not exist.  cmdline_outpath_set is raised so readcio_read
+!!          does not later override this with the file.cio out_path setting.
+!!       4. simulation.out is opened via open_output_file() - which prepends
+!!          out_path - so it lands in the output directory before chdir() runs.
+!!       5. chdir() changes the CWD to the input directory.  All subsequent
+!!          relative open() calls across the codebase automatically resolve
+!!          against that directory; no other input opens needed modification.
+!!
+!!     Supported arguments:
+!!       -i, --input  <dir>   directory containing model input files
+!!       -o, --output <dir>   directory where output files are written
+!!       -h, --help           print usage and exit
+
       prog = " SWAT+ @TODAY@        MODULAR Rev @YEAR@.@SWAT_VERSION@"
 
       !! Get execution directory before any chdir

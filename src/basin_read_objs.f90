@@ -2,8 +2,16 @@
 
 !!     ~ ~ ~ PURPOSE ~ ~ ~
 !!     reads in the routing information from the watershed configuration
-!!     input file (.fig) and calculates the number of subbasins, reaches, 
-!!     and reservoirs
+!!     input file (.fig) and calculates the number of subbasins, reaches,
+!!     and reservoirs.
+!!
+!!     Input path note:
+!!       object.cnt is opened by its filename alone (no path prefix).  By the
+!!       time this subroutine is called, main has already executed chdir() to
+!!       the input directory (if -i was given), so all relative opens resolve
+!!       there automatically.  If object.cnt is not found, getcwd() is used to
+!!       report the absolute path that was searched so the user can diagnose
+!!       whether the wrong input directory was specified.
 
       use hydrograph_module
       use input_file_module
