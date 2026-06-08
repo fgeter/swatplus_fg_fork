@@ -167,5 +167,23 @@
       
       return
       end subroutine open_output_file
-      
+
+      !! Returns .true. if filepath is an absolute path on Linux, macOS, or Windows
+      logical function is_absolute(filepath)
+
+      implicit none
+
+      character(len=*), intent(in) :: filepath
+      character(len=1) :: first_char
+
+      first_char = filepath(1:1)
+      if (first_char == '/' .or. first_char == '\' .or. &
+          index(filepath, ':') == 2) then
+        is_absolute = .true.
+      else
+        is_absolute = .false.
+      end if
+
+      end function is_absolute
+
       end module output_path_module

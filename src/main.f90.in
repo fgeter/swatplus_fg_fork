@@ -73,7 +73,7 @@
       !! Resolve and initialise output path (must be absolute before chdir changes CWD)
       if (got_o) then
         !! Convert relative -o path to absolute
-        if (out_arg(1:1) /= "/") then
+        if (.not. is_absolute(trim(out_arg))) then
           out_arg = trim(exec_cwd) // "/" // trim(out_arg)
         end if
         call init_output_path(trim(out_arg))
@@ -97,6 +97,10 @@
 
       !! Change to input directory if -i was specified
       if (got_i) then
+        !! Convert relative -i path to absolute
+        if (.not. is_absolute(trim(in_arg))) then
+          in_arg = trim(exec_cwd) // "/" // trim(in_arg)
+        end if
         inquire(file=trim(in_arg), exist=dir_exists)
         if (.not. dir_exists) then
           write (*,*) "! ERROR: input directory does not exist: ", trim(in_arg)
