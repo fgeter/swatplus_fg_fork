@@ -70,13 +70,70 @@
       integer :: i_chan = 0           !rtb gwflow    |counter
       integer :: iob_chan = 0        !rtb gwflow    |ob index for channel
       real :: sumflo = 0.
+      integer, allocatable, save :: par_hru(:)   !! icmd indices of independent (cmd_order==1) HRUs
+      integer, save :: n_par_hru = -1            !! size of par_hru (-1 = not yet built)
+      logical :: use_par = .false.               !! run the parallel HRU pre-pass this day?
+      integer :: k = 0                           !! pre-pass loop counter
 
       icmd = sp_ob1%objs
       wallo(:)%trn_cur = 1
       if (allocated(res_ob)) res_ob(:)%wallo_call = 0
-      
+
+      !! === OpenMP: parallel pre-pass over independent (cmd_order==1) headwater HRUs ===
+      !! Build the eligible list once. Eligible = headwater HRU with no incoming hydrograph
+      !! (rcv_tot==0), so the incoming-gather part of the loop body is a no-op for them.
+      !! Gated to simple runs (no water allocation / constituents) for now. Each eligible
+      !! HRU's compute is done here in parallel; the sequential loop below skips their
+      !! recompute but still runs their routing/output (kept sequential, incl. all file I/O).
+      use_par = (db_mx%wallo_db == 0 .and. cs_db%num_pests == 0 .and.  &
+                 cs_db%num_salts == 0 .and. cs_db%num_cs == 0)
+      if (n_par_hru < 0) then
+        n_par_hru = 0
+        iob = sp_ob1%objs
+        do while (iob /= 0)
+          if (ob(iob)%cmd_order == 1 .and. ob(iob)%typ == "hru" .and. ob(iob)%rcv_tot == 0)  &
+            n_par_hru = n_par_hru + 1
+          iob = ob(iob)%cmd_next
+        end do
+        allocate (par_hru(max(1, n_par_hru)))
+        n_par_hru = 0
+        iob = sp_ob1%objs
+        do while (iob /= 0)
+          if (ob(iob)%cmd_order == 1 .and. ob(iob)%typ == "hru" .and. ob(iob)%rcv_tot == 0) then
+            n_par_hru = n_par_hru + 1
+            par_hru(n_par_hru) = iob
+          end if
+          iob = ob(iob)%cmd_next
+        end do
+      end if
+      if (use_par .and. n_par_hru > 0) then
+        !$omp parallel do schedule(dynamic)
+        do k = 1, n_par_hru
+          icmd = par_hru(k)                       !! threadprivate icmd
+          !! per-object setup mirroring the loop body for an independent HRU
+          ob(icmd)%day_cur = ob(icmd)%day_cur + 1
+          if (ob(icmd)%day_cur > ob(icmd)%day_max) ob(icmd)%day_cur = 1
+          ob(icmd)%hin     = hz
+          ob(icmd)%hin_sur = hz
+          ob(icmd)%hin_lat = hz
+          ob(icmd)%hin_til = hz
+          ob(icmd)%tsin     = 0.
+          ob(icmd)%peakrate = 0.
+          ht1 = hz                                !! threadprivate
+          ihru = ob(icmd)%num                     !! threadprivate
+          call hru_control
+        end do
+        !$omp end parallel do
+      end if
+      icmd = sp_ob1%objs                          !! reset for the sequential command loop
+
       do while (icmd /= 0)
-          
+
+        !! independent HRUs were computed in the parallel pre-pass above: skip their
+        !! recompute here, but still run the routing/output section below.
+        if (.not. (use_par .and. ob(icmd)%cmd_order == 1 .and.  &
+                   ob(icmd)%typ == "hru" .and. ob(icmd)%rcv_tot == 0)) then
+
         !! allocate water for transfers that don't include a channel as a source
         !! check here in case channel is last object
         if (db_mx%wallo_db > 0) then
@@ -423,7 +480,9 @@
             end if
             
           end select
-          
+
+        end if   !! end skip-compute wrapper for pre-pass HRUs
+
         !! allocate water for transfers that don't include a channel as a source
         !! check here in case channel is not the last object
         if (db_mx%wallo_db > 0) then
