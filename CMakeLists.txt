@@ -38,6 +38,17 @@ if(NOT TAG)
 endif()
 
 
+# --- Threading build options (multi-threading effort) ------------------------
+# Both default OFF so normal builds are unaffected.
+#   -DSWAT_OPENMP=ON : compile/link with OpenMP
+#   -DSWAT_TSAN=ON   : ThreadSanitizer build (implies OpenMP, requires dynamic link)
+option(SWAT_OPENMP "Build with OpenMP threading" OFF)
+option(SWAT_TSAN   "Build with ThreadSanitizer (implies OpenMP + dynamic link)" OFF)
+if(SWAT_TSAN)
+    set(SWAT_OPENMP ON)
+endif()
+# -----------------------------------------------------------------------------
+
 if (UNIX)
     if(CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
         set(fdialect        "-fpp -free -fpe0 -traceback -diag-disable=10448")
@@ -64,7 +75,9 @@ if (UNIX)
             if (NOT ("${os_id}" STREQUAL "Arch" OR 
                      "${os_like}" MATCHES ".*arch.*" OR
                      "${os_id}" STREQUAL "fedora" ))
-                link_libraries("-static")
+                if(NOT SWAT_TSAN)   # ThreadSanitizer is incompatible with static linking
+                    link_libraries("-static")
+                endif()
             endif()
         endif()
     endif()
@@ -125,6 +138,19 @@ set(CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} ${fdebug}")
 # set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} ${frelease}")
 set(CMAKE_Fortran_FLAGS_RELEASE "${frelease}")
 
+# --- OpenMP / ThreadSanitizer flags (multi-threading effort) ------------------
+if(SWAT_OPENMP)
+    find_package(OpenMP REQUIRED COMPONENTS Fortran)
+    string(APPEND CMAKE_Fortran_FLAGS " ${OpenMP_Fortran_FLAGS}")
+endif()
+if(SWAT_TSAN)
+    # -O1 with -g keeps TSan traces usable. The -ffpe-trap from fdialect stays on;
+    # revisit only if underflow traps fire spuriously under the TSan/OpenMP runtime.
+    string(APPEND CMAKE_Fortran_FLAGS " -fsanitize=thread -g -O1")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -fsanitize=thread")
+endif()
+# -----------------------------------------------------------------------------
+
 #############################################################################
 # Build
 # list (SORT _variableNames)
@@ -153,6 +179,10 @@ endif()
 
 file(GLOB sources src/*.f90)
 add_executable(${SWATPLUS_EXE} ${sources})
+
+if(SWAT_OPENMP)
+    target_link_libraries(${SWATPLUS_EXE} OpenMP::OpenMP_Fortran)
+endif()
 
 #############################################################################
 # Install

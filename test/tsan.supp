@@ -1,0 +1,18 @@
+# ThreadSanitizer suppressions for the SWAT+ multi-threading effort.
+#
+# The gfortran runtime (libgfortran) uses internal locks for formatted I/O and
+# I/O-unit management. Under ThreadSanitizer these show up as lock-order-inversion
+# (potential deadlock) and, in threaded I/O, as data races INSIDE the runtime.
+# They are not application bugs. Suppress reports originating in the runtime so
+# real races in SWAT+ source stand out.
+#
+# NOTE: libgomp (the OpenMP runtime) is deliberately NOT suppressed — a real race
+# in a parallel region is attributed to the SWAT+ frame, and we don't want to mask
+# anything that legitimately routes through the OpenMP runtime.
+#
+# Use with: TSAN_OPTIONS="suppressions=test/tsan.supp detect_deadlocks=0 halt_on_error=0"
+# (detect_deadlocks=0 also turns off the lock-order-inversion detector entirely.)
+
+deadlock:libgfortran
+race:libgfortran
+called_from_lib:libgfortran
