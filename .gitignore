@@ -51,6 +51,7 @@ Data/.DS_Store
 build/
 build-rel/
 build-tsan/
+build-omp/
 nbproject/
 .metadata/
 .project

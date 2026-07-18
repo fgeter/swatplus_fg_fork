@@ -512,4 +512,15 @@
       integer, dimension(:), allocatable :: tillage_days
       real, dimension(:), allocatable :: tillage_factor
 
+      !! OpenMP: per-HRU transient scratch + the HRU index made thread-private for the
+      !! multi-threading effort. Inert without -fopenmp and at 1 thread.
+      !! See tmp/threading_state_inventory.md.
+      !$omp threadprivate(ihru, ipl, isep, qday, qtile, etday, ep_day)
+      !$omp threadprivate(es_day, canev, pet_day, inflpcp, precip_eff, snofall, snomlt)
+      !$omp threadprivate(usle, nd_30, ls_overq, latqrunon, satexq_chan, fertn, fertp)
+      !$omp threadprivate(fixn, grazn, grazp, latlyr, lyrtile, sepday, sw_excess)
+      !$omp threadprivate(wt_shall, bsprev, voltot, fertnh3, fertno3, fertorgn, fertorgp)
+      !$omp threadprivate(fertsolp, albday, ep_max, vpd, snoev, enratio, wnan)
+      !$omp threadprivate(translt, par)
+
       end module hru_module

@@ -377,6 +377,17 @@
         module procedure ro_mult_const
       end interface
 
+      !! OpenMP: per-HRU organic/soil working scratch made thread-private (excludes the
+      !! read-only zero-constants orgz/soil_org_z and the basin reductions bsn_org_*).
+      !$omp threadprivate(soil_prof_hact, soil_prof_hp, soil_prof_hs, soil_prof_hsta)
+      !$omp threadprivate(soil_prof_lig, soil_prof_man, soil_prof_meta, soil_prof_microb)
+      !$omp threadprivate(soil_prof_mn, soil_prof_mp, soil_prof_nonlig, soil_prof_root)
+      !$omp threadprivate(soil_prof_root_frac, soil_prof_rsd, soil_prof_seq_hp, soil_prof_seq_hs)
+      !$omp threadprivate(soil_prof_seq_microb, soil_prof_slig, soil_prof_smeta, soil_prof_somc)
+      !$omp threadprivate(soil_prof_srsd, soil_prof_sstr, soil_prof_str, soil_prof_tot, soil_prof_water)
+      !$omp threadprivate(decomp, pl_mass_up, org_frt, abgr_drop, leaf_drop, seed_drop, stem_drop)
+      !$omp threadprivate(mix_mn, mix_mp, mix_org, pl_yield)
+
     contains
 
       !! add mineral n

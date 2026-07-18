@@ -1219,8 +1219,13 @@
              
       interface operator (//)
         module procedure hydout_div_conv
-      end interface   
-             
+      end interface
+
+      !! OpenMP: the object/command index (icmd), weather-station index (iwst) and the
+      !! working hydrographs are per-HRU; make them thread-private. Excludes the read-only
+      !! zero-hydrograph hz.
+      !$omp threadprivate(icmd, iwst, ht1, ht2, ht3, ht4, ht5, delrto)
+
       contains
 
       !! function to convert mass to concentration

@@ -256,5 +256,8 @@
       character(len=50), dimension(:), allocatable :: wnd_n
       character(len=50), dimension(:), allocatable :: atmo_n
       character(len=50), dimension(:), allocatable :: petm_n
-          
+
+      !! OpenMP: the current-weather carrier is per-HRU; make it thread-private.
+      !$omp threadprivate(w)
+
       end module climate_module

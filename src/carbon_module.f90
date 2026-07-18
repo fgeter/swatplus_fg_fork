@@ -365,8 +365,11 @@
         
       interface operator (/)
         module procedure carbon_plant_gl_div
-      end interface 
-        
+      end interface
+
+      !! OpenMP: per-HRU carbon working scratch (cbn_zhang2 etc.) made thread-private.
+      !$omp threadprivate(org_con, org_tran, org_allo, org_flux, org_ratio, carbdb)
+
       contains
 
       function carbon_soil_flux__add (hru1, hru2) result (hru3)
