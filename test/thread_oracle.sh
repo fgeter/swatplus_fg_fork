@@ -62,8 +62,8 @@ echo "[oracle] running sequential golden ($SEQ_EXE, 1 thread)"
 
 # Compare the annual-average / basin numeric outputs (exclude timestamped logs)
 ( cd "$GOLD" && ls *_aa.txt basin_*.txt *_yr.txt 2>/dev/null \
-    | grep -vE 'simulation' | sort -u > .testfiles.txt )
-echo "[oracle] comparing $(wc -l < "$GOLD/.testfiles.txt") output files (abserr=$AERR relerr=$RERR, threads=$THREADS)"
+    | grep -vE 'simulation' | sort -u > .testfiles.tst )
+echo "[oracle] comparing $(wc -l < "$GOLD/.testfiles.tst") output files (abserr=$AERR relerr=$RERR, threads=$THREADS)"
 
 # spcheck ctest: copies GOLD to a temp dir, runs PAR_EXE there, diffs against GOLD.
 OMP_NUM_THREADS="$THREADS" python3 "$REPO/test/spcheck.py" ctest \
