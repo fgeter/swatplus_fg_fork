@@ -7,9 +7,14 @@
 # (default) with spcheck.py. A missed threadprivate/data race shows up as a numeric
 # diff in the annual-average outputs, which aggregate every simulated day.
 #
-# The fast scenario is DERIVED from refdata/Ames_sub1 at runtime (2-year window,
-# carbon diagnostics off, annual-average output only) so it stays in sync with the
-# reference data and produces ~2 MB instead of ~4.7 GB of output.
+# The fast scenario is DERIVED from refdata/Ams_sub1 at runtime (2-year window,
+# carbon diagnostics off, YEARLY output only) so it stays in sync with the
+# reference data and produces a few MB instead of ~4.7 GB of output.
+#
+# Yearly (not annual-average) is used deliberately: soil_nutcarb_write.f90 does not
+# compute/emit average-annual carbon output regardless of print.prt, so an AA-only
+# config would omit the carbon outputs. Yearly is the finest aggregate that folds in
+# every simulated day AND carries the carbon writes.
 #
 # Usage:
 #   test/thread_oracle.sh <seq_exe> [par_exe] [threads] [abserr] [relerr]
@@ -48,10 +53,10 @@ gen_fast() {
   sed -i 's/1975/2019/'                  "$d"/print.prt     # match print window
   sed -i 's/\(cbn_diagnostics *\)1/\10/' "$d"/carb_coefs.cbn # no daily carbon diagnostics
   sed -i \
-    -e 's/^hru_wb .*/hru_wb        n  n  n  y/'  -e 's/^hru_nb .*/hru_nb        n  n  n  y/' \
-    -e 's/^hru_ls .*/hru_ls        n  n  n  y/'  -e 's/^hru_pw .*/hru_pw        n  n  n  y/' \
-    -e 's/^hru_cb .*/hru_cb        n  n  n  y/'  -e 's/^hru_cb_vars .*/hru_cb_vars   n  n  n  n/' \
-    "$d"/print.prt                                          # annual-average output only
+    -e 's/^hru_wb .*/hru_wb        n  n  y  n/'  -e 's/^hru_nb .*/hru_nb        n  n  y  n/' \
+    -e 's/^hru_ls .*/hru_ls        n  n  y  n/'  -e 's/^hru_pw .*/hru_pw        n  n  y  n/' \
+    -e 's/^hru_cb .*/hru_cb        n  n  y  n/'  -e 's/^hru_cb_vars .*/hru_cb_vars   n  n  y  n/' \
+    "$d"/print.prt                                          # yearly output only (cols: daily monthly yearly avann)
 }
 
 GOLD="$WORK/gold"; mkdir -p "$GOLD"; gen_fast "$GOLD"
@@ -61,7 +66,7 @@ echo "[oracle] running sequential golden ($SEQ_EXE, 1 thread)"
   || { echo "sequential run failed; see $GOLD/run.log" >&2; exit 2; }
 
 # Compare the annual-average / basin numeric outputs (exclude timestamped logs)
-( cd "$GOLD" && ls *_aa.txt basin_*.txt *_yr.txt 2>/dev/null \
+( cd "$GOLD" && ls *_yr.txt basin_*.txt 2>/dev/null \
     | grep -vE 'simulation' | sort -u > .testfiles.tst )
 echo "[oracle] comparing $(wc -l < "$GOLD/.testfiles.tst") output files (abserr=$AERR relerr=$RERR, threads=$THREADS)"
 
