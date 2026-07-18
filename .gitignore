@@ -49,6 +49,8 @@ _ReSharper*/
 .DS_Store
 Data/.DS_Store
 build/
+build-rel/
+build-tsan/
 nbproject/
 .metadata/
 .project
