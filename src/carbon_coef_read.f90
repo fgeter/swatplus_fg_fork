@@ -163,5 +163,16 @@ subroutine carbon_coef_read
           endif
         endif
     endif
+
+    !! Snapshot the setup config (defaults + any carb_coefs.cbn overrides) into SHARED holders so
+    !! the OpenMP parallel HRU pre-pass can assign them into each thread's threadprivate copy —
+    !! worker threads do not inherit the master's threadprivate setup values. See command.f90.
+    org_con_hold   = org_con
+    org_allo_hold  = org_allo
+    carbdb_hold    = carbdb
+    org_tran_hold  = org_tran
+    org_ratio_hold = org_ratio
+    org_frac_hold  = org_frac
+
     return
 end subroutine carbon_coef_read                       

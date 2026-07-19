@@ -20,7 +20,10 @@
       use reservoir_module
       use organic_mineral_mass_module
       use constituent_mass_module
-      use hru_module, only : ihru, hru
+      use hru_module, only : ihru, hru, enratio
+      use carbon_module, only : org_con, org_allo, carbdb, org_tran, org_ratio, org_frac,  &
+                                org_con_hold, org_allo_hold, carbdb_hold, org_tran_hold,   &
+                                org_ratio_hold, org_frac_hold
       use basin_module
       use maximum_data_module
       use gwflow_module
@@ -121,6 +124,21 @@
           ob(icmd)%peakrate = 0.
           ht1 = hz                                !! threadprivate
           ihru = ob(icmd)%num                     !! threadprivate
+          !! seed this thread's threadprivate carbon setup-config from the shared master
+          !! snapshot (workers don't inherit master's threadprivate values; copyin is
+          !! unreliable for derived-type arrays). Config fields persist; scratch is reset in
+          !! cbn_zhang2, so a per-iteration assignment is safe and cheap.
+          org_con   = org_con_hold
+          org_allo  = org_allo_hold
+          carbdb    = carbdb_hold
+          org_tran  = org_tran_hold
+          org_ratio = org_ratio_hold
+          org_frac  = org_frac_hold
+          !! also seed threadprivate residue/nut scratch that is read before write in the
+          !! residue-decomp / organic-N routines (type-default init isn't applied to workers)
+          decomp    = orgz
+          transfer  = rsd_originz
+          enratio   = 0.
           call hru_control
         end do
         !$omp end parallel do

@@ -39,6 +39,8 @@
       use output_landscape_module, only : hnb_d
       
       implicit none 
+
+      type (organic_mass) :: photo_decomp   !! per-HRU local scratch (was shared module var -> race)
        
       integer :: j          !none          |HRU number
       real :: rmn1          !kg N/ha       |amount of nitrogen moving from fresh organic
