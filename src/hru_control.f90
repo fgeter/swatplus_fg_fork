@@ -732,8 +732,8 @@
 
       ! output_waterbal
         hwb_d(j)%precip = w%precip
-        hwb_d(j)%snofall = snofall
-        hwb_d(j)%snomlt = snomlt
+        hwb_d(j)%snofall = snofall(j)
+        hwb_d(j)%snomlt = snomlt(j)
         hwb_d(j)%surq_gen = qday(j)
         hwb_d(j)%latq = latq(j)
         hwb_d(j)%wateryld = qdr(j)
@@ -779,11 +779,11 @@
         
 
       ! output_nutbal
-        hnb_d(j)%grazn = grazn
-        hnb_d(j)%grazp = grazp
-        hnb_d(j)%fertn = fertn
-        hnb_d(j)%fertp = fertp
-        hnb_d(j)%fixn = fixn
+        hnb_d(j)%grazn = grazn(j)
+        hnb_d(j)%grazp = grazp(j)
+        hnb_d(j)%fertn = fertn(j)
+        hnb_d(j)%fertp = fertp(j)
+        hnb_d(j)%fixn = fixn(j)
         hnb_d(j)%gwsoiln = gwsoiln(j) !rtb gwflow
         hnb_d(j)%gwsoilp = gwsoilp(j) !rtb gwflow
 

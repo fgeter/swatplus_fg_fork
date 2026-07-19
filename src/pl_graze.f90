@@ -91,8 +91,8 @@
         if (manure_kg > 0. .and. it > 0) then
           call pl_manure (it, manure_kg, 1.0)
           !! grazing manure N and P for the grazn/grazp landscape output
-          grazn = manure_kg * (manure_om(it)%forgn + manure_om(it)%fminn)
-          grazp = manure_kg * (manure_om(it)%forgp + manure_om(it)%fminp)
+          grazn(j) = manure_kg * (manure_om(it)%forgn + manure_om(it)%fminn)
+          grazp(j) = manure_kg * (manure_om(it)%forgp + manure_om(it)%fminp)
         end if
 
       return

@@ -92,7 +92,7 @@
         call pl_nfix
       end if
 
-      nplnt(j) = nplnt(j) + fixn
+      nplnt(j) = nplnt(j) + fixn(j)
       pl_mass(j)%tot(ipl)%n = pl_mass(j)%tot(ipl)%n + nplnt(j)
       pl_mass(j)%ab_gr(ipl)%n = pl_mass(j)%ab_gr(ipl)%n + nplnt(j) * (1. - pcom(j)%plg(ipl)%root_frac)
       pl_mass(j)%root(ipl)%n = pl_mass(j)%root(ipl)%n + nplnt(j) * pcom(j)%plg(ipl)%root_frac

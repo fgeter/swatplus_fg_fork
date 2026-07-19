@@ -84,11 +84,11 @@
         ep_day(j) = 0.
         ep_max(j) = 0.
         es_day(j) = 0.
-        fertn = 0.
-        fertp = 0.
-        fixn = 0.
-        grazn = 0.
-        grazp = 0.
+        fertn(j) = 0.
+        fertp(j) = 0.
+        fixn(j) = 0.
+        grazn(j) = 0.
+        grazp(j) = 0.
         if (time%step > 1)  hhqday(j,:) = 0.
         inflpcp(j) = 0.
         lyrtile(j) = 0.
@@ -100,8 +100,8 @@
         latqrunon(j) = 0.
         sepday(j) = 0.
         snoev(j) = 0.
-        snofall = 0.
-        snomlt = 0.
+        snofall(j) = 0.
+        snomlt(j) = 0.
         sw_excess = 0.
         uno3d = 0.
         usle = 0.

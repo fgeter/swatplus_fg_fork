@@ -35,6 +35,13 @@
 !!    arrays for plant communities
       allocate (cvm_com(mhru), source = 0.)
       allocate (etday(mhru), source = 0.)
+      allocate (fertn(mhru), source = 0.)
+      allocate (fertp(mhru), source = 0.)
+      allocate (fixn(mhru), source = 0.)
+      allocate (grazn(mhru), source = 0.)
+      allocate (grazp(mhru), source = 0.)
+      allocate (snofall(mhru), source = 0.)
+      allocate (snomlt(mhru), source = 0.)
       allocate (albday(mhru), source = 0.)
       allocate (bioday(mhru), source = 0.)
       allocate (bsprev(mhru), source = 0.)

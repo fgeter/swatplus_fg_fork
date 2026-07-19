@@ -308,13 +308,13 @@
       real, dimension(:), allocatable :: albday
       real :: wt_shall = 0.
       real :: sq_rto = 0.
-      real :: snomlt = 0.
-      real :: snofall = 0.
-      real :: fixn = 0.
+      real, dimension(:), allocatable :: snomlt
+      real, dimension(:), allocatable :: snofall
+      real, dimension(:), allocatable :: fixn
       real :: qtile = 0.
       real :: latlyr = 0.            !!mm            |lateral flow in soil layer for the day
       real, dimension(:), allocatable :: inflpcp
-      real :: fertn = 0.
+      real, dimension(:), allocatable :: fertn
       real, dimension(:), allocatable :: sepday
       real, dimension(:), allocatable :: bioday
       real :: sepcrk = 0.
@@ -324,9 +324,9 @@
       real :: fertorgn = 0.
       real :: fertsolp = 0.
       real :: fertorgp = 0.
-      real :: fertp = 0.
-      real :: grazn = 0.
-      real :: grazp = 0.
+      real, dimension(:), allocatable :: fertp
+      real, dimension(:), allocatable :: grazn
+      real, dimension(:), allocatable :: grazp
       real :: sdti = 0.
       real, dimension(:), allocatable :: voltot
       real :: volcrmin = 0.          !!mm            |minimum crack volume allowed in any soil layer
@@ -514,9 +514,9 @@
       !! multi-threading effort. Inert without -fopenmp and at 1 thread.
       !! See tmp/threading_state_inventory.md.
       !$omp threadprivate(ihru, ipl, isep, qtile)
-      !$omp threadprivate(precip_eff, snofall, snomlt)
-      !$omp threadprivate(usle, nd_30, satexq_chan, fertn, fertp)
-      !$omp threadprivate(fixn, grazn, grazp, latlyr, sw_excess)
+      !$omp threadprivate(precip_eff)
+      !$omp threadprivate(usle, nd_30, satexq_chan)
+      !$omp threadprivate(latlyr, sw_excess)
       !$omp threadprivate(wt_shall, fertnh3, fertno3, fertorgn, fertorgp)
       !$omp threadprivate(fertsolp, enratio)
       !$omp threadprivate(par)

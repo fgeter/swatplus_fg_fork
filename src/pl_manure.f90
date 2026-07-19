@@ -178,8 +178,8 @@
       fertorgn = frt_kg * manure_om(ifrt)%forgn
       fertsolp = frt_kg * manure_om(ifrt)%fminp
       fertorgp = frt_kg * manure_om(ifrt)%forgp  
-      fertn = fertn + frt_kg * (manure_om(ifrt)%fminn + manure_om(ifrt)%forgn)
-      fertp = fertp + frt_kg * (manure_om(ifrt)%fminp + manure_om(ifrt)%forgp)
+      fertn(j) = fertn(j) + frt_kg * (manure_om(ifrt)%fminn + manure_om(ifrt)%forgn)
+      fertp(j) = fertp(j) + frt_kg * (manure_om(ifrt)%fminp + manure_om(ifrt)%forgp)
       
       return
       end subroutine pl_manure
