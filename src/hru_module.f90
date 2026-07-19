@@ -274,7 +274,7 @@
       
       real :: precip_eff = 0.   !! mm   |daily effective precip for runoff calculations = precipday + ls_overq + snomlt - canstor
                                 !!      |precip_eff = precipday + ls_overq - snofall + snomlt - canstor
-      real :: qday = 0.         !! mm   |surface runoff that reaches main channel during day in HRU
+      real, dimension(:), allocatable :: qday
       real :: satexq_chan = 0.  !! mm   |saturation excess runoff that reaches main channel during day in HRU
 
 
@@ -330,19 +330,19 @@
       real :: sdti = 0.
       real :: voltot = 0.            !!mm            |total volume of cracks expressed as depth per area unit
       real :: volcrmin = 0.          !!mm            |minimum crack volume allowed in any soil layer
-      real :: canev = 0.
+      real, dimension(:), allocatable :: canev
       real :: usle = 0.
       real :: rcn = 0.
       real :: enratio = 0.
       real :: vpd = 0.
-      real :: pet_day = 0.
-      real :: ep_day = 0.
-      real :: snoev = 0.
-      real :: es_day = 0.
+      real, dimension(:), allocatable :: pet_day
+      real, dimension(:), allocatable :: ep_day
+      real, dimension(:), allocatable :: snoev
+      real, dimension(:), allocatable :: es_day
       real :: ls_overq = 0.
       real :: latqrunon = 0.
       real :: tilerunon = 0.
-      real :: ep_max = 0.
+      real, dimension(:), allocatable :: ep_max
       real :: bsprev = 0.
       real :: usle_ei = 0.
       real :: snocov1 = 0.
@@ -513,12 +513,12 @@
       !! OpenMP: per-HRU transient scratch + the HRU index made thread-private for the
       !! multi-threading effort. Inert without -fopenmp and at 1 thread.
       !! See tmp/threading_state_inventory.md.
-      !$omp threadprivate(ihru, ipl, isep, qday, qtile, ep_day)
-      !$omp threadprivate(es_day, canev, pet_day, inflpcp, precip_eff, snofall, snomlt)
+      !$omp threadprivate(ihru, ipl, isep, qtile)
+      !$omp threadprivate(inflpcp, precip_eff, snofall, snomlt)
       !$omp threadprivate(usle, nd_30, ls_overq, latqrunon, satexq_chan, fertn, fertp)
       !$omp threadprivate(fixn, grazn, grazp, latlyr, lyrtile, sepday, sw_excess)
       !$omp threadprivate(wt_shall, bsprev, voltot, fertnh3, fertno3, fertorgn, fertorgp)
-      !$omp threadprivate(fertsolp, albday, ep_max, vpd, snoev, enratio)
+      !$omp threadprivate(fertsolp, albday, vpd, enratio)
       !$omp threadprivate(par)
       !$omp threadprivate(uno3d, uapd, un2, up2, htfac, epmax)
       !$omp threadprivate(rto_no3, rto_solp, uno3d_tot, uapd_tot, sum_no3, sum_solp)

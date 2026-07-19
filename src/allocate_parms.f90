@@ -35,6 +35,13 @@
 !!    arrays for plant communities
       allocate (cvm_com(mhru), source = 0.)
       allocate (etday(mhru), source = 0.)
+      allocate (ep_day(mhru), source = 0.)
+      allocate (es_day(mhru), source = 0.)
+      allocate (ep_max(mhru), source = 0.)
+      allocate (pet_day(mhru), source = 0.)
+      allocate (snoev(mhru), source = 0.)
+      allocate (qday(mhru), source = 0.)
+      allocate (canev(mhru), source = 0.)
       allocate (percn(mhru), source = 0.)
 
 !! septic changes added 1/28/09 gsm

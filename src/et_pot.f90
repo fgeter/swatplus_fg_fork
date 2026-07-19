@@ -144,8 +144,8 @@
           
           !! net radiation
           pet_alpha = 1.28
-          pet_day = pet_alpha * (dlt / (dlt + gma)) * rn_pet / xl
-          pet_day = Max(0., pet_day)
+          pet_day(j) = pet_alpha * (dlt / (dlt + gma)) * rn_pet / xl
+          pet_day(j) = Max(0., pet_day(j))
 
        case (1)   !! PENMAN-MONTEITH POTENTIAL EVAPOTRANSPIRATION METHOD
 
@@ -185,8 +185,8 @@
            !! potential ET: reference crop alfalfa at 40 cm height
            rv = 114. / (w%windsp * (170./1000.)**0.2)
            rc = 49. / (1.4 - 0.4 * co2y(time%yrs) / 330.)
-           pet_day = (dlt * rn_pet + gma * rho * vpd / rv) / (xl * (dlt + gma * (1. + rc / rv)))
-           pet_day = Max(0., pet_day)
+           pet_day(j) = (dlt * rn_pet + gma * rho * vpd / rv) / (xl * (dlt + gma * (1. + rc / rv)))
+           pet_day(j) = Max(0., pet_day(j))
  
         !! maximum plant ET
           igrocom = 0
@@ -194,7 +194,7 @@
             if (pcom(j)%plcur(ipl)%gro == "y") igrocom = 1
           end do
           if (igrocom <= 0) then
-            ep_max = 0.0
+            ep_max(j) = 0.0
           else
             !! determine wind speed and height of wind speed measurement
             !! adjust to 100 cm (1 m) above canopy if necessary
@@ -251,9 +251,9 @@
             rc = rc / (0.5 * (pcom(j)%lai_sum + 0.01) * (1.4 - 0.4 * co2y(time%yrs) / 330.))
 
             !! calculate maximum plant ET
-            ep_max = (dlt * rn + gma * rho * vpd / rv) / (xl * (dlt + gma * (1. + rc / rv)))
-            if (ep_max < 0.) ep_max = 0.
-            ep_max = Min(ep_max, pet_day)
+            ep_max(j) = (dlt * rn + gma * rho * vpd / rv) / (xl * (dlt + gma * (1. + rc / rv)))
+            if (ep_max(j) < 0.) ep_max(j) = 0.
+            ep_max(j) = Min(ep_max(j), pet_day(j))
           end if
        
        case (2)   !! HARGREAVES POTENTIAL EVAPOTRANSPIRATION METHOD
@@ -264,20 +264,20 @@
         ramm = w%solradmx  * 37.59 / 30. 
 
         if (w%tmax > w%tmin) then
-         pet_day = 0.0023 * (ramm / xl) * (w%tave + 17.8) * (w%tmax - w%tmin)**0.5
-         pet_day = Max(0., pet_day)
+         pet_day(j) = 0.0023 * (ramm / xl) * (w%tave + 17.8) * (w%tmax - w%tmin)**0.5
+         pet_day(j) = Max(0., pet_day(j))
         else
-          pet_day = 0.
+          pet_day(j) = 0.
         endif
       
        case (3)  !! READ IN PET VALUES
         iob = hru(j)%obj_no
         iwst = ob(iob)%wst
-        pet_day = wst(iwst)%weat%pet
+        pet_day(j) = wst(iwst)%weat%pet
   
       end select
        
-      pet_day = hru(j)%hyd%pet_co * pet_day
+      pet_day(j) = hru(j)%hyd%pet_co * pet_day(j)
 
       return
       end subroutine et_pot

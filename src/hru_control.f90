@@ -500,12 +500,12 @@
         end do
         
         !! compute actual ET for day in HRU
-        etday(j) = ep_day + es_day + canev
-        es_day = es_day
+        etday(j) = ep_day(j) + es_day(j) + canev(j)
+        es_day(j) = es_day(j)
 
         !rtb gwflow
         if(bsn_cc%gwflow.eq.1) then
-          etremain(j) = pet_day - etday(j)
+          etremain(j) = pet_day(j) - etday(j)
         endif
  
         !! compute pesticide washoff   
@@ -555,7 +555,7 @@
           if (wet_dat_c(ires)%hyd.eq.'paddy') then !.and.time%yrs > pco%nyskip) then
             if (wet_ob(j)%depth > -0.1) then
            write(100100,'(4(I6,","),20(f20.1,","))') time%yrc,time%mo,time%day_mo,j,w%precip,irrig(j)%applied,hru(j)%water_seep,     &
-            pet_day,etday(j),wet_ob(j)%weir_hgt*1000,wet_ob(j)%depth*1000.,ht2%flo/(hru(j)%area_ha*10.),soil(j)%sw,sedppm,ht2%sed*1000, &
+            pet_day(j),etday(j),wet_ob(j)%weir_hgt*1000,wet_ob(j)%depth*1000.,ht2%flo/(hru(j)%area_ha*10.),soil(j)%sw,sedppm,ht2%sed*1000, &
             wet(j)%no3,ht2%no3,pcom(j)%lai_sum,saltcon 
             end if
           end if
@@ -625,7 +625,7 @@
         !! ht2%flo is outflow from wetland or total saturation excess if no wetland
         if(ht2%flo > 0.) then
           wet_outflow = ht2%flo / hru(j)%area_ha / 10.   !! mm = m3/ha *ha/10000m2 *1000mm/m
-          qday = qday + wet_outflow
+          qday(j) = qday(j) + wet_outflow
           qdr(j) = qdr(j) + wet_outflow
           ht2%flo = 0.
         end if
@@ -655,7 +655,7 @@
         !qday =  surfq(j)
 
         !! compute water yield for HRU
-        qdr(j) = qday + latq(j) + qtile
+        qdr(j) = qday(j) + latq(j) + qtile
 
         if (qdr(j) < 0.) qdr(j) = 0.
 
@@ -734,7 +734,7 @@
         hwb_d(j)%precip = w%precip
         hwb_d(j)%snofall = snofall
         hwb_d(j)%snomlt = snomlt
-        hwb_d(j)%surq_gen = qday
+        hwb_d(j)%surq_gen = qday(j)
         hwb_d(j)%latq = latq(j)
         hwb_d(j)%wateryld = qdr(j)
         hwb_d(j)%perc = sepbtm(j)
@@ -743,9 +743,9 @@
         end if
         !! add evap from impounded water (wetland) to et and esoil
         hwb_d(j)%et = etday(j) + hru(j)%water_evap
-        hwb_d(j)%ecanopy = canev
-        hwb_d(j)%eplant = ep_day
-        hwb_d(j)%esoil = es_day + hru(j)%water_evap 
+        hwb_d(j)%ecanopy = canev(j)
+        hwb_d(j)%eplant = ep_day(j)
+        hwb_d(j)%esoil = es_day(j) + hru(j)%water_evap 
         hwb_d(j)%wet_evap = hru(j)%water_evap 
         hwb_d(j)%wet_out = wet_outflow
         hwb_d(j)%wet_stor = wet(j)%flo / (10. * hru(j)%area_ha)
@@ -758,7 +758,7 @@
         hwb_d(j)%sw_final = soil(j)%sw
         hwb_d(j)%sw_300 = soil(j)%sw_300
         hwb_d(j)%snopack = hru(j)%sno_mm
-        hwb_d(j)%pet = pet_day
+        hwb_d(j)%pet = pet_day(j)
         hwb_d(j)%qtile = qtile
         hwb_d(j)%irr = irrig(j)%applied
         irrig(j)%applied = 0.

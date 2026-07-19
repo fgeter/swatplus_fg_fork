@@ -229,7 +229,7 @@
         !new epco adjustment requires epmax adjustment of water stress is too high
         pcom(j)%plstr(ipl)%strsw = sum_wuse / epmax(ipl)
         
-        ep_day = ep_day + sum_wuse
+        ep_day(j) = ep_day(j) + sum_wuse
       end if
 
       return

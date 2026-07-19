@@ -69,7 +69,7 @@
       !! calc max water uptake for each plant
       do ipl = 1, pcom(j)%npl
         if (pcom(j)%lai_sum > 1.e-6) then
-          epmax(ipl) = ep_max * pcom(j)%plg(ipl)%lai / pcom(j)%lai_sum
+          epmax(ipl) = ep_max(j) * pcom(j)%plg(ipl)%lai / pcom(j)%lai_sum
         else
           epmax(ipl) = 0.
         end if

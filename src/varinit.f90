@@ -67,11 +67,6 @@
 
       integer :: j              !none          |HRU number
       integer :: ly             !none          |counter
-      real :: crk               !mm H2O        |percolation due to crack flow
-      real :: enratio           !none          |enrichment ratio calculated for day in HRU
-      real :: over_flow         !              |
-      real :: sedprev           !              | 
-      integer :: irmmdt         !              | 
 
       j = ihru
 
@@ -85,12 +80,10 @@
         albday = 0.
         bioday = 0.
         bsprev = 0.
-        canev = 0.
-        crk = 0.
-        enratio = 0.
-        ep_day = 0.
-        ep_max = 0.
-        es_day = 0.
+        canev(j) = 0.
+        ep_day(j) = 0.
+        ep_max(j) = 0.
+        es_day(j) = 0.
         fertn = 0.
         fertp = 0.
         fixn = 0.
@@ -100,14 +93,13 @@
         inflpcp = 0.
         lyrtile = 0.
         qp_cms = 0.
-        pet_day = 0.
-        qday = 0.
+        pet_day(j) = 0.
+        qday(j) = 0.
         qtile = 0.
         ls_overq = 0.
-        over_flow = 0.
         latqrunon = 0.
         sepday = 0.
-        snoev = 0.
+        snoev(j) = 0.
         snofall = 0.
         snomlt = 0.
         sw_excess = 0.
@@ -118,9 +110,7 @@
         voltot = 0.
 
     !! urban modeling by J.Jeong
-      sedprev = 0.
       ubnrunoff = 0.
-      irmmdt = 0.
         hhsedy(j,:) = 0.
         ubntss = 0.
         wet_seep_day(j)%no3 = 0

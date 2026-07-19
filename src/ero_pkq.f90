@@ -44,12 +44,12 @@
         !! half hour rainfall intensity method
         xx = (2. * tconc(j) * Log(1. - wst(iwst)%weat%precip_half_hr))
         altc = 1. - exp(xx)
-        qp_cms = altc * qday / tconc(j)           !! mm/h
+        qp_cms = altc * qday(j) / tconc(j)           !! mm/h
         qp_cms = qp_cms * hru(j)%km / 3.6          !! m^3/s
       else
         !! NRCS dimensionless hydrograph with PRF
         !! convert ha-mm * mi2/259ha * in/25.4mm to mi2-in --> 1/6578.6
-        qp_cfs = bsn_prm%prf / 6578.6 * hru(j)%area_ha * qday / tconc(j)
+        qp_cfs = bsn_prm%prf / 6578.6 * hru(j)%area_ha * qday(j) / tconc(j)
         qp_cms = qp_cfs / 35.3
       end if
       

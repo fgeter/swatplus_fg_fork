@@ -137,7 +137,7 @@
              urb_abstinit(j) = max(0., urb_abstinit(j) - w%ts(k))
            else
              !! the potential for initial dabstraction from paved surface increases based on evaporation
-             urb_abstinit(j) = min(bsn_prm%urb_init_abst, urb_abstinit(j) + pet_day / time%step)
+             urb_abstinit(j) = min(bsn_prm%urb_init_abst, urb_abstinit(j) + pet_day(j) / time%step)
            end if
            !runoff from previous area
            hhqday(j,k) = hhqday(j,k) * (1. - urbdb(ulu)%fcimp) 

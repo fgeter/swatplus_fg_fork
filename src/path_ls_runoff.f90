@@ -23,7 +23,7 @@
         
         path_kd = path_db(ipath_db)%kd
         !! compute soluble bacteria in the surface runoff
-        hpath_bal(j)%path(ipath)%surq = path_kd * cs_soil(j)%ly(1)%path(ipath) * qday /                        &
+        hpath_bal(j)%path(ipath)%surq = path_kd * cs_soil(j)%ly(1)%path(ipath) * qday(j) /                        &
                  (soil(j)%phys(1)%bd * soil(j)%phys(1)%d * path_db(ipath_db)%kd)
         hpath_bal(j)%path(ipath)%surq = Min(hpath_bal(j)%path(ipath)%surq, cs_soil(j)%ly(1)%path(ipath))
         hpath_bal(j)%path(ipath)%surq = Max(cs_soil(j)%ly(1)%path(ipath), 0.)
