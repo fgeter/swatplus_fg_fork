@@ -40,7 +40,7 @@
 
       use basin_module
       use hydrograph_module
-      use hru_module, only : hru, ihru, wnan, stmaxd, surfq, etday, inflpcp, &  
+      use hru_module, only : hru, ihru, stmaxd, surfq, etday, inflpcp, &  
            precip_eff, qtile, wt_shall
       use soil_module
       use time_module
@@ -51,6 +51,7 @@
       external :: swr_depstor
 
       integer :: j1              !none          |counter
+      real :: wnan(10)           !! per-HRU layer scratch (was module threadprivate-allocatable)
       integer :: j               !none          |HRU number 
       integer :: m               !none          |counter
       real:: cone                !mm/hr         |effective saturated lateral conductivity - based

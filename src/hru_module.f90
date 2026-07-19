@@ -292,15 +292,14 @@
       real :: uapd_tot = 0.
       real :: sum_no3 = 0.
       real :: sum_solp = 0.
-      real, dimension (:), allocatable :: epmax
+      real :: epmax(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
       real, dimension (:), allocatable :: cvm_com
-      real, dimension (:), allocatable :: translt
-      real, dimension (:), allocatable :: uno3d
-      real, dimension (:), allocatable :: uapd
-      real, dimension (:), allocatable :: par
-      real, dimension (:), allocatable :: htfac
-      real, dimension (:), allocatable :: un2
-      real, dimension (:), allocatable :: up2
+      real :: uno3d(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
+      real :: uapd(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
+      real :: par(20)   !! per-HRU plant PAR scratch; fixed-size(mpc=20) so threadprivate needs no per-thread allocation
+      real :: htfac(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
+      real :: un2(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
+      real :: up2(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
       integer, dimension (:), allocatable :: iseptic
      
 !! septic variables for output.std
@@ -387,7 +386,6 @@
       integer, dimension (:), allocatable :: itb
       
 !!!!!! drains
-      real, dimension (:), allocatable :: wnan
 
       real, dimension (:), allocatable :: phusw
       integer, dimension (:), allocatable :: yr_skip
@@ -520,8 +518,10 @@
       !$omp threadprivate(usle, nd_30, ls_overq, latqrunon, satexq_chan, fertn, fertp)
       !$omp threadprivate(fixn, grazn, grazp, latlyr, lyrtile, sepday, sw_excess)
       !$omp threadprivate(wt_shall, bsprev, voltot, fertnh3, fertno3, fertorgn, fertorgp)
-      !$omp threadprivate(fertsolp, albday, ep_max, vpd, snoev, enratio, wnan)
-      !$omp threadprivate(translt, par)
+      !$omp threadprivate(fertsolp, albday, ep_max, vpd, snoev, enratio)
+      !$omp threadprivate(par)
+      !$omp threadprivate(uno3d, uapd, un2, up2, htfac, epmax)
+      !$omp threadprivate(rto_no3, rto_solp, uno3d_tot, uapd_tot, sum_no3, sum_solp)
       !$omp threadprivate(bioday, qp_cms, usle_ei)
 
       end module hru_module

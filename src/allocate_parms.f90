@@ -27,20 +27,10 @@
       mch = sp_ob%chan
 
 !!    drains
-      allocate (wnan(10), source = 0.)
       allocate (ranrns_hru(mhru), source = 0.)
       
       !dimension plant arrays used each day and not saved
        mpc = 20
-       allocate (uno3d(mpc), source = 0.)
-       allocate (uapd(mpc), source = 0.)
-       allocate (un2(mpc), source = 0.)
-       allocate (up2(mpc), source = 0.)
-       allocate (translt(mpc), source = 0.)
-       allocate (par(mpc), source = 0.)
-       allocate (htfac(mpc), source = 0.)
-       allocate (epmax(mpc), source = 0.)
-       epmax = 0.
 
 !!    arrays for plant communities
       allocate (cvm_com(mhru), source = 0.)

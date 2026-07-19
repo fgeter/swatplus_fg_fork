@@ -33,7 +33,7 @@
 
 !!    ~ ~ ~ ~ ~ ~ END SPECIFICATIONS ~ ~ ~ ~ ~ ~
 
-      use hru_module, only : ep_max, epmax, htfac, ihru, ipl, par, translt
+      use hru_module, only : ep_max, epmax, htfac, ihru, ipl, par
       use soil_module
       use plant_module
       use plant_data_module
@@ -41,7 +41,8 @@
       use time_module
       use climate_module
       
-      implicit none      
+      implicit none
+      real :: translt(pcom(ihru)%npl)   !! per-HRU plant scratch (was module threadprivate-allocatable)      
       
       external :: pl_waterup
 
