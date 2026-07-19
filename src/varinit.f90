@@ -69,8 +69,6 @@
       integer :: ly             !none          |counter
       real :: crk               !mm H2O        |percolation due to crack flow
       real :: enratio           !none          |enrichment ratio calculated for day in HRU
-      real :: etday             !mm H2O        |actual amount of evapotranspiration that 
-                                !              |occurs on day in HRU
       real :: over_flow         !              |
       real :: sedprev           !              | 
       integer :: irmmdt         !              | 
@@ -93,7 +91,6 @@
         ep_day = 0.
         ep_max = 0.
         es_day = 0.
-        etday = 0.
         fertn = 0.
         fertp = 0.
         fixn = 0.
@@ -124,7 +121,7 @@
       sedprev = 0.
       ubnrunoff = 0.
       irmmdt = 0.
-        hhsedy = 0.
+        hhsedy(j,:) = 0.
         ubntss = 0.
         wet_seep_day(j)%no3 = 0
         wet_seep_day(j)%nh3 = 0

@@ -140,7 +140,7 @@
       sus_sol=0
       
       ! Compute evaporation of water (initial abstraction) from impervious cover
-      init_abstrc(j) = init_abstrc(j) - etday / time%step
+      init_abstrc(j) = init_abstrc(j) - etday(j) / time%step
       init_abstrc(j) = max(0.,init_abstrc(j))
     end do
 

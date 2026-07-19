@@ -20,3 +20,12 @@ called_from_lib:libgfortran
 # libgfortran formatted-I/O mutex handling during (sequential) init reads shows up
 # as "unlock of an unlocked mutex" — a runtime-library artifact, not an app bug.
 mutex:libgfortran
+
+# When libgfortran is linked STATICALLY (this TSan build drops -static but gfortran
+# may still fold in a static libgfortran), its I/O-runtime frames symbolize to the
+# calling Fortran routine (e.g. topo_read_) instead of a "libgfortran" module, so the
+# module-name suppressions above miss. The runtime symbols keep their _gfortran*
+# prefix regardless, so match on that to catch the I/O-lock artifacts at their source.
+mutex:_gfortran
+race:_gfortran
+deadlock:_gfortran

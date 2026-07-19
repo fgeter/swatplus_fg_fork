@@ -349,7 +349,7 @@
       real :: snocov2 = 0.
       real :: lyrtile = 0.
 
-      real :: etday = 0.
+      real, dimension(:), allocatable :: etday
       integer :: mo = 0
       integer :: ihru = 0         !!none          |HRU number
       integer :: nd_30 = 0
@@ -513,7 +513,7 @@
       !! OpenMP: per-HRU transient scratch + the HRU index made thread-private for the
       !! multi-threading effort. Inert without -fopenmp and at 1 thread.
       !! See tmp/threading_state_inventory.md.
-      !$omp threadprivate(ihru, ipl, isep, qday, qtile, etday, ep_day)
+      !$omp threadprivate(ihru, ipl, isep, qday, qtile, ep_day)
       !$omp threadprivate(es_day, canev, pet_day, inflpcp, precip_eff, snofall, snomlt)
       !$omp threadprivate(usle, nd_30, ls_overq, latqrunon, satexq_chan, fertn, fertp)
       !$omp threadprivate(fixn, grazn, grazp, latlyr, lyrtile, sepday, sw_excess)

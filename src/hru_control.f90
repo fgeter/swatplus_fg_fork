@@ -500,12 +500,12 @@
         end do
         
         !! compute actual ET for day in HRU
-        etday = ep_day + es_day + canev
+        etday(j) = ep_day + es_day + canev
         es_day = es_day
 
         !rtb gwflow
         if(bsn_cc%gwflow.eq.1) then
-          etremain(j) = pet_day - etday
+          etremain(j) = pet_day - etday(j)
         endif
  
         !! compute pesticide washoff   
@@ -555,7 +555,7 @@
           if (wet_dat_c(ires)%hyd.eq.'paddy') then !.and.time%yrs > pco%nyskip) then
             if (wet_ob(j)%depth > -0.1) then
            write(100100,'(4(I6,","),20(f20.1,","))') time%yrc,time%mo,time%day_mo,j,w%precip,irrig(j)%applied,hru(j)%water_seep,     &
-            pet_day,etday,wet_ob(j)%weir_hgt*1000,wet_ob(j)%depth*1000.,ht2%flo/(hru(j)%area_ha*10.),soil(j)%sw,sedppm,ht2%sed*1000, &
+            pet_day,etday(j),wet_ob(j)%weir_hgt*1000,wet_ob(j)%depth*1000.,ht2%flo/(hru(j)%area_ha*10.),soil(j)%sw,sedppm,ht2%sed*1000, &
             wet(j)%no3,ht2%no3,pcom(j)%lai_sum,saltcon 
             end if
           end if
@@ -742,7 +742,7 @@
           gwflow_perc(j) = sepbtm(j)
         end if
         !! add evap from impounded water (wetland) to et and esoil
-        hwb_d(j)%et = etday + hru(j)%water_evap
+        hwb_d(j)%et = etday(j) + hru(j)%water_evap
         hwb_d(j)%ecanopy = canev
         hwb_d(j)%eplant = ep_day
         hwb_d(j)%esoil = es_day + hru(j)%water_evap 
