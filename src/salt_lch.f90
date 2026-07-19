@@ -52,23 +52,23 @@
       
       implicit none
       
-      integer :: j = 0
-      integer :: jj = 0
-      integer :: isalt = 0
-      integer :: sol_index = 0
-      integer :: gw_soil_flag = 0
-      real :: cosalt = 0.
-      real :: cosurfsalt = 0.
-      real :: percsaltlyr(8) = 0.
-      real :: ssfsaltlyr = 0.
-      real :: vsalt = 0.
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
-      real :: salt_mass_kg = 0.
-      real :: ro_mass = 0.
-      real :: sro = 0.
-      real :: vv = 0.
-      real :: ww = 0.
+      integer :: j
+      integer :: jj
+      integer :: isalt
+      integer :: sol_index
+      integer :: gw_soil_flag
+      real :: cosalt
+      real :: cosurfsalt
+      real :: percsaltlyr(8)
+      real :: ssfsaltlyr
+      real :: vsalt
+      real :: hru_area_m2
+      real :: water_volume
+      real :: salt_mass_kg
+      real :: ro_mass
+      real :: sro
+      real :: vv
+      real :: ww
 
       j = 0
       j = ihru

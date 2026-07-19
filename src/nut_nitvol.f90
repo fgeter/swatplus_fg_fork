@@ -16,22 +16,22 @@
       
       
       external :: ee
-      integer :: j = 0            !none          |HRU number
-      integer :: k = 0            !none          |counter 
-      real :: sw25 = 0.           !              |
-      real :: swwp = 0.           !              |  
-      real :: swf = 0.            !cfu           |fraction of manure containing active colony forming units 
-      real :: xx = 0.             !              | 
-      real :: dmidl = 0.          !              | 
-      real :: dpf = 0.            !              |  
-      real :: akn = 0.            !              | 
-      real :: akv = 0.            !              | 
-      real :: rnv = 0.            !              |
-      real :: rnit = 0.           !kg N/ha       |amount of nitrogen moving from the NH3 to the
+      integer :: j                !none          |HRU number
+      integer :: k                !none          |counter 
+      real :: sw25                !              |
+      real :: swwp                !              |  
+      real :: swf                 !cfu           |fraction of manure containing active colony forming units 
+      real :: xx                  !              | 
+      real :: dmidl               !              | 
+      real :: dpf                 !              |  
+      real :: akn                 !              | 
+      real :: akv                 !              | 
+      real :: rnv                 !              |
+      real :: rnit                !kg N/ha       |amount of nitrogen moving from the NH3 to the
                                   !              |NO3 pool (nitrification) in the layer
-      real :: rvol = 0.           !kg N/ha       |amount of nitrogen lost from the NH3 pool due
+      real :: rvol                !kg N/ha       |amount of nitrogen lost from the NH3 pool due
                                   !              |to volatilization
-      real :: tf = 0.             !              | 
+      real :: tf                  !              | 
       real :: cecf = 0.15         !none          |volatilization CEC factor 
  
       j = 0

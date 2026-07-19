@@ -44,11 +44,11 @@
       
       external :: pl_nupd, pl_pupd
 
-      integer :: j = 0          !none          |HRU number
-      integer :: nly = 0        !none          |soil layer number
-      integer :: idp = 0        !none          |plant data base number (plants.plt)
-      real :: delg = 0.         !              |
-      real :: delg_p = 0.       !              |
+      integer :: j              !none          |HRU number
+      integer :: nly            !none          |soil layer number
+      integer :: idp            !none          |plant data base number (plants.plt)
+      real :: delg              !              |
+      real :: delg_p            !              |
 
       j = ihru
       

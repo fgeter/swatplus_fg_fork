@@ -11,27 +11,27 @@
       
       implicit none      
  
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      character(len=16) :: ob_name = ""
-      character(len=8) :: ob_typ = ""
-      integer :: imax = 0             !none       |end of loop
-      integer :: iyr = 0              !           |
-      integer :: jday = 0             !           |
-      integer :: mo = 0               !           |
-      integer :: day_mo = 0           !           |
-      integer :: eof = 0              !           |end of file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      character(len=16) :: ob_name
+      character(len=8) :: ob_typ
+      integer :: imax                 !none       |end of loop
+      integer :: iyr                  !           |
+      integer :: jday                 !           |
+      integer :: mo                   !           |
+      integer :: day_mo               !           |
+      integer :: eof                  !           |end of file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: nbyr = 0             !none       !number of years the land use occurred 
-      integer :: k = 0                !           |
-      integer :: iyrs = 0             !           | 
-      integer :: iyr_prev = 0         !none       |previous year
-      integer :: istep = 0            !           | 
-      integer :: ii = 0               !none       |counter
-      integer :: i = 0                !           |
-      integer :: ics = 0
-      integer :: jj = 0
-      integer :: kk = 0
+      integer :: nbyr                 !none       !number of years the land use occurred 
+      integer :: k                    !           |
+      integer :: iyrs                 !           | 
+      integer :: iyr_prev             !none       |previous year
+      integer :: istep                !           | 
+      integer :: ii                   !none       |counter
+      integer :: i                    !           |
+      integer :: ics
+      integer :: jj
+      integer :: kk
       
       eof = 0
       imax = 0

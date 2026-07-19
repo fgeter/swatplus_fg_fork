@@ -37,8 +37,8 @@
       
       implicit none
 
-      integer :: j = 0       !none          |HRU number
-      integer :: k = 0       !none          |counter
+      integer :: j           !none          |HRU number
+      integer :: k           !none          |counter
 
       j = ihru
 

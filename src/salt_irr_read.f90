@@ -6,11 +6,11 @@
       
       implicit none
  
-      character (len=80) :: titldum = ""
-      character (len=80) :: header = ""
-      integer :: isalti = 0
-      integer :: eof = 0
-      integer :: imax = 0
+      character (len=80) :: titldum
+      character (len=80) :: header
+      integer :: isalti
+      integer :: eof
+      integer :: imax
       logical :: i_exist              !none       |check to determine if file exists
 
       eof = 0

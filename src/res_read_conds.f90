@@ -5,15 +5,15 @@
 
       implicit none
       
-      character (len=80) :: title = ""
-      integer :: max_table = 0
-      integer :: tnum_conds = 0
-      integer :: ii = 0
-      integer :: ictbl = 0
-      integer :: isub_con = 0
-      integer :: icc = 0
-      integer :: imod = 0
-      integer :: eof = 0
+      character (len=80) :: title
+      integer :: max_table
+      integer :: tnum_conds
+      integer :: ii
+      integer :: ictbl
+      integer :: isub_con
+      integer :: icc
+      integer :: imod
+      integer :: eof
       logical :: i_exist         !                |check to determine if file exists
    
       inquire (file="res_conds.dat", exist=i_exist)

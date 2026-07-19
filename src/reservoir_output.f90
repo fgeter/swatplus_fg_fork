@@ -9,8 +9,8 @@
       implicit none
       
       integer, intent (in) :: j   !                |
-      integer :: iob = 0          !                |
-      real :: const = 0.          !                |
+      integer :: iob              !                |
+      real :: const               !                |
       
       iob = sp_ob1%res + j - 1
 

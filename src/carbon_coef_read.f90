@@ -11,13 +11,13 @@ subroutine carbon_coef_read
     
     implicit none
 
-    integer :: eof = 0                !           |end of file
-    integer :: soil_test_cntr  = 0    !           |counter for soil test, cannot exceed nmbr_soil_tests 
-    logical :: i_exist = .false.      !           |true if file exists
-    character (len=80) :: titldum  = "" !           |title of file
-    character (len=30) :: var_name = "" !
-    integer :: int_cbn_diagnostics = 0
-    integer :: int_mathers_method = 0
+    integer :: eof                    !           |end of file
+    integer :: soil_test_cntr         !           |counter for soil test, cannot exceed nmbr_soil_tests 
+    logical :: i_exist                !           |true if file exists
+    character (len=80) :: titldum       !           |title of file
+    character (len=30) :: var_name      !
+    integer :: int_cbn_diagnostics
+    integer :: int_mathers_method
     
     nmbr_soil_test_layers = 0     ! comes from soil module
     soil_test_cntr  = 0     ! local variable

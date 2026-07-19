@@ -10,20 +10,20 @@
       
       external :: define_unit_elements
 
-      character (len=500) :: header = "" !              |header of file
-      character (len=80) :: titldum = "" !              |title of file
-      integer :: eof = 0               !              |end of file
+      character (len=500) :: header      !              |header of file
+      character (len=80) :: titldum      !              |title of file
+      integer :: eof                   !              |end of file
       logical :: i_exist               !              |check to determine if file exists
-      integer :: imax = 0              !none          |determine max number for array (imax) and total number in file
-      integer :: mcal = 0              !              |
-      integer :: mreg = 0               !             |
-      integer :: i = 0                  !none         |counter
-      integer :: k = 0                  !             |
-      integer :: nspu = 0               !             | 
-      integer :: isp = 0                !             |
-      integer :: ielem1 = 0             !none         |counter
-      integer :: ireg = 0               !none         |counter
-      integer :: ires = 0               !none         |counter
+      integer :: imax                  !none          |determine max number for array (imax) and total number in file
+      integer :: mcal                  !              |
+      integer :: mreg                   !             |
+      integer :: i                      !none         |counter
+      integer :: k                      !             |
+      integer :: nspu                   !             | 
+      integer :: isp                    !             |
+      integer :: ielem1                 !none         |counter
+      integer :: ireg                   !none         |counter
+      integer :: ires                   !none         |counter
       
       imax = 0
       mcal = 0

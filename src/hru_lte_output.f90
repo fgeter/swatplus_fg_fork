@@ -8,8 +8,8 @@
       implicit none
 
       integer, intent (in) :: isd
-      integer :: iob = 0
-      real :: const = 0.
+      integer :: iob
+      real :: const
       
       iob = sp_ob1%hru_lte + isd - 1
               

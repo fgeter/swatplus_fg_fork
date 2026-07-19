@@ -13,11 +13,11 @@
       
       implicit none       
       
-      integer :: j = 0    !none          |HRU number
-      integer :: k = 0    !none          |pesticide number
-      integer :: ipl = 0  !none          |plant number
-      integer :: ipest_db = 0!none          |pesticide number from pest.dat
-      real :: pest_soil = 0.!kg/ha         |amount of pesticide in soil   
+      integer :: j        !none          |HRU number
+      integer :: k        !none          |pesticide number
+      integer :: ipl      !none          |plant number
+      integer :: ipest_db    !none          |pesticide number from pest.dat
+      real :: pest_soil     !kg/ha         |amount of pesticide in soil   
 
       j = ihru
 

@@ -15,12 +15,12 @@
 
       implicit none
 
-      integer :: eof = 0               !          |end of file
-      integer :: imax = 0              !units     |description
-      character (len=80) :: titldum = "" !          |title of file
-      character (len=80) :: header = ""  !          |header of file
+      integer :: eof                   !          |end of file
+      integer :: imax                  !units     |description
+      character (len=80) :: titldum      !          |title of file
+      character (len=80) :: header       !          |header of file
       logical :: i_exist               !          |check to determine if file exists
-      integer :: ich = 0               !none      |counter
+      integer :: ich                   !none      |counter
 
       eof = 0
       imax = 0

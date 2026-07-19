@@ -11,16 +11,16 @@
       
       implicit none
       
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: mcal = 0             !           |
-      integer :: mreg = 0             !none       |end of loop
-      integer :: ireg = 0             !none       |counter 
-      integer :: mlug = 0             !none       |end of loop
-      integer :: ilum = 0             !none       |counter
+      integer :: mcal                 !           |
+      integer :: mreg                 !none       |end of loop
+      integer :: ireg                 !none       |counter 
+      integer :: mlug                 !none       |end of loop
+      integer :: ilum                 !none       |counter
        
       imax = 0
       mcal = 0

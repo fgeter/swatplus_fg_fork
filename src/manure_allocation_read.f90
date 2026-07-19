@@ -11,20 +11,20 @@
       
       implicit none 
       
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: i = 0                !none       |counter
-      integer :: k = 0                !none       |counter
-      integer :: isrc = 0             !none       |counter
-      integer :: imro = 0             !none       |number of manure allocation objects
-      integer :: num_objs = 0
-      integer :: itrn = 0
-      integer :: idb = 0
-      integer :: ihru = 0
-      integer :: idb_man = 0
+      integer :: i                    !none       |counter
+      integer :: k                    !none       |counter
+      integer :: isrc                 !none       |counter
+      integer :: imro                 !none       |number of manure allocation objects
+      integer :: num_objs
+      integer :: itrn
+      integer :: idb
+      integer :: ihru
+      integer :: idb_man
       
       eof = 0
       imax = 0

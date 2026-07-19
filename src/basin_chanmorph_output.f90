@@ -7,7 +7,7 @@
       
       implicit none
 
-      real :: const = 0.
+      real :: const
                   
       bchsd_d = chsdz
 

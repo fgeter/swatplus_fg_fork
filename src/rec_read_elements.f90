@@ -8,20 +8,20 @@
       
       external :: define_unit_elements
 
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: imax = 0             !none       |end of loop
-      integer :: isp = 0              !none       |counter
-      integer :: mcal = 0             !           |           
-      integer :: mreg = 0             !none       |end of loop
-      integer :: i = 0                !none       |counter
-      integer :: k = 0                !           |  
-      integer :: nspu = 0             !none       |end of loop
-      integer :: ielem1 = 0           !           | 
-      integer :: ireg = 0             !none       |counter
-      integer :: irec = 0             !none       |counter
+      integer :: imax                 !none       |end of loop
+      integer :: isp                  !none       |counter
+      integer :: mcal                 !           |           
+      integer :: mreg                 !none       |end of loop
+      integer :: i                    !none       |counter
+      integer :: k                    !           |  
+      integer :: nspu                 !none       |end of loop
+      integer :: ielem1               !           | 
+      integer :: ireg                 !none       |counter
+      integer :: irec                 !none       |counter
       
       imax = 0
       mcal = 0

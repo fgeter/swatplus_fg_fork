@@ -41,14 +41,14 @@
       integer, intent (in) :: jj       !none           |HRU number
       integer, intent (in) :: idtill   !none           |tillage type
       real, intent (in) :: bmix        !               | 
-      integer :: l = 0                 !none           |counter
-      integer :: kk = 0                !               |
-      integer :: npmx = 0              !               |
-      integer :: ipl = 0               !               |
-      real :: emix = 0.                !none           |mixing efficiency
-      real :: dtil = 0.                !mm             |depth of mixing
-      real :: frac_mixed = 0.          !               |
-      real :: frac_non_mixed = 0.      !               |
+      integer :: l                     !none           |counter
+      integer :: kk                    !               |
+      integer :: npmx                  !               |
+      integer :: ipl                   !               |
+      real :: emix                     !none           |mixing efficiency
+      real :: dtil                     !mm             |depth of mixing
+      real :: frac_mixed               !               |
+      real :: frac_non_mixed           !               |
       real, dimension(:), allocatable :: sol_mass    !              |mass of the soil layer
       real, dimension(:), allocatable :: sol_msm     !              |sol_mass mixed
       real, dimension(:), allocatable :: sol_msn     !              |sol_mass not mixed 

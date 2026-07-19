@@ -16,23 +16,23 @@
       implicit none
       
       integer, intent (in) :: iihru     !none       |
-      integer :: iprop = 0              !           |  
-      integer :: init_om = 0
-      integer :: init = 0               !           |
+      integer :: iprop                  !           |  
+      integer :: init_om
+      integer :: init                   !           |
       integer :: iweir = 1              !           |
-      integer :: icon = 0               !           |
-      integer :: isalt = 0              !           |salt ion counter
-      real :: x1 = 0.                   !           |
-      real :: wet_h = 0.                !           |
-      real :: wet_h1 = 0.               !           | 
-      real :: wet_fr = 0.               !           |
-      integer :: ihyd = 0                !none       |counter
-      integer :: irel = 0                !none       |counter
-      integer :: ised = 0                !none       |counter
-      integer :: inut = 0                !none       |counter
-      integer :: isp_ini = 0             !none       |counter
-      integer :: ics = 0                 !none       |counter
-      integer :: isstor = 0              !none       |counter
+      integer :: icon                   !           |
+      integer :: isalt                  !           |salt ion counter
+      real :: x1                        !           |
+      real :: wet_h                     !           |
+      real :: wet_h1                    !           | 
+      real :: wet_fr                    !           |
+      integer :: ihyd                    !none       |counter
+      integer :: irel                    !none       |counter
+      integer :: ised                    !none       |counter
+      integer :: inut                    !none       |counter
+      integer :: isp_ini                 !none       |counter
+      integer :: ics                     !none       |counter
+      integer :: isstor                  !none       |counter
   
       iweir = wet_ob(iihru)%iweir
         

@@ -33,13 +33,13 @@
       real, intent (in) :: term_m
       real, intent (in) :: cprev
       real, intent (in) :: cint
-      real :: help1 = 0.
-      real :: help2 = 0.
-      real :: help3 = 0.
-      real :: help4 = 0.
-      real :: term1 = 0.
-      real :: term2 = 0.
-      real :: yy = 0.
+      real :: help1
+      real :: help2
+      real :: help3
+      real :: help4
+      real :: term1
+      real :: term2
+      real :: yy
       real :: wq_semianalyt
 
       help1 = 1. / tres - prock

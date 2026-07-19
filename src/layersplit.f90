@@ -7,10 +7,10 @@
       
       implicit none
       
-      integer :: nly = 0           !none         |end of loop
-      integer :: nly1 = 0          !             |
-      integer :: lyn = 0           !none         |counter
-      integer :: ly = 0            !none         |counter
+      integer :: nly               !none         |end of loop
+      integer :: nly1              !             |
+      integer :: lyn               !none         |counter
+      integer :: ly                !none         |counter
       real, intent(in):: dep_new   !             |
       
       nly = soil(ihru)%nly

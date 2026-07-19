@@ -16,35 +16,35 @@
 
       implicit none
 
-      character(len=18) :: pond_name = ''     !       |constructed pond name
-      integer :: r = 0                       !       |counter for number of recharge ponds
-	    integer :: k = 0                       !       |counter for the number of cells connected to the recharge pond
-	    integer :: s = 0						 !       |solute counter
-	    integer :: year = 0
-      integer :: day = 0
-      integer :: month = 0
-	    integer :: chan_id = 0                 !       |channel id
-      integer :: rec_id = 0                  !       |point source if (canal diversion)
-      integer :: cell_id = 0				 !       |cell id
-      integer :: iwst = 0					 !       |weather station id
-      integer :: dum = 0
-      integer :: sol_index = 0               !       |solute counter (no3, p, salt ions, constituents)
-      integer :: isalt = 0                   !       |salt ion counter
-      integer :: ics = 0					 !       |constituent counter
-      integer :: canal_id = 0
-      real :: chan_volume = 0.               !m3     |starting volume in the source channel
-      real :: cell_recharge = 0.             !m3     |recharge from the pond to the aquifer, for a single cell
-      real :: pond_recharge = 0.			 !m3     |total recharge from the pond to the aquifer
-      real :: div_specified = 0.             !m3     |specified diversion volume in gwflow.ponds file
-      real :: div_added = 0.                 !m3     |actual volume added to the recharge pond
-      real :: pond_evap = 0.                 !m3     |water evaporated from the pond during the day
-      real :: pond_rain = 0.                 !m3     |rainfall added to the pond during the day
-      real :: pond_volume = 0.               !m3     |pond volume before recharge occurs
-      real :: sol_conc = 0.                  !g/m3   |solute concentration in the source water
-      real :: sol_mass = 0.                  !kg     |solute mass removed from the source added --> added to recharge pond
-      real :: div_mass(20) = 0.              !kg     |solute mass added to the recharge pond
-      real :: rech_mass(20) = 0.             !kg     |solute mass leaching from the pond to the water table
-      real :: rech_mass_cell(20) = 0.        !g      |solute mass leaching from the pond to an individual cell
+      character(len=18) :: pond_name          !       |constructed pond name
+      integer :: r                           !       |counter for number of recharge ponds
+	    integer :: k                           !       |counter for the number of cells connected to the recharge pond
+	    integer :: s           !       |solute counter
+	    integer :: year
+      integer :: day
+      integer :: month
+	    integer :: chan_id                     !       |channel id
+      integer :: rec_id                      !       |point source if (canal diversion)
+      integer :: cell_id         !       |cell id
+      integer :: iwst          !       |weather station id
+      integer :: dum
+      integer :: sol_index                   !       |solute counter (no3, p, salt ions, constituents)
+      integer :: isalt                       !       |salt ion counter
+      integer :: ics          !       |constituent counter
+      integer :: canal_id
+      real :: chan_volume                    !m3     |starting volume in the source channel
+      real :: cell_recharge                  !m3     |recharge from the pond to the aquifer, for a single cell
+      real :: pond_recharge         !m3     |total recharge from the pond to the aquifer
+      real :: div_specified                  !m3     |specified diversion volume in gwflow.ponds file
+      real :: div_added                      !m3     |actual volume added to the recharge pond
+      real :: pond_evap                      !m3     |water evaporated from the pond during the day
+      real :: pond_rain                      !m3     |rainfall added to the pond during the day
+      real :: pond_volume                    !m3     |pond volume before recharge occurs
+      real :: sol_conc                       !g/m3   |solute concentration in the source water
+      real :: sol_mass                       !kg     |solute mass removed from the source added --> added to recharge pond
+      real :: div_mass(20)                   !kg     |solute mass added to the recharge pond
+      real :: rech_mass(20)                  !kg     |solute mass leaching from the pond to the water table
+      real :: rech_mass_cell(20)             !g      |solute mass leaching from the pond to an individual cell
 
 
 

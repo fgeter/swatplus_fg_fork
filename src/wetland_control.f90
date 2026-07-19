@@ -23,32 +23,32 @@
       external :: conditions, ero_cfactor, gwflow_wetland, res_hydro, res_nutrient, res_sediment, res_weir_release, wet_cs, wet_salt
      
       real :: bypass = 1.             !              | 
-      integer :: j = 0                !none          |counter
-      real :: x1 = 0.                 !              |
-      real :: wet_h = 0.              !              |
-      real :: wet_h1 = 0.             !              | 
-      integer :: ised = 0             !none          |counter
-      integer :: irel = 0             !              |
+      integer :: j                    !none          |counter
+      real :: x1                      !              |
+      real :: wet_h                   !              |
+      real :: wet_h1                  !              | 
+      integer :: ised                 !none          |counter
+      integer :: irel                 !              |
       integer :: icon = 0             !none          |counter: identifies parameter list in cs_res (rtb cs)
-      integer :: ires = 0
-      integer :: j1 = 0
-      integer :: ii = 0               !none          |sub daily time step counter
-      integer :: ihyd = 0             !none          |counter  !Jaehak 2024
-      integer :: isched = 0           !none          |counter  !Jaehak 2024
-      real :: wet_fr = 0.
-      real :: pvol_m3 = 0.
-      real :: evol_m3 = 0.
-      real :: dep = 0.
-      real :: weir_hgt = 0.
-      real :: wsa1 = 0.
-      real :: sedppm = 0.
-      real :: no3ppm = 0.
-      real :: seep_rto = 0.
-      real :: qp_cms = 0.
-      real :: dep_init = 0.
-      real :: volseep = 0.
-      real :: volex = 0.
-      real :: swst(20) = 0.
+      integer :: ires
+      integer :: j1
+      integer :: ii                   !none          |sub daily time step counter
+      integer :: ihyd                 !none          |counter  !Jaehak 2024
+      integer :: isched               !none          |counter  !Jaehak 2024
+      real :: wet_fr
+      real :: pvol_m3
+      real :: evol_m3
+      real :: dep
+      real :: weir_hgt
+      real :: wsa1
+      real :: sedppm
+      real :: no3ppm
+      real :: seep_rto
+      real :: qp_cms
+      real :: dep_init
+      real :: volseep
+      real :: volex
+      real :: swst(20)
       j = ihru
       ires = hru(j)%dbs%surf_stor
       ihyd = wet_dat(ires)%hyd

@@ -21,17 +21,17 @@
 
         !counters and general information
         !counters and general
-        integer :: i = 0
-        integer :: j = 0
-        integer :: k = 0
-        integer :: s = 0
-        integer :: dum = 0
-        integer :: cell_id = 0
-        integer :: num_months = 0
-        real :: sum = 0.
-        real :: gw_storage = 0.
-        real :: gw_heat = 0.
-        real :: gw_temp = 0.
+        integer :: i
+        integer :: j
+        integer :: k
+        integer :: s
+        integer :: dum
+        integer :: cell_id
+        integer :: num_months
+        real :: sum
+        real :: gw_storage
+        real :: gw_heat
+        real :: gw_temp
         real, allocatable, save :: gwsw_sum(:)
         real, allocatable, save :: obs_vals(:)
         !tile drainage outflow
@@ -39,10 +39,10 @@
         real, allocatable, save :: sum_mass(:,:)
         real, allocatable, save :: c_tile(:,:)
         !flow time stepping
-        integer :: num_ts = 0
-        integer :: count = 0
-        real :: depth_wt_avg = 0.
-        real :: temp_avg = 0.
+        integer :: num_ts
+        integer :: count
+        real :: depth_wt_avg
+        real :: temp_avg
         logical, save :: arrays_allocated = .false.
 
 

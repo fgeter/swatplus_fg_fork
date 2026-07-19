@@ -11,18 +11,18 @@
       implicit none
 
       character*30 :: header
-      character(len=20) :: col_head_con(17) = ""
-      integer :: j = 0
-      integer :: k = 0
-      integer :: cell_id = 0
-      integer :: channel = 0
-      integer :: chan_zone = 0
-      integer :: dep_zone = 0
-      integer :: dum1 = 0
-      integer :: dum2 = 0
-      real :: bed_elev = 0.
-      real :: chan_length = 0.
-      real :: dum3 = 0.
+      character(len=20) :: col_head_con(17)
+      integer :: j
+      integer :: k
+      integer :: cell_id
+      integer :: channel
+      integer :: chan_zone
+      integer :: dep_zone
+      integer :: dum1
+      integer :: dum2
+      real :: bed_elev
+      real :: chan_length
+      real :: dum3
       logical :: i_exist
 
       !message to record file

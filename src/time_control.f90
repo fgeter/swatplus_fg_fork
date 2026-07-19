@@ -61,27 +61,27 @@
                   cli_atmodep_time_control, cli_precip_control, climate_control, command, conditions, &
                   mallo_control, xmon, sim_initday, wallo_control, mgt_newtillmix_cswat0
 
-      integer :: j = 0               !none          |counter
-      integer :: julian_day = 0      !none          |counter
-      integer :: id = 0              !              |
-      integer :: isched = 0          !              |
+      integer :: j                   !none          |counter
+      integer :: julian_day          !none          |counter
+      integer :: id                  !              |
+      integer :: isched              !              |
       !integer :: ich = 0             !none          |counter
-      integer :: idp = 0             !              |
-      integer :: iplt = 0
-      integer :: iupd = 0            !none          |counter
-      integer :: ipest = 0           !none          |counter
-      integer :: date_time(8) = 0    !              | 
+      integer :: idp                 !              |
+      integer :: iplt
+      integer :: iupd                !none          |counter
+      integer :: ipest               !none          |counter
+      integer :: date_time(8)        !              | 
       character*10 b(3)              !              |
-      real :: crop_yld_t_ha = 0.     !t/ha          |annual and ave annual basin crop yields
-      real :: sw_init = 0.
-      real :: sno_init = 0.
-      integer :: iob = 0             !              |
+      real :: crop_yld_t_ha          !t/ha          |annual and ave annual basin crop yields
+      real :: sw_init
+      real :: sno_init
+      integer :: iob                 !              |
       integer :: iord
-      integer :: curyr = 0           !              |
-      integer :: mo = 0              !              |
-      integer :: day_mo = 0          !              |
-      integer :: imallo = 0
-      integer :: ires = 0
+      integer :: curyr               !              |
+      integer :: mo                  !              |
+      integer :: day_mo              !              |
+      integer :: imallo
+      integer :: ires
       
       time%yrc = time%yrc_start
       

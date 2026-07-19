@@ -369,6 +369,7 @@
 
       !! OpenMP: per-HRU carbon working scratch (cbn_zhang2 etc.) made thread-private.
       !$omp threadprivate(org_con, org_tran, org_allo, org_flux, org_ratio, carbdb)
+      !$omp threadprivate(org_frac)
 
       contains
 

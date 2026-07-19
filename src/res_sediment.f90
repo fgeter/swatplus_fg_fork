@@ -10,9 +10,9 @@
       
       implicit none
                    !              |  
-      real :: sed_ppm = 0.
-      real :: sil_ppm = 0.
-      real :: cla_ppm = 0.
+      real :: sed_ppm
+      real :: sil_ppm
+      real :: cla_ppm
 
       if (wbody%flo < 1.e-6) then
         ! reservoir is empty

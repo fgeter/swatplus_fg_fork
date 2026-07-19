@@ -16,10 +16,10 @@
       integer :: irec
       
       !local variables
-      integer :: isalt = 0    !            |salt ion counter
-      integer :: ichan = 0    !            |id of source channel
-      real :: salt_conc = 0.  !g/m3        |concentration of salt ion in source channel
-      real :: div_mass = 0.   !kg          |mass of salt ion in diversion water
+      integer :: isalt        !            |salt ion counter
+      integer :: ichan        !            |id of source channel
+      real :: salt_conc       !g/m3        |concentration of salt ion in source channel
+      real :: div_mass        !kg          |mass of salt ion in diversion water
       
       
       !depending on the point source type, add/remove salt mass to object

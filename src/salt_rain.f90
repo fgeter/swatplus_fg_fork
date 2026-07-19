@@ -20,12 +20,12 @@
       
       implicit none
 
-      integer :: iadep = 0        !            |
-      integer :: j = 0            !none        |counter
-      integer :: iob = 0          !            |
-      integer :: ist = 0          !            |
-      integer :: isalt = 0        !            |salt ion counter
-      real :: const = 0.          !            |constant used for rate, days, etc
+      integer :: iadep            !            |
+      integer :: j                !none        |counter
+      integer :: iob              !            |
+      integer :: ist              !            |
+      integer :: isalt            !            |salt ion counter
+      real :: const               !            |constant used for rate, days, etc
 
       j = ihru
       

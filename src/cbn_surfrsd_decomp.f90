@@ -40,24 +40,24 @@
       
       implicit none 
        
-      integer :: j = 0      !none          |HRU number
-      real :: rmn1 = 0.     !kg N/ha       |amount of nitrogen moving from fresh organic
+      integer :: j          !none          |HRU number
+      real :: rmn1          !kg N/ha       |amount of nitrogen moving from fresh organic
                             !              |to nitrate(80%) and active organic(20%)
                             !              |pools in layer
-      real :: rmp = 0.      !              |to labile(80%) and organic(20%) pools in layer
-      real :: xx = 0.       !varies        |variable to hold intermediate calculation result
-      real :: csf = 0.      !none          |combined temperature/soil water factor
-      real :: cnr = 0.      !              |carbon nitrogen ratio
-      real :: cnrf = 0.     !              |carbon nitrogen ratio factor 
-      real :: cpr = 0.      !              |carbon phosphorus ratio
-      real :: cprf = 0.     !              |carbon phosphorus ratio factor
-      real :: ca = 0.       !              |
-      real :: decr = 0.     !              |
-      real :: ipl = 0.      !              |plant number in plant community
-      real :: idp = 0.      !              |plant number in plant data module
-      real :: cdg = 0.      !none          |soil temperature factor
-      real :: sut = 0.      !none          |soil water factor
-      real :: nactfr = 0.   !none          |nitrogen active pool fraction. The fraction
+      real :: rmp           !              |to labile(80%) and organic(20%) pools in layer
+      real :: xx            !varies        |variable to hold intermediate calculation result
+      real :: csf           !none          |combined temperature/soil water factor
+      real :: cnr           !              |carbon nitrogen ratio
+      real :: cnrf          !              |carbon nitrogen ratio factor 
+      real :: cpr           !              |carbon phosphorus ratio
+      real :: cprf          !              |carbon phosphorus ratio factor
+      real :: ca            !              |
+      real :: decr          !              |
+      real :: ipl           !              |plant number in plant community
+      real :: idp           !              |plant number in plant data module
+      real :: cdg           !none          |soil temperature factor
+      real :: sut           !none          |soil water factor
+      real :: nactfr        !none          |nitrogen active pool fraction. The fraction
                             !              |of organic nitrogen in the active pool. 
       j = ihru
       nactfr = .02

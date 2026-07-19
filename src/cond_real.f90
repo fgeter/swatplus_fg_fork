@@ -11,7 +11,7 @@
       real, intent (in)  :: var_cur         !           |current variable to check alternative
       real, intent (in)  :: var_tbl         !           |decision table variable to cpmpare with
       integer, intent (in)  :: idtbl        !none       |unused
-      integer :: ialt = 0
+      integer :: ialt
 
       !! suppress unused variable warning
       if (idtbl < 0) continue

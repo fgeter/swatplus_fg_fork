@@ -22,11 +22,11 @@
       
       implicit none
 
-      integer :: j = 0         !none          |HRU number
-      real :: orgn_kgha = 0.   !kg N/ha       |amount of organic N in first soil layer
-      real :: wt1 = 0.         !kg/ha         |weight of upper soil layer
-      real :: er = 0.          !none          |enrichment ratio           
-      real :: frac = 0.        !              |fraction of organic N in soil
+      integer :: j             !none          |HRU number
+      real :: orgn_kgha        !kg N/ha       |amount of organic N in first soil layer
+      real :: wt1              !kg/ha         |weight of upper soil layer
+      real :: er               !none          |enrichment ratio           
+      real :: frac             !              |fraction of organic N in soil
 
       j = ihru
 

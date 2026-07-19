@@ -32,43 +32,43 @@
       
       external :: activity_coefficient, CaCO3, CaSO4, cationexchange, Ionic_strength, MgCO3, MgSO4, NaCl
 
-      integer :: j = 0
-      integer :: jj = 0
-      integer :: m = 0
-      integer :: iter_count = 0
-      real :: ion1 = 0.
-      real :: ion2 = 0.
-      real :: ion3 = 0.
-      real :: ion4 = 0.
-      real :: ion5 = 0.
-      real :: ion6 = 0.
-      real :: ion7 = 0.
-      real :: ion8 = 0.
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
-      real :: sol_water = 0.
-      real :: sol_thick = 0.
-      real :: waterC = 0.
-      real :: Sol_CaCO3_p(1000) = 0.
-      real :: Sol_MgCO3_p(1000) = 0.
-      real :: Sol_CaSO4_p(1000) = 0.
-      real :: Sol_MgSO4_p(1000) = 0.
-      real :: Sol_NaCl_p(1000) = 0.
-      real :: I_Prep_in = 0.
-      real :: I_diff = 0.
-      real :: SkipedIEX = 0.
-      real :: soil_volume = 0.
-      real :: mass_before = 0.
-      real :: mass_after = 0.
-      real :: salt_mass_kg = 0.
-      real :: soil_mass = 0.
-      real :: sol_bd = 0.
-      real :: mass_before_dis = 0.
-      real :: mass_before_sol = 0.
-      real :: total_before = 0.
-      real :: mass_after_dis = 0.
-      real :: mass_after_sol = 0.
-      real :: total_after = 0.
+      integer :: j
+      integer :: jj
+      integer :: m
+      integer :: iter_count
+      real :: ion1
+      real :: ion2
+      real :: ion3
+      real :: ion4
+      real :: ion5
+      real :: ion6
+      real :: ion7
+      real :: ion8
+      real :: hru_area_m2
+      real :: water_volume
+      real :: sol_water
+      real :: sol_thick
+      real :: waterC
+      real :: Sol_CaCO3_p(1000)
+      real :: Sol_MgCO3_p(1000)
+      real :: Sol_CaSO4_p(1000)
+      real :: Sol_MgSO4_p(1000)
+      real :: Sol_NaCl_p(1000)
+      real :: I_Prep_in
+      real :: I_diff
+      real :: SkipedIEX
+      real :: soil_volume
+      real :: mass_before
+      real :: mass_after
+      real :: salt_mass_kg
+      real :: soil_mass
+      real :: sol_bd
+      real :: mass_before_dis
+      real :: mass_before_sol
+      real :: total_before
+      real :: mass_after_dis
+      real :: mass_after_sol
+      real :: total_after
       double precision IonStr,IS_temp,&                 
           K_ADJ1,K_ADJ2,K_ADJ3,K_ADJ4,K_ADJ5,&                 
           error1ST,error2ND,error3RD,errorTotal
@@ -410,9 +410,9 @@
       real :: I_Prep_in
       DATA CharBal/2.0, -2.0, -2.0, -1.0, 2.0, 1.0, 1.0/
       DATA a_size/6.0, 4.0, 4.5, 4.0, 8.0, 4.5, 3.0/
-      integer :: ii = 0
-      real :: A = 0.
-      real :: B = 0.
+      integer :: ii
+      real :: A
+      real :: B
       A = 0.5 !at 298 K
       B = 0.33 !at 298 K
       
@@ -773,29 +773,29 @@
       use salt_data_module
 
       implicit none 
-      real :: CEC = 0.
-      real :: Sel_K1 = 0.
-      real :: Sel_K2 = 0.
-      real :: Sel_K3 = 0.
-      real :: Sel_K4 = 0.
-      real :: Sel_K5 = 0.
-      real :: Sel_K6 = 0.
-      real :: XCAINI = 0.
-      real :: XMGINI = 0.
-      real :: XNAINI = 0.
-      real :: XKINI = 0.
-      real :: DeltaX_Ca = 0.
-      real :: DeltaX_Mg = 0.
-      real :: DeltaX_Na = 0.
-      real :: DeltaX_K = 0.
-      real :: Con_Ca = 0.
-      real :: Con_Mg = 0.
-      real :: Con_Na = 0.
-      real :: Con_K = 0.
-      real :: X_Ca = 0.
-      real :: X_Mg = 0.
-      real :: X_Na = 0.
-      real :: X_K = 0.
+      real :: CEC
+      real :: Sel_K1
+      real :: Sel_K2
+      real :: Sel_K3
+      real :: Sel_K4
+      real :: Sel_K5
+      real :: Sel_K6
+      real :: XCAINI
+      real :: XMGINI
+      real :: XNAINI
+      real :: XKINI
+      real :: DeltaX_Ca
+      real :: DeltaX_Mg
+      real :: DeltaX_Na
+      real :: DeltaX_K
+      real :: Con_Ca
+      real :: Con_Mg
+      real :: Con_Na
+      real :: Con_K
+      real :: X_Ca
+      real :: X_Mg
+      real :: X_Na
+      real :: X_K
 
       !CEC selected based on soil type; for simplicity, for now used one value based on the sandy-loam soil type
       CEC = 15 ! meq/100g soil 

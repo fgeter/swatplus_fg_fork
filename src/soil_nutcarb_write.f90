@@ -21,28 +21,28 @@
       implicit none
       
       character(len=2), intent(in) :: out_freq   ! Output frequency (d, m, y, a)
-      integer :: ly = 0         !none        |counter
-      real :: const = 0.        !none        |counter
+      integer :: ly             !none        |counter
+      real :: const             !none        |counter
       real :: tot_lyr_n
       real :: tot_lyr_p
       real :: tot_prof_n
       real :: tot_prof_p
-      real :: prf_swc = 0.0     !mm/mm       |average profile soil water content including wilting point moisture content.
-      real :: prf_depth = 0.0   !mm          |depth of soil profile.
+      real :: prf_swc           !mm/mm       |average profile soil water content including wilting point moisture content.
+      real :: prf_depth         !mm          |depth of soil profile.
       real :: frac_above_300 = 1.0
       real :: soil_prof_lig_n
       real :: soil_prof_nonlig_n
       real :: soil_prof_lig_p
       real :: soil_prof_nonlig_p
-      integer :: iihru = 0      !none        |counter
-      integer :: j = 0          !none        |counter
-      integer :: ipl = 0        !none        |counter
-      integer :: iob = 0
+      integer :: iihru          !none        |counter
+      integer :: j              !none        |counter
+      integer :: ipl            !none        |counter
+      integer :: iob
       integer :: profile_depth
       character (len=7) :: freq_label
       logical :: layer_output
       logical :: write_hdr = .true.
-      real :: root_frac_ly = 0.
+      real :: root_frac_ly
 
       layer_output = .false.
 

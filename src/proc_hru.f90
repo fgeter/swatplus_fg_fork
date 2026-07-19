@@ -16,8 +16,8 @@
                   structure_set_parms, topohyd_init, cli_lapse, dr_ru, lsu_read_elements, unit_hyd_ru_hru, &
                   pesticide_init, pathogen_init, salt_hru_init, cs_hru_init
       
-      integer :: j = 0          !none       |counter
-      integer :: ilum = 0       !none       |counter
+      integer :: j              !none       |counter
+      integer :: ilum           !none       |counter
 
        !! set the object number for each hru-to point to weather station
       if (sp_ob%hru > 0) then

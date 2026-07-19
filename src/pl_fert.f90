@@ -22,12 +22,12 @@
       real :: rtof             !none          |weighting factor used to partition the 
                                           !              |organic N & P concentration of septic effluent
                                           !              |between the fresh organic and the stable organic pools
-      integer :: j = 0                    !none          |hru counter
-      integer :: l = 0                    !none          |layer counter 
+      integer :: j                        !none          |hru counter
+      integer :: l                        !none          |layer counter 
       integer, intent (in) :: ifrt        !              |fertilizer type from fert data base
       integer, intent (in) :: fertop      !              |fertilizer operation type
       real, intent (in) :: frt_kg         !kg/ha         |total mass of fertilizer applied
-      real :: fr_ly = 0.                  !fraction      |fraction of fertilizer applied to layer
+      real :: fr_ly                       !fraction      |fraction of fertilizer applied to layer
       real :: c_n_rto                     !              |carbon nitrogen ratio
       real :: meta_fr                     !              |fraction of metabolic applied to layer
       real :: pool_fr                     !              |fraction of structural or lignin applied to layer

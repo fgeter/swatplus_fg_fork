@@ -16,13 +16,13 @@
       
       implicit none
       
-      integer :: nplt = 0
-      integer :: icom = 0
-      integer :: iauto = 0
-      integer :: isched = 0
-      integer :: id = 0
-      integer :: nly1 = 0
-      integer :: iihru = 0
+      integer :: nplt
+      integer :: icom
+      integer :: iauto
+      integer :: isched
+      integer :: id
+      integer :: nly1
+      integer :: iihru
 
       allocate (hru_init(0:sp_ob%hru))
       allocate (soil_init(0:sp_ob%hru))

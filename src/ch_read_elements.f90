@@ -10,21 +10,21 @@
       
       external :: define_unit_elements
 
-      character (len=80) :: titldum = "" !          |title of file
-      character (len=80) :: header = ""  !          |header of file
-      integer :: eof = 0               !          |end of file
-      integer :: imax = 0              !          |determine max number for array (imax) and total number in file
-      integer :: mcal = 0              !units     |description
+      character (len=80) :: titldum      !          |title of file
+      character (len=80) :: header       !          |header of file
+      integer :: eof                   !          |end of file
+      integer :: imax                  !          |determine max number for array (imax) and total number in file
+      integer :: mcal                  !units     |description
       logical :: i_exist               !          |check to determine if file exists
-      integer :: mreg = 0              !units     |description 
-      integer :: i = 0                 !none      |counter
-      integer :: k = 0                 !units     |description
-      integer :: nspu = 0              !units     |description
-      integer :: isp = 0               !none      |counter
-      integer :: ielem1 = 0            !units     |description
-      integer :: icha = 0              !none      |counter 
-      integer :: ireg = 0              !none      |counter
-      integer :: ires = 0              !none      |counter
+      integer :: mreg                  !units     |description 
+      integer :: i                     !none      |counter
+      integer :: k                     !units     |description
+      integer :: nspu                  !units     |description
+      integer :: isp                   !none      |counter
+      integer :: ielem1                !units     |description
+      integer :: icha                  !none      |counter 
+      integer :: ireg                  !none      |counter
+      integer :: ires                  !none      |counter
      
       imax = 0
       mcal = 0

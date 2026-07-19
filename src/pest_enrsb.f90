@@ -8,8 +8,8 @@
       
       implicit none       
       
-      integer :: j = 0       !none          |HRU number
-      real :: cy = 0.        !              |
+      integer :: j           !none          |HRU number
+      real :: cy             !              |
 
       j = ihru
 

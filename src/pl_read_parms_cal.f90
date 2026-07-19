@@ -11,20 +11,20 @@
       
       external :: define_unit_elements
       
-       character (len=80) :: titldum = ""!           |title of file
-       character (len=80) :: header = "" !           |header of file
-       integer :: eof = 0              !           |end of file
+       character (len=80) :: titldum     !           |title of file
+       character (len=80) :: header      !           |header of file
+       integer :: eof                  !           |end of file
        logical :: i_exist              !none       |check to determine if file exists
-       integer :: mreg = 0             !none       |end of loop
-       integer :: i = 0                !none       |counter
-       integer :: ilum = 0
-       integer :: ilum_mx = 0
-       integer :: isp = 0              !none       |counter 
-       integer :: ielem1 = 0           !none       |counter 
-       integer :: iihru = 0            !none       |counter  
-       integer :: ihru = 0             !none       |counter 
-       integer :: nspu = 0             !           | 
-       integer :: ipl = 0              !           | 
+       integer :: mreg                 !none       |end of loop
+       integer :: i                    !none       |counter
+       integer :: ilum
+       integer :: ilum_mx
+       integer :: isp                  !none       |counter 
+       integer :: ielem1               !none       |counter 
+       integer :: iihru                !none       |counter  
+       integer :: ihru                 !none       |counter 
+       integer :: nspu                 !           | 
+       integer :: ipl                  !           | 
        
        mreg = 0
        eof = 0

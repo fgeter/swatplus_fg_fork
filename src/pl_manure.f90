@@ -24,26 +24,26 @@
                                           !              |organic N & P concentration of septic effluent
                                           !              |between the fresh organic and the stable 
                                           !              |organic pools
-      integer :: j = 0                    !none          |counter
-      integer :: l = 0                    !none          |counter 
+      integer :: j                        !none          |counter
+      integer :: l                        !none          |counter 
       integer, intent (in) :: ifrt        !              |fertilizer type from fert data base
       real, intent (in) :: surf_frac      !frac          |fraction of manure applied to the surface layer
                                           !              |(from chem_app.ops surf_frac for "manu"; 1.0 for "graz")
       real, intent (in) :: frt_kg         !kg/ha         |amount of fertilizer applied
-      real :: fr_ly = 0.                  !              |fraction of fertilizer applied to layer
+      real :: fr_ly                       !              |fraction of fertilizer applied to layer
       
       !!added by zhang
       !!======================
-      real :: org_c = 0.                       !organic carbon applied (kg C/ha)
-      real :: meta_fr = 0.  !fraction of carbon in fertilizer that is allocated to metabolic litter C pool
-      real :: meta_c = 0.                  !organic carbon allocated to metabolic litter C pool
-      real :: meta_m = 0.        !fertilizer (including C and N) allocated into metabolic litter SOM pool
-      real :: meta_n = 0.       !organic N allocated to metabolic litter N pool
-      real :: str_c = 0.        !organic carbon allocated to structural litter C pool
-      real :: str_m = 0.         !fertilizer (including C and N) allocated into structure litter SOM pool
-      real :: c_n_fac = 0.        !function of C:N ratio in fertilizer
-      real :: liq_manure_kg = 0.   !kilograms of the liquid portion of the manure 
-      real :: liq_manure_mm = 0.   !mm/ha of of the liquid portion of the manure
+      real :: org_c                            !organic carbon applied (kg C/ha)
+      real :: meta_fr       !fraction of carbon in fertilizer that is allocated to metabolic litter C pool
+      real :: meta_c                       !organic carbon allocated to metabolic litter C pool
+      real :: meta_m             !fertilizer (including C and N) allocated into metabolic litter SOM pool
+      real :: meta_n            !organic N allocated to metabolic litter N pool
+      real :: str_c             !organic carbon allocated to structural litter C pool
+      real :: str_m              !fertilizer (including C and N) allocated into structure litter SOM pool
+      real :: c_n_fac             !function of C:N ratio in fertilizer
+      real :: liq_manure_kg        !kilograms of the liquid portion of the manure 
+      real :: liq_manure_mm        !mm/ha of of the liquid portion of the manure
       real :: frac_solids          !fraction of solids in manure which by definition is solids/(solids + liquids)
       real :: fr_mass              !fraction of dry weight applied.
       

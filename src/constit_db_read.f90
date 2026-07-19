@@ -9,15 +9,15 @@
 
       implicit none
          
-      character (len=80) :: titldum = ""!           |title of file
+      character (len=80) :: titldum     !           |title of file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: eof = 0              !           |end of file
-      integer :: i = 0                !           |
-      integer :: imax = 0             !           |
-      integer :: ipest = 0            !none       |counter
-      integer :: ipestdb = 0          !none       |counter
-      integer :: ipath = 0            !none       |counter
-      integer :: ipathdb = 0          !none       |counter
+      integer :: eof                  !           |end of file
+      integer :: i                    !           |
+      integer :: imax                 !           |
+      integer :: ipest                !none       |counter
+      integer :: ipestdb              !none       |counter
+      integer :: ipath                !none       |counter
+      integer :: ipathdb              !none       |counter
        
       eof = 0
       imax = 0

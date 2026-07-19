@@ -8,19 +8,19 @@
       
       external :: define_unit_elements
       
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      character (len=16) :: namedum = ""!           |
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
-      integer :: nspu = 0             !           |
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      character (len=16) :: namedum     !           |
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
+      integer :: nspu                 !           |
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: i = 0                !none       |counter
-      integer :: isp = 0              !none       |counter
-      integer :: numb = 0             !           |
-      integer :: iaq = 0              !none       |counter
-      integer :: iaq_db = 0           !none       |counter
-      integer :: ielem1 = 0           !none       |counter
+      integer :: i                    !none       |counter
+      integer :: isp                  !none       |counter
+      integer :: numb                 !           |
+      integer :: iaq                  !none       |counter
+      integer :: iaq_db               !none       |counter
+      integer :: ielem1               !none       |counter
 
       eof = 0
       imax = 0

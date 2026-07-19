@@ -26,29 +26,29 @@
                   gwflow_channel_exch, gwflow_floodplain, gwflow_satexcess, gwflow_tile, rcurv_interp_flo, &
                   sd_channel_sediment3, wallo_control, cli_lapse
     
-      integer :: isd_db = 0           !              |
-      integer :: ipest = 0            !              |
-      integer :: isalt = 0            !              |salt ion counter (rtb salt)
-      real :: ebtm_m = 0.             !m             |erosion of bottom of channel
-      real :: ebank_m = 0.            !m             |meander cut on one side
-      real :: hc_sed = 0.             !tons          |headcut erosion
-      real :: a = 0.                  !m^2           |cross-sectional area of channel
-      real :: frac = 0.               !0-1           |fraction of hydrograph 
-      integer :: ics = 0              !none          |counter
-      real :: rto = 0.                !none          |cloud cover factor 
-      integer :: iaq = 0
-      integer :: iaq_ch = 0
-      real :: scoef = 0.              !none          |Storage coefficient
-      real :: gw_salt_in = 0.         !kg            |salt loading to channel from aquifer
-      real :: gw_cs_in = 0.           !kg            |constituent loading to channel from aquifer
-      real :: seep_mass = 0.          !kg            |salt mass in seepage water
-      real :: salt_conc(8) = 0.       !kg            |salt concentration in channel water
-      real :: cs_conc(8) = 0.         !kg            |constituent concentration in channel water
-      real :: conc_chng = 0.          !              |change in concentration (and mass) in channel sol and org N and P
-      real :: inflo_rate = 0.
-      real :: aqu_inflo = 0.          !m3            |aquifer inflow if using geomorphic baseflow
-      integer :: iw = 0               !              |counter for water allocation object
-      integer :: iwallo = 0           !              |variable to pass to wallo_control
+      integer :: isd_db               !              |
+      integer :: ipest                !              |
+      integer :: isalt                !              |salt ion counter (rtb salt)
+      real :: ebtm_m                  !m             |erosion of bottom of channel
+      real :: ebank_m                 !m             |meander cut on one side
+      real :: hc_sed                  !tons          |headcut erosion
+      real :: a                       !m^2           |cross-sectional area of channel
+      real :: frac                    !0-1           |fraction of hydrograph 
+      integer :: ics                  !none          |counter
+      real :: rto                     !none          |cloud cover factor 
+      integer :: iaq
+      integer :: iaq_ch
+      real :: scoef                   !none          |Storage coefficient
+      real :: gw_salt_in              !kg            |salt loading to channel from aquifer
+      real :: gw_cs_in                !kg            |constituent loading to channel from aquifer
+      real :: seep_mass               !kg            |salt mass in seepage water
+      real :: salt_conc(8)            !kg            |salt concentration in channel water
+      real :: cs_conc(8)              !kg            |constituent concentration in channel water
+      real :: conc_chng               !              |change in concentration (and mass) in channel sol and org N and P
+      real :: inflo_rate
+      real :: aqu_inflo               !m3            |aquifer inflow if using geomorphic baseflow
+      integer :: iw                   !              |counter for water allocation object
+      integer :: iwallo               !              |variable to pass to wallo_control
       
       ich = isdch
       isd_db = sd_dat(ich)%hyd

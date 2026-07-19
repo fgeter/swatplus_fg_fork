@@ -9,18 +9,18 @@
 
       implicit none
  
-      character (len=80) :: titldum = ""
-      character (len=80) :: header = ""
-      integer :: eof = 0
-      integer :: imax = 0
-      integer :: ob1 = 0
-      integer :: ob2 = 0
+      character (len=80) :: titldum
+      character (len=80) :: header
+      integer :: eof
+      integer :: imax
+      integer :: ob1
+      integer :: ob2
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: iexco_path = 0
-      integer :: ii = 0
-      integer :: ipath = 0
-      integer :: iexco = 0
-      integer :: iob = 0
+      integer :: iexco_path
+      integer :: ii
+      integer :: ipath
+      integer :: iexco
+      integer :: iob
 
       eof = 0
       imax = 0

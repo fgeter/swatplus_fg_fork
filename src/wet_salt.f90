@@ -16,16 +16,16 @@
       
       integer, intent (in) :: icmd !command counter (incoming)
       integer, intent (in) :: ihru !HRU number (incoming)
-      integer :: isalt = 0         !salt ion counter
-      real    :: salt_mass_beg = 0.
-      real    :: salt_conc_beg = 0.
-      real    :: salt_mass_end = 0.
-      real    :: salt_conc_end = 0.
-      real    :: salt_inflow = 0.
-      real    :: salt_outflow = 0.
-      real    :: salt_seep = 0.
-      real    :: mass_avail = 0.   !track available salt ion mass in the wetland (kg)
-      real    :: seep_mass = 0.    !salt ion mass lost via seepage (and added to soil profile) (kg/ha)
+      integer :: isalt             !salt ion counter
+      real    :: salt_mass_beg
+      real    :: salt_conc_beg
+      real    :: salt_mass_end
+      real    :: salt_conc_end
+      real    :: salt_inflow
+      real    :: salt_outflow
+      real    :: salt_seep
+      real    :: mass_avail        !track available salt ion mass in the wetland (kg)
+      real    :: seep_mass         !salt ion mass lost via seepage (and added to soil profile) (kg/ha)
       
       !mass balance output (by HRU for wetlands): prepare by setting to 0
       do isalt=1,cs_db%num_salts

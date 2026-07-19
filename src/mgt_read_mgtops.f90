@@ -8,17 +8,17 @@
       
       external :: read_mgtops, mgt_operatn
             
-      integer :: nops = 0             !           |end of loop
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      integer :: nops                 !           |end of loop
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: iops = 0             !none       |counter   
-      integer :: nauto = 0            !           |end of loop
-      integer :: iauto = 0            !none       |counter
-      integer :: isched = 0           !none       |counter
-      integer :: m_autos = 0          !           |end of loop
+      integer :: iops                 !none       |counter   
+      integer :: nauto                !           |end of loop
+      integer :: iauto                !none       |counter
+      integer :: isched               !none       |counter
+      integer :: m_autos              !           |end of loop
 
       eof = 0
       imax = 0

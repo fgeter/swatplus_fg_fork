@@ -11,46 +11,46 @@
       use cs_data_module
 
       implicit none
-      integer :: j = 0
-      integer :: jj = 0
-      real :: cseo4 = 0.
-      real :: cseo3 = 0.
-      real :: cborn = 0.
-      real :: ccseo4 = 0.
-      real :: ccseo3 = 0.
-      real :: ccborn = 0.
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
-      real :: mass_seo4_sol = 0.
-      real :: mass_seo3_sol = 0.
-      real :: mass_born_sol = 0.
-      real :: mass_seo4_sorb = 0.
-      real :: mass_seo3_sorb = 0.
-      real :: mass_born_sorb = 0.
-      real :: sol_thick = 0.
-      real :: volume = 0.
-      real :: ratio = 0.
-      real :: mass_total = 0.
-      real :: val_num = 0.
-      real :: val_den = 0.
-      real :: val = 0.
-      real :: cseo4_new = 0.
-      real :: ccseo4_new = 0.
-      real :: cseo3_new = 0.
-      real :: ccseo3_new = 0.
-      real :: cborn_new = 0.
-      real :: ccborn_new = 0.
-      real :: soil_volume = 0.
-      real :: soil_mass = 0.
-      real :: sorbed_seo4 = 0.
-      real :: sorbed_seo3 = 0.
-      real :: sorbed_born = 0.
-      real :: mass_seo4_before = 0.
-      real :: mass_seo4_after = 0.
-      real :: mass_seo3_before = 0.
-      real :: mass_seo3_after = 0.
-      real :: mass_born_before = 0.
-      real :: mass_born_after = 0.
+      integer :: j
+      integer :: jj
+      real :: cseo4
+      real :: cseo3
+      real :: cborn
+      real :: ccseo4
+      real :: ccseo3
+      real :: ccborn
+      real :: hru_area_m2
+      real :: water_volume
+      real :: mass_seo4_sol
+      real :: mass_seo3_sol
+      real :: mass_born_sol
+      real :: mass_seo4_sorb
+      real :: mass_seo3_sorb
+      real :: mass_born_sorb
+      real :: sol_thick
+      real :: volume
+      real :: ratio
+      real :: mass_total
+      real :: val_num
+      real :: val_den
+      real :: val
+      real :: cseo4_new
+      real :: ccseo4_new
+      real :: cseo3_new
+      real :: ccseo3_new
+      real :: cborn_new
+      real :: ccborn_new
+      real :: soil_volume
+      real :: soil_mass
+      real :: sorbed_seo4
+      real :: sorbed_seo3
+      real :: sorbed_born
+      real :: mass_seo4_before
+      real :: mass_seo4_after
+      real :: mass_seo3_before
+      real :: mass_seo3_after
+      real :: mass_born_before
+      real :: mass_born_after
       
       
       !hru ID

@@ -12,16 +12,16 @@
       
       implicit none
                   
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: i = 0                !none       |counter 
-      integer :: mdtbl = 0            !none       |ending of loop
-      integer :: ic = 0               !none       |counter 
-      integer :: ial = 0              !none       |counter 
-      integer :: iac = 0              !none       !counter 
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: i                    !none       |counter 
+      integer :: mdtbl                !none       |ending of loop
+      integer :: ic                   !none       |counter 
+      integer :: ial                  !none       |counter 
+      integer :: iac                  !none       !counter 
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: ilum = 0             !none       |counter      
+      integer :: ilum                 !none       |counter      
       
       mdtbl = 0
       eof = 0

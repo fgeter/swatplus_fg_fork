@@ -16,14 +16,14 @@
       
       implicit none 
         
-      integer :: ihru = 0        !none          !counter       
-      integer :: npmx = 0        !none          |total number of pesticides     
-      integer :: ly = 0          !none          |counter
-      integer :: isalt = 0       !none          |counter
-      integer :: isalt_db = 0    !              | 
-      integer :: isp_ini = 0     !              |
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
+      integer :: ihru            !none          !counter       
+      integer :: npmx            !none          |total number of pesticides     
+      integer :: ly              !none          |counter
+      integer :: isalt           !none          |counter
+      integer :: isalt_db        !              | 
+      integer :: isp_ini         !              |
+      real :: hru_area_m2
+      real :: water_volume
         
         
       !! allocate hru salts

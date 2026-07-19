@@ -87,9 +87,9 @@
       
       implicit none
  
-      integer :: j = 0     !none          |HRU number
-      integer :: k = 0     !none          |counter
-      real :: sedprev = 0. !              | 
+      integer :: j         !none          |HRU number
+      integer :: k         !none          |counter
+      real :: sedprev      !              | 
 
       j = ihru
 

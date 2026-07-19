@@ -14,24 +14,24 @@
       
       external :: se_reactions_soil
 
-      integer :: j = 0
-      integer :: jj = 0
-      integer :: n = 0
+      integer :: j
+      integer :: jj
+      integer :: n
       real :: conc_old
       real :: conc_new
       real :: conc_rg
       real :: k_rg
       real :: phi_value
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
-      real :: mass_seo4_before = 0.
-      real :: mass_seo3_before = 0.
-      real :: mass_seo4_after = 0.
-      real :: mass_seo3_after = 0.
-      real :: cs_mass_kg = 0.
-      real :: seo4_conc = 0.
-      real :: seo3_conc = 0.
-      real :: no3_conc = 0.
+      real :: hru_area_m2
+      real :: water_volume
+      real :: mass_seo4_before
+      real :: mass_seo3_before
+      real :: mass_seo4_after
+      real :: mass_seo3_after
+      real :: cs_mass_kg
+      real :: seo4_conc
+      real :: seo3_conc
+      real :: no3_conc
       dimension conc_old(3),conc_new(3),conc_rg(3),k_rg(4,3),phi_value(3)
       
       

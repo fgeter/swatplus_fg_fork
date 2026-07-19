@@ -6,7 +6,7 @@
       
       implicit none
              
-      integer :: irec = 0   !none      |counter
+      integer :: irec       !none      |counter
 
            
         brec_d = hz

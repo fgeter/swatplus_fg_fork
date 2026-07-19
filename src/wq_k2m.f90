@@ -32,11 +32,11 @@
       real, intent (in) :: tk
       real, intent (in) :: c1
       real, intent (in) :: c2
-      real :: h1 = 0.
-      real :: h2 = 0.
-      real :: help = 0.
-      real :: tm = 0.
-      real :: h3 = 0.
+      real :: h1
+      real :: h2
+      real :: help
+      real :: tm
+      real :: h3
       real :: wq_k2m
       real :: wq_semianalyt
       

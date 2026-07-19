@@ -46,34 +46,34 @@
                   soil_carbvar_write
 
       real, dimension(time%step) :: hyd_flo     !flow hydrograph
-      integer :: in = 0               !              | 
-      integer :: iob = 0              !              |
-      integer :: iday = 0             !              |
-      integer :: isd = 0              !none          |counter
-      integer :: ires = 0             !none          |reservoir number
-      integer :: irec = 0             !              |
-      integer :: iout = 0             !none          |counter
-      integer :: ihtyp = 0            !              |
-      integer :: iaq = 0              !none          |counter
-      integer :: j = 0                !none          |counter
-      integer :: ihyd = 0             !              |
-      integer :: idr = 0              !              |
-      integer :: iwro = 0             !              |
-      real :: conv = 0.               !              |
-      real :: frac_in = 0.            !              |
-      integer :: ts1 = 0
-      integer :: ts2 = 0
-      integer :: iw = 0               !              |counter for water allocation object
-      integer :: iwallo = 0           !              |variable to pass to wallo_control
-      integer :: i_count = 0          !rtb gwflow
-      integer :: i_mfl = 0            !rtb gwflow    |counter
-      integer :: i_chan = 0           !rtb gwflow    |counter
-      integer :: iob_chan = 0        !rtb gwflow    |ob index for channel
-      real :: sumflo = 0.
+      integer :: in                   !              | 
+      integer :: iob                  !              |
+      integer :: iday                 !              |
+      integer :: isd                  !none          |counter
+      integer :: ires                 !none          |reservoir number
+      integer :: irec                 !              |
+      integer :: iout                 !none          |counter
+      integer :: ihtyp                !              |
+      integer :: iaq                  !none          |counter
+      integer :: j                    !none          |counter
+      integer :: ihyd                 !              |
+      integer :: idr                  !              |
+      integer :: iwro                 !              |
+      real :: conv                    !              |
+      real :: frac_in                 !              |
+      integer :: ts1
+      integer :: ts2
+      integer :: iw                   !              |counter for water allocation object
+      integer :: iwallo               !              |variable to pass to wallo_control
+      integer :: i_count              !rtb gwflow
+      integer :: i_mfl                !rtb gwflow    |counter
+      integer :: i_chan               !rtb gwflow    |counter
+      integer :: iob_chan            !rtb gwflow    |ob index for channel
+      real :: sumflo
       integer, allocatable, save :: par_hru(:)   !! icmd indices of independent (cmd_order==1) HRUs
       integer, save :: n_par_hru = -1            !! size of par_hru (-1 = not yet built)
-      logical :: use_par = .false.               !! run the parallel HRU pre-pass this day?
-      integer :: k = 0                           !! pre-pass loop counter
+      logical :: use_par                         !! run the parallel HRU pre-pass this day?
+      integer :: k                               !! pre-pass loop counter
 
       icmd = sp_ob1%objs
       wallo(:)%trn_cur = 1

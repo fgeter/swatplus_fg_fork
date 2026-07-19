@@ -10,9 +10,9 @@
       implicit none
       
       integer, intent (in) :: iaq        !             |
-      real :: const = 0.                 !             |constant used for rate, days, etc
-      integer :: iob = 0                 !             |
-      integer :: isalt = 0
+      real :: const                      !             |constant used for rate, days, etc
+      integer :: iob                     !             |
+      integer :: isalt
                          
 !!    ~ ~ ~ PURPOSE ~ ~ ~
 !!    this subroutine outputs salt mass loadings and concentrations in aquifers

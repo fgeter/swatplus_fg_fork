@@ -21,12 +21,12 @@
       
       implicit none
 
-      integer :: j = 0    !none          |HRU number
-      real :: xx = 0.     !kg N/ha       |amount of organic N in first soil layer
-      real :: wt1 = 0.    !none          |conversion factor (mg/kg => kg/ha)
-      real :: er = 0.     !none          |enrichment ratio
-      real :: conc = 0.   !              |concentration of organic N in soil
-      real :: xx1 = 0.    !              |
+      integer :: j        !none          |HRU number
+      real :: xx          !kg N/ha       |amount of organic N in first soil layer
+      real :: wt1         !none          |conversion factor (mg/kg => kg/ha)
+      real :: er          !none          |enrichment ratio
+      real :: conc        !              |concentration of organic N in soil
+      real :: xx1         !              |
  
       j = ihru
 

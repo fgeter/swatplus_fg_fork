@@ -11,20 +11,20 @@
       implicit none
 
       integer, intent (in) :: chan_id    !       |channel id
-      integer :: k = 0                   !       |counter
-      integer :: s = 0                   !       |solute counter
-      integer :: cell_id = 0             !       |cell in connection with the channel
-      integer :: isalt = 0               !       |salt ion counter
-      integer :: ics = 0                 !       |constituent counter
-      integer :: sol_index = 0
+      integer :: k                       !       |counter
+      integer :: s                       !       |solute counter
+      integer :: cell_id                 !       |cell in connection with the channel
+      integer :: isalt                   !       |salt ion counter
+      integer :: ics                     !       |constituent counter
+      integer :: sol_index
 			integer :: dum
-      real :: satx_depth = 0.            !m      |height of water table above ground surface
-      real :: satx_volume = 0.           !m3     |volume of groundwater above ground surface
-      real :: solmass(100) = 0.          !g      |solute mass transferred
-      real :: heat_flux = 0.             !J      |groundwater heat flux to the channel
-      real :: chan_heat = 0.             !J      |heat in the channel
-			real :: chan_flow = 0.
-			real :: chan_temp = 0.
+      real :: satx_depth                 !m      |height of water table above ground surface
+      real :: satx_volume                !m3     |volume of groundwater above ground surface
+      real :: solmass(100)               !g      |solute mass transferred
+      real :: heat_flux                  !J      |groundwater heat flux to the channel
+      real :: chan_heat                  !J      |heat in the channel
+			real :: chan_flow
+			real :: chan_temp
 			real :: gw_temp,gw_storage,gw_heat
 
 

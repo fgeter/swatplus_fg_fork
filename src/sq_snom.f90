@@ -37,12 +37,12 @@
       
       implicit none
 
-      integer :: j = 0      !none       |HRU number
-      real :: smfac = 0.    !           |
-      real :: rto_sno  = 0. !none       |ratio of current day's snow water to minimum amount needed to
+      integer :: j          !none       |HRU number
+      real :: smfac         !           |
+      real :: rto_sno       !none       |ratio of current day's snow water to minimum amount needed to
                             !           |cover ground completely 
-      real :: snocov = 0.   !none       |fraction of HRU area covered with snow
-      real :: snotmp = 0.   !deg C      |temperature of snow pack
+      real :: snocov        !none       |fraction of HRU area covered with snow
+      real :: snotmp        !deg C      |temperature of snow pack
 
       snotmp = 0.
 

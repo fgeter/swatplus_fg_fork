@@ -20,16 +20,16 @@
 
       implicit none
       
-      integer :: i = 0
-      integer :: m = 0
-      integer :: ob_ctr = 0
-      integer :: num_days = 0
-      integer :: sol_index = 0
-      integer :: jj = 0
-      real :: cssum1 = 0.
-      real :: cssum2 = 0.
-      real :: cssum3 = 0.
-      real :: cs_basin(87) = 0.
+      integer :: i
+      integer :: m
+      integer :: ob_ctr
+      integer :: num_days
+      integer :: sol_index
+      integer :: jj
+      real :: cssum1
+      real :: cssum2
+      real :: cssum3
+      real :: cs_basin(87)
 
       !basin-wide constituent mass balance ------------------------------------------------------------------------------------------------
 

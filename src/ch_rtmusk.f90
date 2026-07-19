@@ -27,35 +27,35 @@
       external :: rcurv_interp_flo
       real, external :: qman, theta
       
-      integer :: ii = 0     !none              |current day of simulation
-      integer :: ihru = 0
-      integer :: iihru = 0
-      integer :: icha = 0
-      integer :: irtstep = 0
-      integer :: isubstep = 0
+      integer :: ii         !none              |current day of simulation
+      integer :: ihru
+      integer :: iihru
+      integer :: icha
+      integer :: irtstep
+      integer :: isubstep
       
-      real :: ch_stor_init = 0. !m3             |storage in channel at beginning of day
-      real :: fp_stor_init = 0. !m3             |storage in flood plain above wetlands emergency spillway at beginning of day
-      real :: wet_stor_init = 0.  !m3           |storage in flood plain wetlands at beginning of day
-      real :: tot_stor_init = 0.
-      real :: inout = 0.        !m3             |inflow - outflow for day
-      real :: del_stor = 0.     !m3             |change in storage of channel + flood plain + wetlands
-      real :: topw = 0.         !m              |top width of main channel
-      real :: qinday = 0.       !units          |description 
-      real :: qoutday = 0.      !units          |description   
-      real :: inflo = 0.        !m^3            |inflow water volume
-      real :: inflo_rate = 0.   !m^3/s          |inflow rate
-      real :: outflo = 0.       !m^3            |outflow water volume
-      real :: trans_loss = 0.   !m^3            |transmission losses during day
-      real :: evap = 0.         !m^3            |evaporation losses during day
-      real :: rto = 0.
-      real :: outflo_rate = 0.
-      real :: dts = 0.               !seconds    |time step interval for substep
-      real :: dthr = 0.
-      real :: scoef = 0.
-      real :: sum_inflo = 0.
-      real :: sum_outflo = 0.
-      real :: wet_evol = 0. 
+      real :: ch_stor_init      !m3             |storage in channel at beginning of day
+      real :: fp_stor_init      !m3             |storage in flood plain above wetlands emergency spillway at beginning of day
+      real :: wet_stor_init       !m3           |storage in flood plain wetlands at beginning of day
+      real :: tot_stor_init
+      real :: inout             !m3             |inflow - outflow for day
+      real :: del_stor          !m3             |change in storage of channel + flood plain + wetlands
+      real :: topw              !m              |top width of main channel
+      real :: qinday            !units          |description 
+      real :: qoutday           !units          |description   
+      real :: inflo             !m^3            |inflow water volume
+      real :: inflo_rate        !m^3/s          |inflow rate
+      real :: outflo            !m^3            |outflow water volume
+      real :: trans_loss        !m^3            |transmission losses during day
+      real :: evap              !m^3            |evaporation losses during day
+      real :: rto
+      real :: outflo_rate
+      real :: dts                    !seconds    |time step interval for substep
+      real :: dthr
+      real :: scoef
+      real :: sum_inflo
+      real :: sum_outflo
+      real :: wet_evol
 
       jrch = isdch
       jhyd = sd_dat(jrch)%hyd

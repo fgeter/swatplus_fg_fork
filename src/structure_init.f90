@@ -8,8 +8,8 @@
       
       external :: structure_set_parms
       
-      integer :: j = 0               !none       |counter
-      integer :: ilum = 0            !none       |counter 
+      integer :: j                   !none       |counter
+      integer :: ilum                !none       |counter 
       
       do j = 1, sp_ob%hru
         ilum = hru(j)%land_use_mgt

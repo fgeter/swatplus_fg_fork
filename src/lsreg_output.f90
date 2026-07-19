@@ -14,18 +14,18 @@
       implicit none
       
       integer, dimension(:), allocatable :: iarea
-      integer :: ireg = 0
-      integer :: ielem = 0
-      real :: area_ha = 0.
-      integer :: i = 0
-      integer :: ilum = 0
-      integer :: nlum = 0
-      real :: const = 0.
-      integer :: ilum_db = 0
-      real :: constnb = 0.
-      integer :: icu = 0
-      real :: constwb = 0.
-      real :: constpw = 0.
+      integer :: ireg
+      integer :: ielem
+      real :: area_ha
+      integer :: i
+      integer :: ilum
+      integer :: nlum
+      real :: const
+      integer :: ilum_db
+      real :: constnb
+      integer :: icu
+      real :: constwb
+      real :: constpw
               
 !!    ~ ~ ~ PURPOSE ~ ~ ~
 !!!    PRINT CODES: "avann" = average annual (always print)

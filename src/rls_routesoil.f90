@@ -15,10 +15,10 @@
       
       implicit none
 
-      real :: latqlyr = 0.          !mm         |lateral flow into layer 
-      integer :: j = 0              !           |hru number
+      real :: latqlyr               !mm         |lateral flow into layer 
+      integer :: j                  !           |hru number
       integer, intent (in) :: iob   !           |object number
-      integer :: lyr = 0            !           |layer number
+      integer :: lyr                !           |layer number
 
       j = ihru
       

@@ -13,17 +13,17 @@
       
       implicit none 
         
-      integer :: ihru = 0        !none          !counter       
-      integer :: npmx = 0        !none          |total number of pesticides     
-      integer :: ly = 0          !none          |counter
-      integer :: ics = 0         !none          |counter
-      integer :: ics_db = 0      !              | 
-      integer :: isp_ini = 0     !              |
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
-      real :: soil_volume = 0.
-      real :: soil_mass = 0.
-      real :: mass_sorbed = 0.
+      integer :: ihru            !none          !counter       
+      integer :: npmx            !none          |total number of pesticides     
+      integer :: ly              !none          |counter
+      integer :: ics             !none          |counter
+      integer :: ics_db          !              | 
+      integer :: isp_ini         !              |
+      real :: hru_area_m2
+      real :: water_volume
+      real :: soil_volume
+      real :: soil_mass
+      real :: mass_sorbed
         
         
       !! allocate hru cs

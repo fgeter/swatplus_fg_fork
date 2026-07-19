@@ -7,16 +7,16 @@
 
       implicit none
 
-      integer :: iaq = 0            !none       |counter
-      integer :: mfe = 0            !none       |my first element (channel with smallest area)
-      integer :: next1 = 0          !none       |counter
-      integer :: iprv = 0           !none       |counter 
-      integer :: ipts = 0           !none       |counter
-      integer :: npts = 0           !none       |counter
-      integer :: icha = 0           !none       |counter
-      integer :: ichd = 0           !none       |counter
-      integer :: iob = 0            !none       |counter
-      real :: sum_len = 0.          !km         |total length of channel in aquifer
+      integer :: iaq                !none       |counter
+      integer :: mfe                !none       |my first element (channel with smallest area)
+      integer :: next1              !none       |counter
+      integer :: iprv               !none       |counter 
+      integer :: ipts               !none       |counter
+      integer :: npts               !none       |counter
+      integer :: icha               !none       |counter
+      integer :: ichd               !none       |counter
+      integer :: iob                !none       |counter
+      real :: sum_len               !km         |total length of channel in aquifer
       real, dimension(:), allocatable :: next   !!next channel to dry up - sorted by drainage area
       
       !! set parameters needed to distribute gwflow to channels using geomorphical model

@@ -75,47 +75,47 @@
       
       
       
-      real :: xx = 0.                       !varies        |variable to hold calculation results
-      real :: lattan = 0.                   !none          |Tan(Latitude)
-      real :: x1 = 0.                       !none          |variable to hold calculation results
-      real :: x2 = 0.                       !none          |variable to hold calculation results
-      real :: x3 = 0.                       !none          |variable to hold calculation results
-      real :: tav = 0.                      !deg C         |average monthly temperature
-      real :: tmin = 0.                     !deg C         |minimum average monthly temperature
-      real :: tmax = 0.                     !deg C         |maximum average monthly temperature
-      real :: tk = 0.                       !deg K         |maximum average monthly temperature degrees Kelvin
-      real :: alb = 0.                      !none          |albedo
-      real :: d = 0.                        !              |
-      real :: gma = 0.                      !              |
-      real :: ho = 0.                       !              |
-      real :: aph = 0.                      !              |
-      integer :: inext = 0                  !none          |counter for days for running sum
-      real :: sum = 0.                      !none          |variable to hold summation results
-      real :: summm_p = 0.                  !mm            |sum of precipitation over year
-      real :: summm_pet = 0.                !mm            |sum of potential ET over year
-      real :: summn_t = 0.                  !deg C         |sum of minimum temp values over year
-      real :: summx_t = 0.                  !deg C         |sum of maximum temp values over year
-      real :: rnm2 = 0.                     !none          |random number between 0.0 and 1.0
-      real :: r6 = 0.                       !none          |variable to hold calculation result
-      real :: xlv = 0.                      !none          |variable to hold calculation results
-      real, dimension (12) :: rain_hhsm = 0.  !mm            |smoothed values for maximum 0.5 hour rainfall 
-      real :: rndm1 = 0.                    !none          |random number between 0.0 and 1.0
-      real :: dl = 0.                       !hour          |time threshold used to define dormant
+      real :: xx                            !varies        |variable to hold calculation results
+      real :: lattan                        !none          |Tan(Latitude)
+      real :: x1                            !none          |variable to hold calculation results
+      real :: x2                            !none          |variable to hold calculation results
+      real :: x3                            !none          |variable to hold calculation results
+      real :: tav                           !deg C         |average monthly temperature
+      real :: tmin                          !deg C         |minimum average monthly temperature
+      real :: tmax                          !deg C         |maximum average monthly temperature
+      real :: tk                            !deg K         |maximum average monthly temperature degrees Kelvin
+      real :: alb                           !none          |albedo
+      real :: d                             !              |
+      real :: gma                           !              |
+      real :: ho                            !              |
+      real :: aph                           !              |
+      integer :: inext                      !none          |counter for days for running sum
+      real :: sum                           !none          |variable to hold summation results
+      real :: summm_p                       !mm            |sum of precipitation over year
+      real :: summm_pet                     !mm            |sum of potential ET over year
+      real :: summn_t                       !deg C         |sum of minimum temp values over year
+      real :: summx_t                       !deg C         |sum of maximum temp values over year
+      real :: rnm2                          !none          |random number between 0.0 and 1.0
+      real :: r6                            !none          |variable to hold calculation result
+      real :: xlv                           !none          |variable to hold calculation results
+      real, dimension (12) :: rain_hhsm       !mm            |smoothed values for maximum 0.5 hour rainfall 
+      real :: rndm1                         !none          |random number between 0.0 and 1.0
+      real :: dl                            !hour          |time threshold used to define dormant
                                             !              |period for plant (when daylength is within
                                             !              |the time specified by dl from the minimum
                                             !              |daylength for the area, the plant will go
                                             !              |dormant)     
-      integer :: mon = 0                    !none          |monthly counter
-      integer :: mdays = 0                  !none          |number of days in the month
-      integer :: j = 0                      !none          |counter
-      integer :: m1 = 0                     !none          |array location (see definition of ndays)
-      integer :: nda = 0                    !julian date   |julian date of last day in the month
+      integer :: mon                        !none          |monthly counter
+      integer :: mdays                      !none          |number of days in the month
+      integer :: j                          !none          |counter
+      integer :: m1                         !none          |array location (see definition of ndays)
+      integer :: nda                        !julian date   |julian date of last day in the month
       real, external :: cli_dstn1           !              |                     !              |
-      real :: pcp_gen = 0.                  !mm H2O        |generated precipitation
+      real :: pcp_gen                       !mm H2O        |generated precipitation
       real, external :: aunif               !              |
-      integer :: xrnd = 0                   !              |
+      integer :: xrnd                       !              |
       integer :: iwgn                       !              |
-      integer :: mo_ppet = 0                !              |
+      integer :: mo_ppet                    !              |
 
       !! variables needed for radiation calcs.
       x1 = 0.0

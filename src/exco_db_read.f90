@@ -9,14 +9,14 @@
       
       external :: exco_read_om, ee, exco_read_hmet, exco_read_path, exco_read_pest, exco_read_salt
  
-      character (len=80) :: titldum = ""
-      character (len=80) :: header = ""
-      integer :: eof = 0
-      integer :: imax = 0
+      character (len=80) :: titldum
+      character (len=80) :: header
+      integer :: eof
+      integer :: imax
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: i = 0
-      integer :: ii = 0
-      integer :: k = 0
+      integer :: i
+      integer :: ii
+      integer :: k
 
       eof = 0
       

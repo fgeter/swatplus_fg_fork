@@ -17,19 +17,19 @@
 
       implicit none
       
-      character (len=80) :: titldum = ""  !          |title of file
-      character (len=80) :: header = "" !          |header of file
-      integer :: eof = 0                !          |end of file
-      integer :: imax = 0               !units     |description
+      character (len=80) :: titldum       !          |title of file
+      character (len=80) :: header      !          |header of file
+      integer :: eof                    !          |end of file
+      integer :: imax                   !units     |description
       logical :: i_exist                !          |check to determine if file exists
-      integer :: ichi = 0               !none      |counter
-      integer :: isp_ini = 0            !          |counter
-      integer :: ics = 0                !none      |counter
-      integer :: inut = 0               !none      |counter 
-      integer :: ihydsed = 0            !none      |counter
-      integer :: i = 0                  !none      |counter
-      integer :: k = 0                  !none      |counter
-      integer :: isalt = 0              !none      |counter for salt ion
+      integer :: ichi                   !none      |counter
+      integer :: isp_ini                !          |counter
+      integer :: ics                    !none      |counter
+      integer :: inut                   !none      |counter 
+      integer :: ihydsed                !none      |counter
+      integer :: i                      !none      |counter
+      integer :: k                      !none      |counter
+      integer :: isalt                  !none      |counter for salt ion
 
       eof = 0
       imax = 0

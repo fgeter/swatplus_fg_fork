@@ -21,29 +21,29 @@
       integer, intent(in) :: ndsave   !           |
       integer, intent(in) :: nspu     !           | 
       integer, intent(in) :: nspu1    !           |
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
       character (len=20) :: con_file  !           |
       character (len=8) :: obtyp      !           |
-      integer :: isp = 0              !none       |counter
-      integer :: cmd_prev = 0         !none       |previous command (object) number
-      integer :: ob1 = 0              !none       |beginning of loop
-      integer :: ob2 = 0              !none       |ending of loop
-      integer :: i = 0                !none       |object counter
-      integer :: isp_ob = 0           !none       |spatial object counter
-      integer :: nout = 0             !           |       
-      integer :: iout = 0             !           |       
-      integer :: k = 0                !           |
-      integer :: ihyd = 0             !           |hydrograph counter
-      integer :: npests = 0           !           |pesticides counter
-      integer :: npaths = 0           !           |pathogens counter
-      integer :: nmetals = 0          !           |heavy metals counter
-      integer :: nsalts = 0           !           |salts counter
-      integer :: ncs = 0              !           |constituent counter
-      integer :: aqu_found = 0        !           |rtb gwflow
+      integer :: isp                  !none       |counter
+      integer :: cmd_prev             !none       |previous command (object) number
+      integer :: ob1                  !none       |beginning of loop
+      integer :: ob2                  !none       |ending of loop
+      integer :: i                    !none       |object counter
+      integer :: isp_ob               !none       |spatial object counter
+      integer :: nout                 !           |       
+      integer :: iout                 !           |       
+      integer :: k                    !           |
+      integer :: ihyd                 !           |hydrograph counter
+      integer :: npests               !           |pesticides counter
+      integer :: npaths               !           |pathogens counter
+      integer :: nmetals              !           |heavy metals counter
+      integer :: nsalts               !           |salts counter
+      integer :: ncs                  !           |constituent counter
+      integer :: aqu_found            !           |rtb gwflow
       
       eof = 0
       imax = 0

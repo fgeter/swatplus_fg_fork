@@ -27,8 +27,8 @@
       real    :: reduction_frac         !               |fractional adjustment if residue remaining is than bm_min
       real    :: bm_min                 !               |minimum biomass that must remain after residue removal 
       integer, intent (in) :: iharvop   !               |harvest operation type
-      integer :: ipl = 0                !none           |sequential plant number
-      integer :: j = 0
+      integer :: ipl                    !none           |sequential plant number
+      integer :: j
 
       
       j = jj

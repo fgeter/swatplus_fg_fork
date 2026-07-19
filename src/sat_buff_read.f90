@@ -11,16 +11,16 @@
       
       
       external :: smp_buffer
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: msno = 0             !           |
-      integer :: ibuff = 0            !none       |counter
-      integer :: idb = 0              !none       |counter
-      integer :: hru_src = 0          !none       |source hru for saturated buffer
-      integer :: hru_rcv = 0          !none       |receiving hru (the saturated buffer hru(
+      integer :: msno                 !           |
+      integer :: ibuff                !none       |counter
+      integer :: idb                  !none       |counter
+      integer :: hru_src              !none       |source hru for saturated buffer
+      integer :: hru_rcv              !none       |receiving hru (the saturated buffer hru(
       
       msno = 0
       eof = 0

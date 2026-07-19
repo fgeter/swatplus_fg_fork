@@ -11,21 +11,21 @@
       real, external :: theta
       
       integer, intent (in) :: iob
-      real :: nitrok = 0.        !              |
-      real :: phosk = 0.         !              |
-      real :: nitrosolk = 0.     !              |
-      real :: phossolk = 0.      !              |
-      real :: tpco = 0.          !              |
-      real :: chlaco = 0.        !              |
-      integer :: iwst = 0        !none          |weather station number
-      real :: nsetlr = 0.        !              |
-      real :: psetlr = 0.        !              |
-      real :: nsolr = 0.         !              |
-      real :: psolr = 0.         !              |
-      real :: conc_n = 0.        !              |
-      real :: conc_p = 0.        !              |
-      real :: conc_soln = 0.     !              |
-      real :: conc_solp = 0.     !              |
+      real :: nitrok             !              |
+      real :: phosk              !              |
+      real :: nitrosolk          !              |
+      real :: phossolk           !              |
+      real :: tpco               !              |
+      real :: chlaco             !              |
+      integer :: iwst            !none          |weather station number
+      real :: nsetlr             !              |
+      real :: psetlr             !              |
+      real :: nsolr              !              |
+      real :: psolr              !              |
+      real :: conc_n             !              |
+      real :: conc_p             !              |
+      real :: conc_soln          !              |
+      real :: conc_solp          !              |
       
 
       !! if reservoir volume less than 1 m^3, set all nutrient levels to

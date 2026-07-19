@@ -17,9 +17,9 @@
       
       external :: zero0, zero1, zero2, zeroini
       
-      integer :: mhru = 0
-      integer :: mch = 0
-      integer :: mpc = 0
+      integer :: mhru
+      integer :: mch
+      integer :: mpc
       
 !! initialize variables    
       mhyd = 1  !!added for jaehak vars

@@ -41,9 +41,9 @@
       
       implicit none
 
-      integer :: j = 0       !none                   |HRU number
+      integer :: j           !none                   |HRU number
       !real :: usle = 0.      !metric tons/ha         | daily soil loss predicted with USLE equation
-      real :: rock = 0.      !percent                |rock fragments
+      real :: rock           !percent                |rock fragments
 
       j = ihru
       

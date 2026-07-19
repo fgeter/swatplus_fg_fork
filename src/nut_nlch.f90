@@ -38,21 +38,21 @@
       
       implicit none 
 
-      integer :: j = 0     !none          |HRU number
-      integer :: jj = 0    !none          |counter 
-      integer :: jlo = 0   !none          |counter for taking tile no3 from lower layers
-      real :: sro = 0.     !mm H2O        |surface runoff 
-      real :: ssfnlyr = 0. !kg N/ha       |nitrate transported in lateral flow from layer
-      real :: percnlyr = 0.  !kg N/ha       |nitrate leached to next lower layer with
+      integer :: j         !none          |HRU number
+      integer :: jj        !none          |counter 
+      integer :: jlo       !none          |counter for taking tile no3 from lower layers
+      real :: sro          !mm H2O        |surface runoff 
+      real :: ssfnlyr      !kg N/ha       |nitrate transported in lateral flow from layer
+      real :: percnlyr       !kg N/ha       |nitrate leached to next lower layer with
                            !              |percolation
-      real :: vv = 0.      !mm H2O        |water mixing with nutrient in layer
-      real :: vno3 = 0.    !              |
-      real :: co = 0.      !kg N/mm       |concentration of nitrate in solution
-      real :: ww = 0.      !varies        |variable to hold intermediate calculation
-      real :: ul_sum = 0.  !mm            |sum of porosity in tile layer to lowest layer
-      real :: no3_sum = 0. !kg/ha         |sum of no3 in tile layer to lowest layer
-      real :: tileno3_left = 0.!kg/ha         |remaining no3 if not available from layers below tile
-      real :: st_sum = 0.
+      real :: vv           !mm H2O        |water mixing with nutrient in layer
+      real :: vno3         !              |
+      real :: co           !kg N/mm       |concentration of nitrate in solution
+      real :: ww           !varies        |variable to hold intermediate calculation
+      real :: ul_sum       !mm            |sum of porosity in tile layer to lowest layer
+      real :: no3_sum      !kg/ha         |sum of no3 in tile layer to lowest layer
+      real :: tileno3_left     !kg/ha         |remaining no3 if not available from layers below tile
+      real :: st_sum
 
       j = ihru
 

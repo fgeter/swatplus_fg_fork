@@ -43,14 +43,14 @@
       integer, intent (in) :: idtill   !none           |tillage type
       real, intent (in) :: bmix        !               | 
        real :: fcgd              !                     |
-      integer :: l = 0                 !none           |counter
-      integer :: npmx = 0              !               |
-      integer :: ipl = 0               !               |
-      integer :: lyr_exit = 0
-      real :: emix = 0.                !none           |mixing efficiency
-      real :: dtil = 0.                !mm             |depth of mixing
-      real :: frac_mixed = 0.          !               |
-      real :: frac_non_mixed = 0.      !               |
+      integer :: l                     !none           |counter
+      integer :: npmx                  !               |
+      integer :: ipl                   !               |
+      integer :: lyr_exit
+      real :: emix                     !none           |mixing efficiency
+      real :: dtil                     !mm             |depth of mixing
+      real :: frac_mixed               !               |
+      real :: frac_non_mixed           !               |
       real, dimension(:), allocatable :: sol_mass    !              |mass of the soil layer
       real, dimension(:), allocatable :: sol_msm     !              |sol_mass mixed
       real, dimension(:), allocatable :: sol_msn     !              |sol_mass not mixed 

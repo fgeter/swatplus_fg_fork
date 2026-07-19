@@ -8,7 +8,7 @@
       
       implicit none
 
-      integer :: j = 0                      !none       |HRU number
+      integer :: j                          !none       |HRU number
       real, intent (in) :: tile_above_btm   !mm         |!height of tiles above bottom of soil profile
 
       j = ihru

@@ -18,33 +18,33 @@
       external :: aqu2d_read, dr_db_read, gwflow_chan_read, gwflow_read, hyd_read_connect, overbank_read, &
                   recall_read, recall_read_cs, recall_read_salt, ru_read, ru_read_elements
 
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
-      character (len=3) :: iob_out = "" !           !object type out
-      character (len=3) :: iobtyp = ""  !none       |object type
-      integer :: nspu = 0             !           |
-      integer :: cmdno = 0            !           |
-      integer :: idone = 0            !           | 
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
+      character (len=3) :: iob_out      !           !object type out
+      character (len=3) :: iobtyp       !none       |object type
+      integer :: nspu                 !           |
+      integer :: cmdno                !           |
+      integer :: idone                !           | 
       !integer :: hydno
-      integer :: cmd_prev = 0         !           |
-      integer :: ob1 = 0              !none       |beginning of loop
-      integer :: ob2 = 0              !none       |ending of loop
-      integer :: iobj_tot = 0         !           |
-      real :: mexco_sp = 0.           !           |
-      integer :: i = 0                !none       |counter
-      integer :: ii = 0               !none       |counter
-      integer :: ielem = 0            !none       |counter 
-      integer :: k = 0                !none       |counter
-      integer :: iob = 0              !           |
-      integer :: kk = 0               !none       |counter
-      integer :: j = 0                !           |
-      integer :: ielem_db = 0         !           |
-      integer :: jj = 0               !none       |counter
-      integer :: iord = 0             !none       |counter
-      integer :: isrc_tot = 0         !           |
-      integer :: iorder = 0           !           |
-      integer :: ircv = 0             !none       |counter
-      integer :: ircv_ob = 0          !           |
+      integer :: cmd_prev             !           |
+      integer :: ob1                  !none       |beginning of loop
+      integer :: ob2                  !none       |ending of loop
+      integer :: iobj_tot             !           |
+      real :: mexco_sp                !           |
+      integer :: i                    !none       |counter
+      integer :: ii                   !none       |counter
+      integer :: ielem                !none       |counter 
+      integer :: k                    !none       |counter
+      integer :: iob                  !           |
+      integer :: kk                   !none       |counter
+      integer :: j                    !           |
+      integer :: ielem_db             !           |
+      integer :: jj                   !none       |counter
+      integer :: iord                 !none       |counter
+      integer :: isrc_tot             !           |
+      integer :: iorder               !           |
+      integer :: ircv                 !none       |counter
+      integer :: ircv_ob              !           |
       integer :: max                  !           |
       logical :: i_exist
     

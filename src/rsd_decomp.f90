@@ -41,18 +41,18 @@
       
       implicit none 
 
-      integer :: j = 0      !none          |HRU number
-      integer :: idp = 0.   !none          |plant number in data file - plants.plt
-      real :: xx = 0.       !varies        |variable to hold intermediate calculation result
-      real :: csf = 0.      !none          |combined temperature/soil water factor
-      real :: cnr = 0.      !              |carbon nitrogen ratio
-      real :: cnrf = 0.     !              |carbon nitrogen ratio factor 
-      real :: cpr = 0.      !              |carbon phosphorus ratio
-      real :: cprf = 0.     !              |carbon phosphorus ratio factor
-      real :: ca = 0.       !              |
-      real :: decr = 0.     !              |
-      real :: cdg = 0.      !none          |soil temperature factor
-      real :: sut = 0.      !none          |soil water factor
+      integer :: j          !none          |HRU number
+      integer :: idp        !none          |plant number in data file - plants.plt
+      real :: xx            !varies        |variable to hold intermediate calculation result
+      real :: csf           !none          |combined temperature/soil water factor
+      real :: cnr           !              |carbon nitrogen ratio
+      real :: cnrf          !              |carbon nitrogen ratio factor 
+      real :: cpr           !              |carbon phosphorus ratio
+      real :: cprf          !              |carbon phosphorus ratio factor
+      real :: ca            !              |
+      real :: decr          !              |
+      real :: cdg           !none          |soil temperature factor
+      real :: sut           !none          |soil water factor
       
       j = ihru
       

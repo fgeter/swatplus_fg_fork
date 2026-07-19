@@ -8,15 +8,15 @@
       
       implicit none
       
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: iadep = 0            !           |counter
-      integer :: imo = 0              !           |counter
-      integer :: iyr = 0              !           |counter
-      integer :: imo_atmo = 0         !           |
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: iadep                !           |counter
+      integer :: imo                  !           |counter
+      integer :: iyr                  !           |counter
+      integer :: imo_atmo             !           |
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: iyrc_atmo = 0        !           |
+      integer :: iyrc_atmo            !           |
       
       eof = 0
 

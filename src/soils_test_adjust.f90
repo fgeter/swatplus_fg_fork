@@ -9,9 +9,9 @@ subroutine soils_test_adjust(isol, mlyr)
     integer, intent(in) :: isol
     integer, intent(in) :: mlyr     !none |max number of soil layers
     real :: soil_layer_thickness    !     |thickness of soil layer being processed 
-    real :: prev_depth = 0.         !mm   |previous custom depth in millimeters
+    real :: prev_depth              !mm   |previous custom depth in millimeters
     real :: sum_bd, sum_cbn, sum_sand, sum_silt, sum_clay !     |temporary sums for weighted averages
-    integer :: tot_soil_depth = 0.  !mm   |total soil depth for the soil being processed
+    integer :: tot_soil_depth       !mm   |total soil depth for the soil being processed
     integer :: test                 !     |soil test index
     integer :: i                    !     |index to sol array
     integer :: j                    !     |index to soildb array, sol_mm_db array

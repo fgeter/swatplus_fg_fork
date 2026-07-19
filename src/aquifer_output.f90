@@ -8,8 +8,8 @@
       implicit none
             
       integer, intent (in) :: iaq        !             |
-      real :: const = 0.                 !             |constant used for rate, days, etc
-      integer :: iob = 0                 !             |
+      real :: const                      !             |constant used for rate, days, etc
+      integer :: iob                     !             |
                           
       iob = sp_ob1%aqu + iaq - 1
        

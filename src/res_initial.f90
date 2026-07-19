@@ -12,17 +12,17 @@
       
       implicit none
       
-      integer :: ires = 0    !none          |counter
-      integer :: lnvol = 0   !              |
-      real :: resdif = 0.    !              |
-      integer :: i = 0       !none          |counter
-      integer :: idat = 0    !none          |counter
-      integer :: icon = 0    !none          |
-      integer :: init = 0    !              | 
-      integer :: ipest = 0   !none          |counter
-      integer :: ipath = 0   !              |
-      integer :: isalt = 0   !              |counter for salt ions !rtb salt
-      integer :: ipest_db = 0  !none      |counter
+      integer :: ires        !none          |counter
+      integer :: lnvol       !              |
+      real :: resdif         !              |
+      integer :: i           !none          |counter
+      integer :: idat        !none          |counter
+      integer :: icon        !none          |
+      integer :: init        !              | 
+      integer :: ipest       !none          |counter
+      integer :: ipath       !              |
+      integer :: isalt       !              |counter for salt ions !rtb salt
+      integer :: ipest_db      !none      |counter
 
       do ires = 1, sp_ob%res
         !! set initial volumes for res and hru types and convert units

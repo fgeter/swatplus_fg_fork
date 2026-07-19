@@ -31,23 +31,23 @@
       
       implicit none
 
-      integer :: j = 0
-      integer :: jj = 0
-      integer :: gw_soil_flag = 0
-      integer :: ics = 0
-      integer :: sol_index = 0
-      real :: cocs = 0.
-      real :: cosurfcs = 0.
-      real :: perccslyr(3) = 0.
-      real :: ssfcslyr = 0.
-      real :: vcs = 0.
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
-      real :: cs_mass_kg = 0.
-      real :: ro_mass = 0.
-      real :: sro = 0.
-      real :: vv = 0.
-      real :: ww = 0.
+      integer :: j
+      integer :: jj
+      integer :: gw_soil_flag
+      integer :: ics
+      integer :: sol_index
+      real :: cocs
+      real :: cosurfcs
+      real :: perccslyr(3)
+      real :: ssfcslyr
+      real :: vcs
+      real :: hru_area_m2
+      real :: water_volume
+      real :: cs_mass_kg
+      real :: ro_mass
+      real :: sro
+      real :: vv
+      real :: ww
 
 
       j = 0

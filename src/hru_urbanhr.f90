@@ -58,22 +58,22 @@
       
       external :: hru_sweep
 
-      real :: sus_sol = 0. !kg            |suspended solid loading in surface runoff
+      real :: sus_sol      !kg            |suspended solid loading in surface runoff
                            !              |from urban area
-      real :: tn = 0.      !kg            |total nitrogen in surface runoff from
+      real :: tn           !kg            |total nitrogen in surface runoff from
                            !              |urban area
 
-      real :: tp = 0.      !kg            |total phosphorus in surface runoff from 
+      real :: tp           !kg            |total phosphorus in surface runoff from 
                            !              |urban area
-      real :: urbk = 0.    !1/hr          | 
-      real :: dirto = 0.   !kg/ha         |amount of solids built up on impervious
+      real :: urbk         !1/hr          | 
+      real :: dirto        !kg/ha         |amount of solids built up on impervious
                            !              |surfaces at the beginning of time step
-      integer :: j = 0     !none          |HRU number
-      real :: qdt = 0.     !              |
-      real*8 :: dirt = 0.d0  !kg/curb km    |amount of solids built up on impervious
+      integer :: j         !none          |HRU number
+      real :: qdt          !              |
+      real*8 :: dirt         !kg/curb km    |amount of solids built up on impervious
                            !              |surfaces
-      integer :: k = 0     !none          |counter 
-      integer :: tno3 = 0  !              |
+      integer :: k         !none          |counter 
+      integer :: tno3      !              |
 
       j = ihru
       ulu = hru(j)%luse%urb_lu

@@ -11,22 +11,22 @@
       
       integer, intent (in) :: j     !none               |HRU number
       integer, intent (in) :: init  !none               |init=1 to initialize and transplant; init=0 during simulation
-      integer :: idp = 0            !                   |
-      real :: root_frac = 0.        !none               |root mass fraction
-      real :: ab_gr_frac = 0.       !none               |above ground mass fraction
-      real :: leaf_mass_frac = 0.   !none               |leaf mass fraction of above ground biomass
-      real :: stem_mass_frac = 0.   !none               |stem mass fraction of above ground biomass
-      real :: seed_mass_frac = 0.   !none               |stem mass fraction of above ground biomass
-      real :: n_left = 0.           !none               |n left after seed is removed
-      real :: n_frac = 0.           !none               |n fraction in remainder of plant
-      real :: p_left = 0.           !none               |p left after seed is removed
-      real :: p_frac = 0.           !none               |p fraction in remainder of plant
-      real :: mass_left = 0.        !none               |mass left after plant component is removed
-      real :: mass_act = 0.         !none               |actual mass in each plant component 
-      real :: mass_opt = 0.         !none               |optimal mass in each plant component 
-      real :: mass_add = 0.         !none               |added mass in each plant component
-      real :: leaf_frac_veg = 0.    !none               |fraction veg mass (stem+leaf) that is leaf
-      real :: leaf_mass_frac_veg = 0. !none               |fraction veg mass (stem+leaf) that is leaf
+      integer :: idp                !                   |
+      real :: root_frac             !none               |root mass fraction
+      real :: ab_gr_frac            !none               |above ground mass fraction
+      real :: leaf_mass_frac        !none               |leaf mass fraction of above ground biomass
+      real :: stem_mass_frac        !none               |stem mass fraction of above ground biomass
+      real :: seed_mass_frac        !none               |stem mass fraction of above ground biomass
+      real :: n_left                !none               |n left after seed is removed
+      real :: n_frac                !none               |n fraction in remainder of plant
+      real :: p_left                !none               |p left after seed is removed
+      real :: p_frac                !none               |p fraction in remainder of plant
+      real :: mass_left             !none               |mass left after plant component is removed
+      real :: mass_act              !none               |actual mass in each plant component 
+      real :: mass_opt              !none               |optimal mass in each plant component 
+      real :: mass_add              !none               |added mass in each plant component
+      real :: leaf_frac_veg         !none               |fraction veg mass (stem+leaf) that is leaf
+      real :: leaf_mass_frac_veg      !none               |fraction veg mass (stem+leaf) that is leaf
            
       idp = pcom(j)%plcur(ipl)%idplt
       
