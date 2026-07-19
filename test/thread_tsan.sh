@@ -41,9 +41,19 @@ export TSAN_OPTIONS="suppressions=$REPO/test/tsan.supp detect_deadlocks=0 halt_o
 echo "[tsan] running $EXE with OMP_NUM_THREADS=$THREADS"
 ( cd "$RUN" && OMP_NUM_THREADS="$THREADS" "$EXE" >run.log 2>&1 ) || true
 
-if grep -q "ThreadSanitizer: data race" "$RUN/run.log"; then
-  echo "[tsan] FAIL — data race(s) reported:"
-  grep -E "ThreadSanitizer: data race|SUMMARY: ThreadSanitizer" "$RUN/run.log" | head -40
+# Preserve the full log outside $WORK (the trap deletes $WORK on exit).
+KEEP="$REPO/tsan_last.log"
+cp "$RUN/run.log" "$KEEP"
+echo "[tsan] full log preserved at $KEEP"
+
+# Only DATA RACES are application bugs; libgfortran I/O "unlock of an unlocked
+# mutex" reports during the sequential read phase are runtime-library noise.
+races="$(grep -c "ThreadSanitizer: data race" "$RUN/run.log" || true)"
+if [ "$races" -gt 0 ]; then
+  echo "[tsan] FAIL — $races data race report(s). Distinct SWAT frames (top of each stack):"
+  # first src/ frame after each "data race" header = the racing app site
+  awk '/ThreadSanitizer: data race/{f=1} f&&/#[0-9]+ .* src\//{print $0; f=0}' "$RUN/run.log" \
+    | grep -oE 'src/[a-z0-9_]+\.f90:[0-9]+' | sort | uniq -c | sort -rn
   exit 1
 fi
 echo "[tsan] PASS — no data races reported (threads=$THREADS)"
