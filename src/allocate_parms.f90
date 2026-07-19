@@ -35,6 +35,9 @@
 !!    arrays for plant communities
       allocate (cvm_com(mhru), source = 0.)
       allocate (etday(mhru), source = 0.)
+      allocate (sw_excess(mhru), source = 0.)
+      allocate (qp_cms(mhru), source = 0.)
+      allocate (qtile(mhru), source = 0.)
       allocate (fertn(mhru), source = 0.)
       allocate (fertp(mhru), source = 0.)
       allocate (fixn(mhru), source = 0.)

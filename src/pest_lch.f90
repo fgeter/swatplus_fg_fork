@@ -48,7 +48,7 @@
             !! compute volume of flow through the layer
             vf = soil(j)%ly(ly)%prk + soil(j)%ly(ly)%flat
             if (ly == 1) vf = vf + surfq(j)
-            if (ly == hru(j)%lumv%ldrain) vf = vf + qtile
+            if (ly == hru(j)%lumv%ldrain) vf = vf + qtile(j)
               
             !! compute concentration in the flow
             if (cs_soil(j)%ly(ly)%pest(k) >= 0.0001 .and. vf > 0.) then
@@ -66,8 +66,8 @@
               endif
 
               !! calculate pesticide lost in tile flow
-              if (qtile > 0. .and. ly == hru(j)%lumv%ldrain) then
-                yy = co * qtile
+              if (qtile(j) > 0. .and. ly == hru(j)%lumv%ldrain) then
+                yy = co * qtile(j)
                 if (yy > cs_soil(j)%ly(ly)%pest(k)) yy = cs_soil(j)%ly(ly)%pest(k)
                 cs_soil(j)%ly(ly)%pest(k) = cs_soil(j)%ly(ly)%pest(k) - yy
                 hpestb_d(j)%pest(k)%tileq = yy

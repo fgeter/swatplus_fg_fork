@@ -116,7 +116,7 @@
             sro = 0.
           end if
           vv = soil(j)%ly(jj)%prk + sro + soil(j)%ly(jj)%flat + 1.e-10
-          if (hru(j)%lumv%ldrain == jj) vv = vv + qtile
+          if (hru(j)%lumv%ldrain == jj) vv = vv + qtile(j)
           ww = -vv / ((1. - soil(j)%anion_excl) * soil(j)%phys(jj)%ul)
           vsalt = cs_soil(j)%ly(jj)%salt(isalt) * (1. - Exp(ww))
           cosalt = Max(vsalt / vv, 0.)
@@ -133,7 +133,7 @@
           !Daniel 1/2012    
           !! calculate salt in tile flow 
           if (hru(j)%lumv%ldrain == jj) then
-            tilesalt(j,isalt) = cosalt * qtile
+            tilesalt(j,isalt) = cosalt * qtile(j)
             tilesalt(j,isalt) = Min(tilesalt(j,isalt), cs_soil(j)%ly(jj)%salt(isalt))
             cs_soil(j)%ly(jj)%salt(isalt) = cs_soil(j)%ly(jj)%salt(isalt) - tilesalt(j,isalt)
           endif

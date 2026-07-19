@@ -808,22 +808,22 @@
             select case (d_tbl%act(iac)%option)
                 
             case ("flo_mm")    !! set tile flow diverted - can't be more than actual flow
-              hru(hru_rcv)%sb%inflo = Min (qtile, d_tbl%act(iac)%const)
+              hru(hru_rcv)%sb%inflo = Min (qtile(j), d_tbl%act(iac)%const)
 
             case ("min_mm")    !! divert at least the minimum flow rate
-              hru(hru_rcv)%sb%inflo = Max (qtile, d_tbl%act(iac)%const)
+              hru(hru_rcv)%sb%inflo = Max (qtile(j), d_tbl%act(iac)%const)
               
             case ("max_mm")    !! divert the maximum flow rate - can't be more than actual flow
-              hru(hru_rcv)%sb%inflo = Min (qtile, d_tbl%act(iac)%const)
+              hru(hru_rcv)%sb%inflo = Min (qtile(j), d_tbl%act(iac)%const)
               
             case ("all_flo")    !! all flow diverted
-              hru(hru_rcv)%sb%inflo = qtile
+              hru(hru_rcv)%sb%inflo = qtile(j)
 
             case ("zero_flo")    !! no flow diverted
               hru(hru_rcv)%sb%inflo = 0.
 
             case ("frac")   !! minimum - constant fraction 
-              hru(hru_rcv)%sb%inflo = d_tbl%act(iac)%const * qtile
+              hru(hru_rcv)%sb%inflo = d_tbl%act(iac)%const * qtile(j)
                 
             end select
                                                             

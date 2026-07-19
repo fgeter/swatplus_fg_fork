@@ -80,7 +80,7 @@
           sro = 0.
         end if
         vv = soil(j)%ly(jj)%prk + sro + soil(j)%ly(jj)%flat + 1.e-10
-        if (hru(j)%lumv%ldrain == jj) vv = vv + qtile
+        if (hru(j)%lumv%ldrain == jj) vv = vv + qtile(j)
         ww = -vv / ((1. - soil(j)%anion_excl) * soil(j)%phys(jj)%ul)
         if (ww < -80.0) then   ! This check was added to prevent gfortran aborting on the Exp(ww) function below.
           ww = -80
@@ -96,7 +96,7 @@
         endif
 
         !! calculate nitrate in tile flow 
-        if (hru(j)%lumv%ldrain == jj .and. qtile > 0.) then
+        if (hru(j)%lumv%ldrain == jj .and. qtile(j) > 0.) then
           !! take no3 from tile layer and all lower layers
           !! assume rising water table will move nitrates up
           ul_sum = 0.
@@ -107,11 +107,11 @@
             no3_sum = no3_sum + soil1(j)%mn(jlo)%no3
             st_sum = st_sum + soil(j)%phys(jlo)%st
           end do
-          vv = qtile
+          vv = qtile(j)
           ww = -vv / ((1. - soil(j)%anion_excl) * ul_sum)
           vno3 = no3_sum * (1. - Exp(ww))
           co = Max(vno3 / vv, 0.)     !kg/ha/mm (if * 100 = ppm)
-          tileno3(j) = co * hru(j)%nut%nperco_lchtile  * qtile
+          tileno3(j) = co * hru(j)%nut%nperco_lchtile  * qtile(j)
           !! subtract tile no3 from soil layers
           tileno3_left = tileno3(j)
           do jlo = jj, soil(j)%nly

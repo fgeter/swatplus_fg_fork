@@ -61,7 +61,7 @@
         if (soil(j)%phys(ly1)%ul - soil(j)%phys(ly1)%fc <= 0.) then
           ho = 0.
         else
-          ho = 2. * sw_excess / ((soil(j)%phys(ly1)%ul - soil(j)%phys(ly1)%fc) / soil(j)%phys(ly1)%thick)
+          ho = 2. * sw_excess(j) / ((soil(j)%phys(ly1)%ul - soil(j)%phys(ly1)%fc) / soil(j)%phys(ly1)%thick)
         end if
         if (ly1 == 1) then
           latlyr = 0.
@@ -70,7 +70,7 @@
         end if
         
       if (latlyr < 0.) latlyr = 0. 
-      if (latlyr > sw_excess) latlyr = sw_excess
+      if (latlyr > sw_excess(j)) latlyr = sw_excess(j)
 
       soil(j)%phys(ly1)%hk = (soil(j)%phys(ly1)%ul - soil(j)%phys(ly1)%fc) / soil(j)%phys(ly1)%k
 
@@ -107,13 +107,13 @@
       end if
 
       !! check mass balance
-      if (sepday(j) + latlyr > sw_excess) then
+      if (sepday(j) + latlyr > sw_excess(j)) then
         ratio = sepday(j) / (latlyr + sepday(j))
-        sepday(j) = sw_excess * ratio
-        latlyr = sw_excess * (1. - ratio)
+        sepday(j) = sw_excess(j) * ratio
+        latlyr = sw_excess(j) * (1. - ratio)
       endif
-      if (sepday(j) + lyrtile(j) > sw_excess) then
-        sepday(j) = sw_excess - lyrtile(j)
+      if (sepday(j) + lyrtile(j) > sw_excess(j)) then
+        sepday(j) = sw_excess(j) - lyrtile(j)
       endif
 
       return

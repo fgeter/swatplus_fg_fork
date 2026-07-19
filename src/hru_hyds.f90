@@ -61,7 +61,7 @@
       !! surface runoff hydrograph (3)
       ob(icmd)%hdsep%flo_surq = qday(j) * cnv_m3            !!rtb gwflow - hydrograph separation (surface runoff)
       ob(icmd)%hdsep%flo_satexsw = satexq_chan * cnv_m3  !!rtb gwflow - hydrograph separation (saturation excess runoff)
-      ob(icmd)%peakrate = qp_cms
+      ob(icmd)%peakrate = qp_cms(j)
       ob(icmd)%hd(3)%temp = 5. + .75 * w%tave         !!wtmp
       ob(icmd)%hd(3)%flo = qday(j) * cnv_m3              !!qdr m3/d
       ob(icmd)%hd(3)%sed = sedyld(j)                  !!sedyld
@@ -137,7 +137,7 @@
       enddo
       
       !tile flow hydrograph (5)
-      ob(icmd)%hd(5)%flo = qtile * cnv_m3               !! tile flow
+      ob(icmd)%hd(5)%flo = qtile(j) * cnv_m3               !! tile flow
       ob(icmd)%hd(5)%no3 = tileno3(j) * cnv_kg          !! tile flow nitrate 
       !set constituents
       do ipest = 1, cs_db%num_pests

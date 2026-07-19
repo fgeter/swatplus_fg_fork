@@ -523,7 +523,7 @@
         !! sum total pesticide in soil
         call pest_soil_tot
         
-        if (surfq(j) > 0. .and. qp_cms > 1.e-6) then
+        if (surfq(j) > 0. .and. qp_cms(j) > 1.e-6) then
           if (precip_eff > 0.) then
             call pest_enrsb
             if (sedyld(j) > 0.) call pest_pesty
@@ -648,14 +648,14 @@
           !! convert to mm of the receiving hru and adjust for fraction of incoming hru
           rto =  hru(hru_rcv)%area_ha / hru(j)%area_ha
           hru(hru_rcv)%sb%inflo = rto * hru(j)%sb%sb_db%frac_src * hru(hru_rcv)%sb%inflo 
-          qtile = (1. - hru(j)%sb%sb_db%frac_src) * hru(hru_rcv)%sb%inflo 
+          qtile(j) = (1. - hru(j)%sb%sb_db%frac_src) * hru(hru_rcv)%sb%inflo 
           hru(hru_rcv)%sb%no3 = hru(j)%sb%sb_db%frac_src * tileno3(j) 
           tileno3(j) = (1. - hru(j)%sb%sb_db%frac_src) * tileno3(j)
         end if
         !qday =  surfq(j)
 
         !! compute water yield for HRU
-        qdr(j) = qday(j) + latq(j) + qtile
+        qdr(j) = qday(j) + latq(j) + qtile(j)
 
         if (qdr(j) < 0.) qdr(j) = 0.
 
@@ -759,7 +759,7 @@
         hwb_d(j)%sw_300 = soil(j)%sw_300
         hwb_d(j)%snopack = hru(j)%sno_mm
         hwb_d(j)%pet = pet_day(j)
-        hwb_d(j)%qtile = qtile
+        hwb_d(j)%qtile = qtile(j)
         hwb_d(j)%irr = irrig(j)%applied
         irrig(j)%applied = 0.
         irrig(j)%runoff = 0.

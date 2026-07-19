@@ -17,17 +17,17 @@
 
       !if (soil(j)%sw > soil(j)%sumfc .and. wt_shall > 1.e-6) then
       if (soil(j)%sw > soil(j)%sumfc ) then
-        sw_excess = (tile_above_btm / wt_shall) * (soil(j)%sw - soil(j)%sumfc)
+        sw_excess(j) = (tile_above_btm / wt_shall) * (soil(j)%sw - soil(j)%sumfc)
         !! (wt_above_btm - tile_above_btm) / wt_above_btm * (sw - fc)
-        sw_excess = (wt_shall - tile_above_btm) / wt_shall * (soil(j)%sw - soil(j)%sumfc)
+        sw_excess(j) = (wt_shall - tile_above_btm) / wt_shall * (soil(j)%sw - soil(j)%sumfc)
         if (hru(j)%sdr%time < 1.) then
-          qtile = sw_excess
+          qtile(j) = sw_excess(j)
         else
-          qtile = sw_excess * (1. - Exp(-24. / hru(j)%sdr%time))
+          qtile(j) = sw_excess(j) * (1. - Exp(-24. / hru(j)%sdr%time))
         end if
-        qtile = Min(qtile, hru(j)%sdr%drain_co)
+        qtile(j) = Min(qtile(j), hru(j)%sdr%drain_co)
       else
-        qtile = 0.
+        qtile(j) = 0.
       end if
      
       return

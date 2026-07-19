@@ -76,10 +76,10 @@
         !! calculate average flow based on 3 hours of runoff
         chflow_day = 1000. * surfq(j) * hru(ihru)%km
         chflow_m3 = chflow_day / 10800
-        qp_cms = 2. * chflow_m3 / (1.5 * tc_gwat(j))
+        qp_cms(j) = 2. * chflow_m3 / (1.5 * tc_gwat(j))
 
         !! if peak rate is greater than bankfull discharge
-        if (qp_cms > grwway_vel(j)%vel_bf) then
+        if (qp_cms(j) > grwway_vel(j)%vel_bf) then
           rcharea = grwway_vel(j)%area
           rchdep = hru(j)%lumv%grwat_d
         else
@@ -89,7 +89,7 @@
           sdti = 0.
           rchdep = 0.
 
-          Do While (sdti < qp_cms)
+          Do While (sdti < qp_cms(j))
             rchdep = rchdep + 0.01
             rcharea = (grwway_vel(j)%wid_btm + 8 * rchdep) * rchdep
             p = grwway_vel(j)%wid_btm + 2. * rchdep * Sqrt(1. + 8 * 8)
@@ -137,7 +137,7 @@
         !! calculate flow velocity
         vc = 0.001
         if (rcharea > 1.e-4) then
-          vc = qp_cms / rcharea
+          vc = qp_cms(j) / rcharea
           if (vc > grwway_vel(j)%celerity_bf) vc = grwway_vel(j)%celerity_bf
         end if
 

@@ -91,7 +91,7 @@
          endif
          !! tile p
          if (ly == hru(j)%lumv%ldrain) then
-           vap = -qtile / (.01 * soil(j)%phys(ly)%st + .1 * hru(j)%nut%pperco *  soil(j)%phys(ly)%bd)
+           vap = -qtile(j) / (.01 * soil(j)%phys(ly)%st + .1 * hru(j)%nut%pperco *  soil(j)%phys(ly)%bd)
            plch = .001 * soil1(j)%mp(ly)%lab * (1. - exp_w(vap))
            plch = Min(plch, soil1(j)%mp(ly)%lab)
            soil1(j)%mp(ly)%lab = soil1(j)%mp(ly)%lab - plch

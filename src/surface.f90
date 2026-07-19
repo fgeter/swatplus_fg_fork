@@ -67,14 +67,14 @@
         call ero_pkq 
       end if  
 
-      if (qday(j) > 1.e-6 .and. qp_cms > 1.e-6) then
+      if (qday(j) > 1.e-6 .and. qp_cms(j) > 1.e-6) then
         call ero_eiusle
 
     !! calculate sediment erosion by rainfall and overland flow
         call ero_ovrsed
       end if
 
-      if (surfq(j) > 1.e-6 .and. qp_cms > 1.e-6) then
+      if (surfq(j) > 1.e-6 .and. qp_cms(j) > 1.e-6) then
         call ero_cfactor
         call ero_ysed
       end if

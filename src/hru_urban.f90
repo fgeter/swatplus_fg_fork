@@ -129,7 +129,7 @@
           dirto = dirt
 
           !! calculate wash-off of solids 
-          urbk = urbdb(ulu)%urbcoef * (qp_cms * 3.6 / hru(j)%km)
+          urbk = urbdb(ulu)%urbcoef * (qp_cms(j) * 3.6 / hru(j)%km)
                                      !! expression in () qp_cms in mm/hr 
           rp1 = -2. * Log(1.- wst(iwst)%weat%precip_half_hr)
           durf = 4.605 / rp1         

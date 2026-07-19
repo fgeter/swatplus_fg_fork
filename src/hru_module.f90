@@ -303,15 +303,15 @@
       integer, dimension (:), allocatable :: iseptic
      
 !! septic variables for output.std
-      real :: qp_cms = 0.
-      real :: sw_excess = 0.
+      real, dimension(:), allocatable :: qp_cms
+      real, dimension(:), allocatable :: sw_excess
       real, dimension(:), allocatable :: albday
       real :: wt_shall = 0.
       real :: sq_rto = 0.
       real, dimension(:), allocatable :: snomlt
       real, dimension(:), allocatable :: snofall
       real, dimension(:), allocatable :: fixn
-      real :: qtile = 0.
+      real, dimension(:), allocatable :: qtile
       real :: latlyr = 0.            !!mm            |lateral flow in soil layer for the day
       real, dimension(:), allocatable :: inflpcp
       real, dimension(:), allocatable :: fertn
@@ -513,15 +513,14 @@
       !! OpenMP: per-HRU transient scratch + the HRU index made thread-private for the
       !! multi-threading effort. Inert without -fopenmp and at 1 thread.
       !! See tmp/threading_state_inventory.md.
-      !$omp threadprivate(ihru, ipl, isep, qtile)
+      !$omp threadprivate(ihru, ipl, isep)
       !$omp threadprivate(precip_eff)
       !$omp threadprivate(usle, nd_30, satexq_chan)
-      !$omp threadprivate(latlyr, sw_excess)
+      !$omp threadprivate(latlyr)
       !$omp threadprivate(wt_shall, fertnh3, fertno3, fertorgn, fertorgp)
       !$omp threadprivate(fertsolp, enratio)
       !$omp threadprivate(par)
       !$omp threadprivate(uno3d, uapd, un2, up2, htfac, epmax)
       !$omp threadprivate(rto_no3, rto_solp, uno3d_tot, uapd_tot, sum_no3, sum_solp)
-      !$omp threadprivate(qp_cms)
 
       end module hru_module

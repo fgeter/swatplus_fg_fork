@@ -209,7 +209,7 @@
         if(em < 0.) dflux=0.
         end if
     end if
-    qtile = dflux
+    qtile(j) = dflux
 
        return
        end subroutine swr_drains

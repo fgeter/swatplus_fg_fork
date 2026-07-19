@@ -101,14 +101,14 @@
         end if
 
        !! determine gravity drained water in layer
-        sw_excess = soil(j)%phys(j1)%st - soil(j)%phys(j1)%fc
+        sw_excess(j) = soil(j)%phys(j1)%st - soil(j)%phys(j1)%fc
 
         !! initialize variables for current layer
         sepday(j) = 0.
         latlyr = 0.
         lyrtile(j) = 0.
 
-        if (sw_excess > 1.e-5) then
+        if (sw_excess(j) > 1.e-5) then
           !! calculate tile flow (lyrtile), lateral flow (latlyr) and
           !! percolation (sepday)
           call swr_percmicro(j1)
@@ -122,11 +122,11 @@
           sepbtm(j) = sepbtm(j) + sepday(j)
         endif
         latq(j) = latq(j) + latlyr
-        qtile = qtile + lyrtile(j)
+        qtile(j) = qtile(j) + lyrtile(j)
         soil(j)%ly(j1)%flat = latlyr + lyrtile(j)
         soil(j)%ly(j1)%prk = soil(j)%ly(j1)%prk + sepday(j)
         if (latq(j) < 1.e-6) latq(j) = 0.
-        if (qtile < 1.e-6) qtile = 0.
+        if (qtile(j) < 1.e-6) qtile(j) = 0.
         if (soil(j)%ly(j1)%flat < 1.e-6) soil(j)%ly(j1)%flat = 0.
       end do
       if (sep_left <= 0.) exit
@@ -142,7 +142,7 @@
       end do
 
       !! compute shallow water table depth and tile flow
-      qtile = 0.
+      qtile(j) = 0.
       wt_shall = soil(j)%zmx
       !! drainmod tile equations   08/11/2006
       if (soil(j)%phys(2)%tmp > 0.) then   !Daniel 1/29/09
@@ -180,7 +180,7 @@
         if (hru(j)%tiledrain > 0) then
         if (hru(j)%lumv%sdr_dep > 0.) then
           if (wt_shall <= d) then
-            qtile = 0.
+            qtile(j) = 0.
           else
             !! Start Daniel"s tile equations modifications  01/2006
             if (bsn_cc%tdrn == 1) then
@@ -188,7 +188,7 @@
               call swr_drains           !! compute tile flow using drainmod tile equations 
             else                        
               call swr_origtile(d)      !! compute tile flow using existing tile equations 
-              if(qtile < 0.) qtile = 0.
+              if(qtile(j) < 0.) qtile(j) = 0.
             end if 
           end if
         end if
@@ -196,9 +196,9 @@
       end if
       !! End Daniel"s tile equations modifications  01/2006
 
-      if (qtile > 0.) then
+      if (qtile(j) > 0.) then
         !! update soil profile water after tile drainage
-        sumqtile = qtile
+        sumqtile = qtile(j)
         do j1 = 1, soil(j)%nly
           xx = soil(j)%phys(j1)%st - soil(j)%phys(j1)%fc
           if (xx > 0.) then
@@ -212,8 +212,8 @@
           end if
         end do
         if (sumqtile > 0.) then
-          qtile = qtile - sumqtile
-          qtile = Max(0., qtile)
+          qtile(j) = qtile(j) - sumqtile
+          qtile(j) = Max(0., qtile(j))
         end if
       end if
 
