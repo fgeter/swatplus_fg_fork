@@ -16,3 +16,7 @@
 deadlock:libgfortran
 race:libgfortran
 called_from_lib:libgfortran
+
+# libgfortran formatted-I/O mutex handling during (sequential) init reads shows up
+# as "unlock of an unlocked mutex" — a runtime-library artifact, not an app bug.
+mutex:libgfortran

@@ -604,11 +604,11 @@
         type (constituent_mass), intent (in) :: hydcs1
         type (constituent_mass), intent (in) :: hydcs2
         type (constituent_mass) :: hydcs3
-        integer :: ipest = 0
-        integer :: ipath = 0
-        integer :: ihmet = 0
-        integer :: isalt = 0
-        integer :: ics = 0
+        integer :: ipest
+        integer :: ipath
+        integer :: ihmet
+        integer :: isalt
+        integer :: ics
         allocate (hydcs3%pest(cs_db%num_pests), source = 0.)
         allocate (hydcs3%path(cs_db%num_paths), source = 0.)
         allocate (hydcs3%hmet(cs_db%num_metals), source = 0.)
@@ -637,11 +637,11 @@
         type (constituent_mass), intent (in) :: hydcs1
         type (constituent_mass) :: hydcs2
         real, intent (in) :: const
-        integer :: ipest = 0
-        integer :: ipath = 0
-        integer :: ihmet = 0
-        integer :: isalt = 0
-        integer :: ics = 0
+        integer :: ipest
+        integer :: ipath
+        integer :: ihmet
+        integer :: isalt
+        integer :: ics
         allocate (hydcs2%pest(cs_db%num_pests), source = 0.)
         allocate (hydcs2%path(cs_db%num_paths), source = 0.)
         allocate (hydcs2%hmet(cs_db%num_metals), source = 0.)
@@ -671,11 +671,11 @@
         real, intent (in) :: vol_m3
         type (constituent_mass), intent (in) :: hydcs1
         type (constituent_mass), intent (out) :: hydcs2
-        integer :: ipest = 0
-        integer :: ipath = 0
-        integer :: ihmet = 0
-        integer :: isalt = 0
-        integer :: ics = 0
+        integer :: ipest
+        integer :: ipath
+        integer :: ihmet
+        integer :: isalt
+        integer :: ics
         allocate (hydcs2%pest(cs_db%num_pests), source = 0.)
         allocate (hydcs2%path(cs_db%num_paths), source = 0.)
         allocate (hydcs2%hmet(cs_db%num_metals), source = 0.)

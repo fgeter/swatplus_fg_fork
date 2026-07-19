@@ -522,5 +522,6 @@
       !$omp threadprivate(wt_shall, bsprev, voltot, fertnh3, fertno3, fertorgn, fertorgp)
       !$omp threadprivate(fertsolp, albday, ep_max, vpd, snoev, enratio, wnan)
       !$omp threadprivate(translt, par)
+      !$omp threadprivate(bioday, qp_cms, usle_ei)
 
       end module hru_module

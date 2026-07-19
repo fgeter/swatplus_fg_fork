@@ -186,5 +186,7 @@
         integer :: irr = 0
       end type management_schedule
       type (management_schedule), dimension (:), allocatable :: sched
+      !$omp threadprivate(mgt)
+
       
       end module mgt_operations_module 
