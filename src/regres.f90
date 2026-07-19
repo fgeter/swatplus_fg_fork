@@ -64,7 +64,7 @@
 
       j = ihru
 
-      ii = wgn_pms(iwgen)%ireg
+      ii = wgn_pms(iwgen(j))%ireg
       ulu = hru(j)%luse%urb_lu
 
 

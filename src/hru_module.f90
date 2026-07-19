@@ -5,7 +5,7 @@
       integer :: isep = 0            !          |
       integer :: ilu = 0             !          | 
       integer :: ulu = 0             !          |
-      integer :: iwgen = 0           !          |
+      integer, dimension(:), allocatable :: iwgen   !          |per-HRU weather-generator index
       character (len=1) :: timest = "" !          |
      
       type uptake_parameters

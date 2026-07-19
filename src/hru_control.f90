@@ -115,7 +115,7 @@
       ulu = hru(j)%luse%urb_lu
       iob = hru(j)%obj_no
       iwst = ob(iob)%wst
-      iwgen = wst(iwst)%wco%wgn
+      iwgen(j) = wst(iwst)%wco%wgn
       ith = hru(j)%dbs%topo
       iwgn = wst(iwst)%wco%wgn
       ires =  hru(j)%dbs%surf_stor

@@ -61,7 +61,7 @@
           pcom(j)%plstr(ipl)%strst = 0.
         end if
 
-        if(w%tmin <= wgn_pms(iwgen)%tmp_an - 15.) pcom(j)%plstr(ipl)%strst = 0.
+        if(w%tmin <= wgn_pms(iwgen(j))%tmp_an - 15.) pcom(j)%plstr(ipl)%strst = 0.
 
       end if
       
