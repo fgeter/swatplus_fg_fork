@@ -58,7 +58,7 @@
       j = ihru
 
 !! Calculate current cumulative erosivity and rainfall
-    ei = usle_ei*18.7633
+    ei = usle_ei(j)*18.7633
     if (itill(j) ==1)then
       cumeira(j) = cumeira(j) + ei
       cumei(j) = cumeira(j) - ei

@@ -25,7 +25,7 @@
 
       j = 0
       j = ihru
-      voltot = 0.
+      voltot(j) = 0.
 
       !! calculate volume of cracks in soil
       do l = 1, soil(j)%nly
@@ -45,7 +45,7 @@
         soil(j)%ly(l)%volcr = crlag * soil(j)%ly(l)%volcr + (1. - crlag) *   &
                   volcrnew
         if (soil(j)%ly(l)%volcr < 0.) soil(j)%ly(l)%volcr = 0.
-        voltot = voltot + soil(j)%ly(l)%volcr + volcrmin
+        voltot(j) = voltot(j) + soil(j)%ly(l)%volcr + volcrmin
       end do
 
       return

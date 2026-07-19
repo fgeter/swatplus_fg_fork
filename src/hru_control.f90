@@ -339,12 +339,12 @@
         !! compute effective rainfall (amount that percs into soil)
         if (ires > 0) then
           !! for wetland use seepage into soil from ponded water
-          inflpcp = hru(j)%water_seep
+          inflpcp(j) = hru(j)%water_seep
         else
           !! no wetland (no ponded water)
-          inflpcp = precip_eff - surfq(j)
+          inflpcp(j) = precip_eff - surfq(j)
         end if
-        inflpcp = Max(0., inflpcp)
+        inflpcp(j) = Max(0., inflpcp(j))
          
         !! add irrigation to subdaily effective precip
         if (time%step > 1) then
@@ -763,8 +763,8 @@
         hwb_d(j)%irr = irrig(j)%applied
         irrig(j)%applied = 0.
         irrig(j)%runoff = 0.
-        hwb_d(j)%surq_runon = ls_overq
-        hwb_d(j)%latq_runon = latqrunon 
+        hwb_d(j)%surq_runon = ls_overq(j)
+        hwb_d(j)%latq_runon = latqrunon(j) 
         hwb_d(j)%overbank = hru(j)%wet_obank_in
         hru(j)%wet_obank_in = 0.
 

@@ -69,9 +69,9 @@
       !! initialize water entering first soil layer
       !! ht1%flo is infiltration from overland flow routing
       if (ires==0) then
-        sepday = inflpcp + irrig(j)%applied + ht1%flo / (hru(j)%area_ha * 10.)
+        sepday(j) = inflpcp(j) + irrig(j)%applied + ht1%flo / (hru(j)%area_ha * 10.)
       else
-        sepday = inflpcp + ht1%flo / (hru(j)%area_ha * 10.)
+        sepday(j) = inflpcp(j) + ht1%flo / (hru(j)%area_ha * 10.)
       endif
       
       !hru(j)%water_seep = 0.
@@ -79,19 +79,19 @@
       !! calculate crack flow 
       if (bsn_cc%crk == 1) then 
         call swr_percmacro
-        sepday = sepday - sepcrktot
+        sepday(j) = sepday(j) - sepcrktot
       endif
 
       !back to 4 mm slug for soil routing- keeps moisture above fc
       slug = 1000.  !4.  !1000.   !this should be an input in parameters.bsn
-      sep_left = sepday
+      sep_left = sepday(j)
       do                  !slug loop
-        sepday = amin1(sep_left, slug)
-        sep_left = sep_left - sepday
+        sepday(j) = amin1(sep_left, slug)
+        sep_left = sep_left - sepday(j)
         sep_left = max(0., sep_left)
       do j1 = 1, soil(j)%nly
         !! add water moving into soil layer from overlying layer
-        soil(j)%phys(j1)%st = soil(j)%phys(j1)%st + sepday
+        soil(j)%phys(j1)%st = soil(j)%phys(j1)%st + sepday(j)
         
       !! septic tank inflow to biozone layer  J.Jeong
       ! STE added to the biozone layer if soil temp is above zero. 
@@ -104,27 +104,27 @@
         sw_excess = soil(j)%phys(j1)%st - soil(j)%phys(j1)%fc
 
         !! initialize variables for current layer
-        sepday = 0.
+        sepday(j) = 0.
         latlyr = 0.
-        lyrtile = 0.
+        lyrtile(j) = 0.
 
         if (sw_excess > 1.e-5) then
           !! calculate tile flow (lyrtile), lateral flow (latlyr) and
           !! percolation (sepday)
           call swr_percmicro(j1)
 
-          soil(j)%phys(j1)%st = soil(j)%phys(j1)%st - sepday - latlyr - lyrtile
+          soil(j)%phys(j1)%st = soil(j)%phys(j1)%st - sepday(j) - latlyr - lyrtile(j)
           soil(j)%phys(j1)%st = Max(1.e-6, soil(j)%phys(j1)%st)
         end if
 
         !! summary calculations
         if (j1 == soil(j)%nly) then
-          sepbtm(j) = sepbtm(j) + sepday
+          sepbtm(j) = sepbtm(j) + sepday(j)
         endif
         latq(j) = latq(j) + latlyr
-        qtile = qtile + lyrtile
-        soil(j)%ly(j1)%flat = latlyr + lyrtile
-        soil(j)%ly(j1)%prk = soil(j)%ly(j1)%prk + sepday
+        qtile = qtile + lyrtile(j)
+        soil(j)%ly(j1)%flat = latlyr + lyrtile(j)
+        soil(j)%ly(j1)%prk = soil(j)%ly(j1)%prk + sepday(j)
         if (latq(j) < 1.e-6) latq(j) = 0.
         if (qtile < 1.e-6) qtile = 0.
         if (soil(j)%ly(j1)%flat < 1.e-6) soil(j)%ly(j1)%flat = 0.

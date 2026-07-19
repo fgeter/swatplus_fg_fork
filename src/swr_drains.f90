@@ -180,7 +180,7 @@
         stor= 0.
       end if
       if (wet_ob(j)%area_ha <= 0.) then ! determine stor
-        stor = precip_eff - inflpcp - etday(j) !Daniel 10/05/07
+        stor = precip_eff - inflpcp(j) - etday(j) !Daniel 10/05/07
         if(surfq(j) > 0.0) stor = stmaxd(j)
       else
         stor = wet(j)%flo / (wet_ob(j)%area_ha * 1000.)

@@ -49,8 +49,8 @@
 
           !! adjust radiation-use efficiency for vapor pressure deficit
           !!assumes vapor pressure threshold of 1.0 kPa
-          if (vpd > 1.0) then
-            ruedecl = vpd - 1.0
+          if (vpd(j) > 1.0) then
+            ruedecl = vpd(j) - 1.0
             beadj = beadj - pldb(idp)%wavp * ruedecl
             beadj = Max(beadj, 0.27 * pldb(idp)%bio_e)
           end if
@@ -62,8 +62,8 @@
           iwst = ob(iob)%wst
           !beadj = beadj * wst(iwst)%weat%daylength / 16.    !Jimmy used 12,
           
-          bioday = beadj * par(ipl)
-          if (bioday < 0.) bioday = 0.
+          bioday(j) = beadj * par(ipl)
+          if (bioday(j) < 0.) bioday(j) = 0.
                     
           !! compute temperature stress    
           call pl_tstr
@@ -80,9 +80,9 @@
             rto_solp = 1.
           end if
        
-          uno3d(ipl) = Min(4. * pldb(idp)%pltnfr3 * bioday, uno3d(ipl))
+          uno3d(ipl) = Min(4. * pldb(idp)%pltnfr3 * bioday(j), uno3d(ipl))
           if (uapd(ipl) > 10.) then
-            uapd(ipl) = Min(4. * pldb(idp)%pltpfr3 * bioday, uapd(ipl))
+            uapd(ipl) = Min(4. * pldb(idp)%pltpfr3 * bioday(j), uapd(ipl))
           end if
           ! uno3d(ipl) = uno3d(ipl) * rto_no3
           ! uapd(ipl) = uapd(ipl) * rto_solp
@@ -141,7 +141,7 @@
           if (pcom(j)%plstr(ipl)%reg < 0.) pcom(j)%plstr(ipl)%reg = 0.
           if (pcom(j)%plstr(ipl)%reg > 1.) pcom(j)%plstr(ipl)%reg = 1.
 
-          pl_mass_up%m = bioday * pcom(j)%plstr(ipl)%reg
+          pl_mass_up%m = bioday(j) * pcom(j)%plstr(ipl)%reg
           pl_mass_up%c = 0.42 * pl_mass_up%m
           hpw_d(j)%bm_grow = hpw_d(j)%bm_grow + pl_mass_up%m
           hpw_d(j)%c_gro = hpw_d(j)%c_gro + pl_mass_up%c

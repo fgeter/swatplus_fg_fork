@@ -31,15 +31,15 @@
       j = ihru
 
       !! subtract crack flow from surface runoff
-      if (surfq(j) > voltot) then
-        surfq(j) = surfq(j) - voltot
+      if (surfq(j) > voltot(j)) then
+        surfq(j) = surfq(j) - voltot(j)
       else
         surfq(j) = 0.
       endif
 
       if (time%step > 1) then
         voli = 0.
-        voli = voltot
+        voli = voltot(j)
         do ii = 1, time%step  !j.jeong 4/24/2009
           if (hhqday(j,ii) > voli) then
             hhqday(j,ii) = hhqday(j,ii) - voli

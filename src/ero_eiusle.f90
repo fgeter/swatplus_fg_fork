@@ -54,9 +54,9 @@
         xb = -2. * Log(1. - wst(iwst)%weat%precip_half_hr)
         pkrf30 = 2. * w%precip * wst(iwst)%weat%precip_half_hr
         pkrf = xb * w%precip
-        usle_ei = w%precip * (12.1 + 8.9 * (Log10(pkrf) - .4343)) * pkrf30 / 1000.
-        if (usle_ei < 1.e-4) usle_ei = 0.
-        usle_eifac(j) = usle_ei
+        usle_ei(j) = w%precip * (12.1 + 8.9 * (Log10(pkrf) - .4343)) * pkrf30 / 1000.
+        if (usle_ei(j) < 1.e-4) usle_ei(j) = 0.
+        usle_eifac(j) = usle_ei(j)
       endif
 
       return

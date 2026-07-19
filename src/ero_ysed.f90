@@ -78,7 +78,7 @@
       !lagyld(j) = sedyld(j) * soil(j)%det_lag    !! Large Aggregate yield
 
       !! compute erosion with usle (written to output for comparison)
-      usle = 1.292 * usle_ei * cklsp(j) / 11.8
+      usle = 1.292 * usle_ei(j) * cklsp(j) / 11.8
 
       !! erosion output variables
       ero_output(j)%ero_d%sedyld = sedyld(j)

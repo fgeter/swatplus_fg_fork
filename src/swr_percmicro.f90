@@ -53,7 +53,7 @@
       !! if temperature of layer is 0 degrees C or below
       !! there is no water flow
       if (soil(j)%phys(ly1)%tmp <= 0.) then
-        sepday = 0.
+        sepday(j) = 0.
         return
       end if
 
@@ -92,28 +92,28 @@
       soil(j)%phys(ly1)%hk = Max(2., soil(j)%phys(ly1)%hk)
 
       !! compute seepage to the next layer
-      sepday = (soil(j)%phys(ly1)%st - soil(j)%phys(ly1)%fc) * (1. - Exp(-24. / soil(j)%phys(ly1)%hk))
-      sepday = Max(0., sepday)
+      sepday(j) = (soil(j)%phys(ly1)%st - soil(j)%phys(ly1)%fc) * (1. - Exp(-24. / soil(j)%phys(ly1)%hk))
+      sepday(j) = Max(0., sepday(j))
       
       !! limit maximum seepage from biozone layer below potential perc amount
       if(ly1 == i_sep(j).and.sep(isep)%opt ==1) then
-        sepday = min(sepday,sol_k_sep *24.)
-        bz_perc(j) = sepday
+        sepday(j) = min(sepday(j),sol_k_sep *24.)
+        bz_perc(j) = sepday(j)
       end if
       
       !! switched to linear relationship for dep_imp and seepage
       if (ly1 == soil(j)%nly) then
-        sepday = sepday * hru(j)%hyd%perco_lim
+        sepday(j) = sepday(j) * hru(j)%hyd%perco_lim
       end if
 
       !! check mass balance
-      if (sepday + latlyr > sw_excess) then
-        ratio = sepday / (latlyr + sepday)
-        sepday = sw_excess * ratio
+      if (sepday(j) + latlyr > sw_excess) then
+        ratio = sepday(j) / (latlyr + sepday(j))
+        sepday(j) = sw_excess * ratio
         latlyr = sw_excess * (1. - ratio)
       endif
-      if (sepday + lyrtile > sw_excess) then
-        sepday = sw_excess - lyrtile
+      if (sepday(j) + lyrtile(j) > sw_excess) then
+        sepday(j) = sw_excess - lyrtile(j)
       endif
 
       return

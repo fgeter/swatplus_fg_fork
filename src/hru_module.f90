@@ -305,7 +305,7 @@
 !! septic variables for output.std
       real :: qp_cms = 0.
       real :: sw_excess = 0.
-      real :: albday = 0.
+      real, dimension(:), allocatable :: albday
       real :: wt_shall = 0.
       real :: sq_rto = 0.
       real :: snomlt = 0.
@@ -313,10 +313,10 @@
       real :: fixn = 0.
       real :: qtile = 0.
       real :: latlyr = 0.            !!mm            |lateral flow in soil layer for the day
-      real :: inflpcp = 0.           !!mm            |amount of precipitation that infiltrates
+      real, dimension(:), allocatable :: inflpcp
       real :: fertn = 0.
-      real :: sepday = 0.
-      real :: bioday = 0.
+      real, dimension(:), allocatable :: sepday
+      real, dimension(:), allocatable :: bioday
       real :: sepcrk = 0.
       real :: sepcrktot = 0.
       real :: fertno3 = 0.
@@ -328,26 +328,26 @@
       real :: grazn = 0.
       real :: grazp = 0.
       real :: sdti = 0.
-      real :: voltot = 0.            !!mm            |total volume of cracks expressed as depth per area unit
+      real, dimension(:), allocatable :: voltot
       real :: volcrmin = 0.          !!mm            |minimum crack volume allowed in any soil layer
       real, dimension(:), allocatable :: canev
       real :: usle = 0.
       real :: rcn = 0.
       real :: enratio = 0.
-      real :: vpd = 0.
+      real, dimension(:), allocatable :: vpd
       real, dimension(:), allocatable :: pet_day
       real, dimension(:), allocatable :: ep_day
       real, dimension(:), allocatable :: snoev
       real, dimension(:), allocatable :: es_day
-      real :: ls_overq = 0.
-      real :: latqrunon = 0.
+      real, dimension(:), allocatable :: ls_overq
+      real, dimension(:), allocatable :: latqrunon
       real :: tilerunon = 0.
       real, dimension(:), allocatable :: ep_max
-      real :: bsprev = 0.
-      real :: usle_ei = 0.
+      real, dimension(:), allocatable :: bsprev
+      real, dimension(:), allocatable :: usle_ei
       real :: snocov1 = 0.
       real :: snocov2 = 0.
-      real :: lyrtile = 0.
+      real, dimension(:), allocatable :: lyrtile
 
       real, dimension(:), allocatable :: etday
       integer :: mo = 0
@@ -514,14 +514,14 @@
       !! multi-threading effort. Inert without -fopenmp and at 1 thread.
       !! See tmp/threading_state_inventory.md.
       !$omp threadprivate(ihru, ipl, isep, qtile)
-      !$omp threadprivate(inflpcp, precip_eff, snofall, snomlt)
-      !$omp threadprivate(usle, nd_30, ls_overq, latqrunon, satexq_chan, fertn, fertp)
-      !$omp threadprivate(fixn, grazn, grazp, latlyr, lyrtile, sepday, sw_excess)
-      !$omp threadprivate(wt_shall, bsprev, voltot, fertnh3, fertno3, fertorgn, fertorgp)
-      !$omp threadprivate(fertsolp, albday, vpd, enratio)
+      !$omp threadprivate(precip_eff, snofall, snomlt)
+      !$omp threadprivate(usle, nd_30, satexq_chan, fertn, fertp)
+      !$omp threadprivate(fixn, grazn, grazp, latlyr, sw_excess)
+      !$omp threadprivate(wt_shall, fertnh3, fertno3, fertorgn, fertorgp)
+      !$omp threadprivate(fertsolp, enratio)
       !$omp threadprivate(par)
       !$omp threadprivate(uno3d, uapd, un2, up2, htfac, epmax)
       !$omp threadprivate(rto_no3, rto_solp, uno3d_tot, uapd_tot, sum_no3, sum_solp)
-      !$omp threadprivate(bioday, qp_cms, usle_ei)
+      !$omp threadprivate(qp_cms)
 
       end module hru_module

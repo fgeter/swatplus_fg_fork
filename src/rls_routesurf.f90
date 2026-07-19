@@ -29,12 +29,12 @@
       ifield = hru(j)%dbs%field
 
       !! compute infiltration from surface runon and tile flow to next landscape unit
-      ls_overq = ob(iob)%hin_sur%flo + (ob(iob)%hin_til%flo * tile_fr_surf) / (10. * hru(j)%area_ha)   ! m3/10*ha = mm
-      precip_eff = precip_eff + ls_overq
+      ls_overq(j) = ob(iob)%hin_sur%flo + (ob(iob)%hin_til%flo * tile_fr_surf) / (10. * hru(j)%area_ha)   ! m3/10*ha = mm
+      precip_eff = precip_eff + ls_overq(j)
       
       !! add surface runon to subdaily effective precip
       if (time%step > 1) then
-          w%ts(:) = w%ts(:) + ls_overq / time%step
+          w%ts(:) = w%ts(:) + ls_overq(j) / time%step
       end if
       
 !!    compute infiltration from surface runon to next landscape unit
@@ -56,7 +56,7 @@
 !!    sediment deposition across the landscape
       sed = ob(iob)%hin_sur%sed / hru(j)%area_ha
       !! use surface runoff (mm) for eiq - m3/(10 * ha) = mm
-      trancap = hru(j)%topo%dep_co * usle_cfac(j) * ls_overq *        &
+      trancap = hru(j)%topo%dep_co * usle_cfac(j) * ls_overq(j) *        &
                 hru(j)%topo%slope**1.4 * hru(j)%field%wid**1.4
       if (sed > trancap) then
         ht1%sed = (sed - trancap) * hru(j)%area_ha

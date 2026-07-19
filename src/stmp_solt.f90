@@ -101,7 +101,7 @@
       tcov = 0.
       soil(j)%tmp_srf = 0.
       !! SWAT manual equation 2.3.10
-      st0 = (w%solrad * (1. - albday) - 14.) / 20.
+      st0 = (w%solrad * (1. - albday(j)) - 14.) / 20.
       !! SWAT manual equation 2.3.9
       tbare = w%tave + 0.5 * (w%tmax - w%tmin) * st0
       !! SWAT manual equation 2.3.12

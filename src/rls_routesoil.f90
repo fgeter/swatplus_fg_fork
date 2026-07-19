@@ -22,11 +22,11 @@
 
       j = ihru
       
-      latqrunon = ob(iob)%hin_lat%flo
-      if (latqrunon > 1.e-9) then
+      latqrunon(j) = ob(iob)%hin_lat%flo
+      if (latqrunon(j) > 1.e-9) then
       !!put in soil layers - weighted by depth of soil layer
         do lyr = 1, soil(j)%nly
-          latqlyr = (soil(j)%phys(lyr)%thick / soil(j)%phys(soil(j)%nly)%d) * latqrunon
+          latqlyr = (soil(j)%phys(lyr)%thick / soil(j)%phys(soil(j)%nly)%d) * latqrunon(j)
           soil(j)%phys(lyr)%st = soil(j)%phys(lyr)%st + latqlyr
         end do
         !! excess above ul is added to surface storage in saturation excess routine

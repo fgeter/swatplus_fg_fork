@@ -105,7 +105,7 @@
       !! vapor pressure deficit
       ea = Ee(w%tave)
       ed = ea * w%rhum
-      vpd = ea - ed
+      vpd(j) = ea - ed
 
       !!calculate the slope of the saturation vapor pressure curve
       dlt = 4098. * ea / (w%tave + 237.3)**2
@@ -157,7 +157,7 @@
             ralb = w%solrad * (1.0 - 0.8) 
           end if
          !! calculate net short-wave radiation for max plant ET
-          ralb1 = w%solrad * (1.0 - albday) 
+          ralb1 = w%solrad * (1.0 - albday(j)) 
 
          !! calculate net long-wave radiation
           !! net emissivity  equation 2.2.20 in SWAT manual
@@ -185,7 +185,7 @@
            !! potential ET: reference crop alfalfa at 40 cm height
            rv = 114. / (w%windsp * (170./1000.)**0.2)
            rc = 49. / (1.4 - 0.4 * co2y(time%yrs) / 330.)
-           pet_day(j) = (dlt * rn_pet + gma * rho * vpd / rv) / (xl * (dlt + gma * (1. + rc / rv)))
+           pet_day(j) = (dlt * rn_pet + gma * rho * vpd(j) / rv) / (xl * (dlt + gma * (1. + rc / rv)))
            pet_day(j) = Max(0., pet_day(j))
  
         !! maximum plant ET
@@ -236,7 +236,7 @@
             do ipl = 1, pcom(j)%npl
               idp = pcom(j)%plcur(ipl)%idplt
               rto = pcom(j)%plg(ipl)%lai / (pcom(j)%lai_sum + 0.01)
-              xx = vpd - 1.
+              xx = vpd(j) - 1.
               if (xx > 0.0) then
                 fvpd = Max(0.1,1.0 - plcp(idp)%vpd2 * xx)
               else
@@ -251,7 +251,7 @@
             rc = rc / (0.5 * (pcom(j)%lai_sum + 0.01) * (1.4 - 0.4 * co2y(time%yrs) / 330.))
 
             !! calculate maximum plant ET
-            ep_max(j) = (dlt * rn + gma * rho * vpd / rv) / (xl * (dlt + gma * (1. + rc / rv)))
+            ep_max(j) = (dlt * rn + gma * rho * vpd(j) / rv) / (xl * (dlt + gma * (1. + rc / rv)))
             if (ep_max(j) < 0.) ep_max(j) = 0.
             ep_max(j) = Min(ep_max(j), pet_day(j))
           end if

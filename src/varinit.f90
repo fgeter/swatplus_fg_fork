@@ -77,9 +77,9 @@
       end do
       
       !!initialize variables NUBS - all these need to be checked
-        albday = 0.
-        bioday = 0.
-        bsprev = 0.
+        albday(j) = 0.
+        bioday(j) = 0.
+        bsprev(j) = 0.
         canev(j) = 0.
         ep_day(j) = 0.
         ep_max(j) = 0.
@@ -90,24 +90,24 @@
         grazn = 0.
         grazp = 0.
         if (time%step > 1)  hhqday(j,:) = 0.
-        inflpcp = 0.
-        lyrtile = 0.
+        inflpcp(j) = 0.
+        lyrtile(j) = 0.
         qp_cms = 0.
         pet_day(j) = 0.
         qday(j) = 0.
         qtile = 0.
-        ls_overq = 0.
-        latqrunon = 0.
-        sepday = 0.
+        ls_overq(j) = 0.
+        latqrunon(j) = 0.
+        sepday(j) = 0.
         snoev(j) = 0.
         snofall = 0.
         snomlt = 0.
         sw_excess = 0.
         uno3d = 0.
         usle = 0.
-        usle_ei = 0.
-        vpd = 0.
-        voltot = 0.
+        usle_ei(j) = 0.
+        vpd(j) = 0.
+        voltot(j) = 0.
 
     !! urban modeling by J.Jeong
       ubnrunoff = 0.

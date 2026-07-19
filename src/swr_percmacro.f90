@@ -39,7 +39,7 @@
 
       j = ihru
 
-      sepcrk = Min(voltot, inflpcp)
+      sepcrk = Min(voltot(j), inflpcp(j))
       sepcrktot = sepcrk
       if (sepcrk > 1.e-4) then
         do ly = soil(j)%nly, 1, -1
@@ -47,7 +47,7 @@
           xx = 0.
           if (ly == soil(j)%nly) then
           crk = crklch*(soil(j)%ly(ly)%volcr/(soil(j)%phys(ly)%d -          &
-                soil(j)%phys(ly-1)%d) * voltot - volcrmin)
+                soil(j)%phys(ly-1)%d) * voltot(j) - volcrmin)
             if (crk < sepcrk) then
               sepcrk = sepcrk - crk
               sepbtm(j) = sepbtm(j) + crk
