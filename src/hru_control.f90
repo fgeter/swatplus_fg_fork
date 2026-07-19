@@ -181,9 +181,13 @@
             id = sched(isched)%num_db(iauto)
             jj = j
             d_tbl => dtbl_lum(id)
+            !! decision-table eval writes shared dtbl_lum state (act_hit + cumulative
+            !! probabilistic/area counters); serialize so parallel HRUs don't race on it
+            !$omp critical (dtbl_eval)
             call conditions (jj, iauto)
             call actions (jj, iob, iauto)
-            
+            !$omp end critical (dtbl_eval)
+
             !! check day of future fertilizer application
             if (pcom(ihru)%fert_fut_num > 0) then
               do ifrt = 1, pcom(ihru)%fert_fut_num
@@ -634,8 +638,10 @@
           !! use decision table
           id = hru(j)%sb%dtbl
           d_tbl => dtbl_flo(id)
+          !$omp critical (dtbl_eval)
           call conditions (j, id)
           call actions (j, iob, id)
+          !$omp end critical (dtbl_eval)
           
           !! set amount of tile flow to send to buffer hru
           hru_rcv = hru(j)%sb%sb_db%hru_rcv
