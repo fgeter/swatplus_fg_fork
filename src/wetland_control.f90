@@ -29,7 +29,7 @@
       real :: wet_h1                  !              | 
       integer :: ised                 !none          |counter
       integer :: irel                 !              |
-      integer :: icon = 0             !none          |counter: identifies parameter list in cs_res (rtb cs)
+      integer :: icon                 !none          |counter: identifies parameter list in cs_res (rtb cs)
       integer :: ires
       integer :: j1
       integer :: ii                   !none          |sub daily time step counter

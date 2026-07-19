@@ -43,7 +43,7 @@
       real :: c2                           !none          |variable used to hold calculated value 
       real :: cn1                          !none          |SCS runoff curve number for moisture condition I
       real :: cn3                          !none          |SCS runoff curve number for moisture condition III
-      real :: s3 = 0.                      !none          |retention parameter for CN3
+      real :: s3                           !none          |retention parameter for CN3
       real :: rto3                         !none          |fraction difference between CN3 and CN1 retention parameters
       real :: rtos                         !none          |fraction difference between CN=99 and CN1 retention parameters
       real :: smxold                       !              | 

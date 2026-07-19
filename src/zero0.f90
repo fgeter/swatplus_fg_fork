@@ -12,9 +12,9 @@
       implicit none
 
       integer :: iop                      !none               !counter
-      real :: pltnfr = 0.                 !kg N/kg biomass    |nitrogen uptake parameter normal fraction
+      real :: pltnfr                      !kg N/kg biomass    |nitrogen uptake parameter normal fraction
                                           !                   |of N in crop biomass at emergence 
-      real :: pltpfr = 0.                 !kg P/kg biomass    |phosphorus uptake parameter normal
+      real :: pltpfr                      !kg P/kg biomass    |phosphorus uptake parameter normal
                                           !                   |fraction of P in crop biomass at emergence
       real :: ranrns                      !mm                 |random roughness of a given tillage operation
       

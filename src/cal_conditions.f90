@@ -35,7 +35,7 @@
       integer :: ipg                                          !                |
       integer :: ipl                                          !                |
       integer :: iyear                                        !none            |counter
-      real :: val_cur = 0.                                    !variable        |current parameter value
+      real :: val_cur                                         !variable        |current parameter value
                                                               !                |the standard temperature (20 degrees C)
       real :: chg_par                                         !variable        |type of change (absval, abschg, pctchg)
       integer :: iday                                         !none            |counter

@@ -35,7 +35,7 @@
       real :: chg_val          !          | 
       real :: qn1              !          |
       real :: qn3              !          |
-      real :: s3 = 0.          !none      |retention parameter for CN3
+      real :: s3               !none      |retention parameter for CN3
       real :: rto3             !none      |fraction difference between CN3 and CN1 
       real :: rtos             !none      |fraction difference between CN=99 and CN1 
       real :: sumul            !mm H2O    |amount of water held in soil profile at saturation

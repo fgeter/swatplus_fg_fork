@@ -25,7 +25,7 @@
       integer :: j      !none          |HRU number
       real :: pb        !none          |variable used to store intermediate
                         !              |calculation result
-      real :: r2 = 0.   !none          |retention parameter in CN equation
+      real :: r2        !none          |retention parameter in CN equation
       real :: surfqimp     !mm H2O        |surface runoff from impervious area
       integer :: ulu      !              |
 
