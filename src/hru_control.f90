@@ -883,7 +883,7 @@
         hls_d(j)%surqno3 = surqno3(j)
         hls_d(j)%latno3 = latno3(j)
         hls_d(j)%surqsolp = surqsolp(j)
-        hls_d(j)%usle = usle
+        hls_d(j)%usle = usle(j)
         hls_d(j)%sedminp = sedminpa(j) + sedminps(j)
         hls_d(j)%tileno3 = tileno3(j)
 

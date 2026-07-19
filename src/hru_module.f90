@@ -331,7 +331,7 @@
       real, dimension(:), allocatable :: voltot
       real :: volcrmin = 0.          !!mm            |minimum crack volume allowed in any soil layer
       real, dimension(:), allocatable :: canev
-      real :: usle = 0.
+      real, dimension(:), allocatable :: usle
       real :: rcn = 0.
       real :: enratio = 0.
       real, dimension(:), allocatable :: vpd
@@ -515,7 +515,7 @@
       !! See tmp/threading_state_inventory.md.
       !$omp threadprivate(ihru, ipl, isep)
       !$omp threadprivate(precip_eff)
-      !$omp threadprivate(usle, nd_30, satexq_chan)
+      !$omp threadprivate(nd_30, satexq_chan)
       !$omp threadprivate(latlyr)
       !$omp threadprivate(wt_shall, fertnh3, fertno3, fertorgn, fertorgp)
       !$omp threadprivate(fertsolp, enratio)

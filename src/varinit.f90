@@ -104,7 +104,7 @@
         snomlt(j) = 0.
         sw_excess(j) = 0.
         uno3d = 0.
-        usle = 0.
+        usle(j) = 0.
         usle_ei(j) = 0.
         vpd(j) = 0.
         voltot(j) = 0.
