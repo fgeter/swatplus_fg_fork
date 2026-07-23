@@ -73,22 +73,22 @@
       !! divide/multiply guards above.
       nitrok = 0.
       if (abs(conc_n - wbody_prm%nut%conc_nmin) >= 1.e-30) &
-        nitrok = (conc_n - wbody_prm%nut%conc_nmin) * Theta(nsetlr, wbody_prm%nut%theta_n, wst(iwst)%weat%tave)
+        nitrok = (conc_n - wbody_prm%nut%conc_nmin) * Theta(nsetlr, wbody_prm%nut%theta_n, w%tave)
       nitrok = amin1 (nitrok, 1.)
       nitrok = max (nitrok, 0.)
       phosk = 0.
       if (abs(conc_p - wbody_prm%nut%conc_pmin) >= 1.e-30) &
-        phosk = (conc_p - wbody_prm%nut%conc_pmin) * Theta(psetlr, wbody_prm%nut%theta_p, wst(iwst)%weat%tave)
+        phosk = (conc_p - wbody_prm%nut%conc_pmin) * Theta(psetlr, wbody_prm%nut%theta_p, w%tave)
       phosk = amin1 (phosk, 1.)
       phosk = max (phosk, 0.)
       nitrosolk = 0.
       if (abs(conc_soln - wbody_prm%nut%conc_nmin) >= 1.e-30) &
-        nitrosolk = (conc_soln - wbody_prm%nut%conc_nmin) * Theta(nsolr, wbody_prm%nut%theta_n, wst(iwst)%weat%tave)
+        nitrosolk = (conc_soln - wbody_prm%nut%conc_nmin) * Theta(nsolr, wbody_prm%nut%theta_n, w%tave)
       nitrosolk = amin1 (nitrosolk, 1.)
       nitrosolk = max (nitrosolk, 0.)
       phossolk = 0.
       if (abs(conc_solp - wbody_prm%nut%conc_pmin) >= 1.e-30) &
-        phossolk = (conc_solp - wbody_prm%nut%conc_pmin) * Theta(psolr, wbody_prm%nut%theta_p, wst(iwst)%weat%tave)
+        phossolk = (conc_solp - wbody_prm%nut%conc_pmin) * Theta(psolr, wbody_prm%nut%theta_p, w%tave)
       phossolk = amin1 (phossolk, 1.)
       phossolk = max (phossolk, 0.)
       !! remove nutrients from reservoir by settling - exclude soluble nutrients

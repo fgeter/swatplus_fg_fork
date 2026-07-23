@@ -40,6 +40,10 @@
       type (water_body) :: bres_wat_a
       type (water_body), pointer :: wbody_wb       !! used for reservoir and wetlands
 
+      !! OpenMP Stage 3: reassigned per-reservoir in res_control.f90 (=> res_wat_d(jres)).
+      !! Same "shared pointer to current object" race class as hydrograph_module's wbody.
+      !$omp threadprivate(wbody_wb)
+
        interface operator (+)
         module procedure watbod_add
       end interface

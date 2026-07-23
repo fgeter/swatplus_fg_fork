@@ -593,10 +593,19 @@
       interface operator (+)
         module procedure hydcsout_add
       end interface
-      
+
       interface operator (*)
         module procedure hydcsout_mult_const
       end interface
+
+      !! OpenMP Stage 3: hcs1/hcs2/hcs3 are per-object working scratch (constituent
+      !! counterpart of hydrograph_module's ht1/ht2/ht3, which ARE already threadprivate).
+      !! res_control.f90 assigns hcs2 = hin_csz UNCONDITIONALLY (regardless of whether any
+      !! constituents are configured) -- a derived-type assignment with allocatable
+      !! components implicitly deallocates hcs2's old component storage and reallocates it,
+      !! so two reservoirs racing through res_control concurrently in the same wavefront
+      !! double-free the same shared block. Caught by AddressSanitizer.
+      !$omp threadprivate(hcs1, hcs2, hcs3)
 
       contains
       

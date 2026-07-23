@@ -133,7 +133,11 @@
       type (water_body_data_parameters), dimension(:), allocatable, target :: res_prm
       type (water_body_data_parameters), dimension(:), allocatable, target :: wet_prm
       type (water_body_data_parameters), pointer :: wbody_prm       !! used for reservoir and wetlands
-      
+
+      !! OpenMP Stage 3: reassigned per-reservoir in res_control.f90 (=> res_prm(jres)).
+      !! Same "shared pointer to current object" race class as hydrograph_module's wbody.
+      !$omp threadprivate(wbody_prm)
+
       type reservoir_weir_outflow
         character(len=25) :: name = ""
         real :: c = 1.84              !none          |weir discharge linear coefficient 

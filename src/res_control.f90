@@ -47,9 +47,12 @@
         iwst = ob(iob)%wst
       
         !! adjust precip and temperature for elevation using lapse rates
+        !! w is threadprivate; the write-back to shared wst(iwst)%weat raced when two
+        !! reservoirs sharing the same weather station were processed concurrently (same
+        !! class of bug already fixed in sd_channel_control3.f90 during Stage 2) -- removed
+        !! the write-back, downstream reads use w directly instead of wst(iwst)%weat.
         w = wst(iwst)%weat
         if (bsn_cc%lapse == 1) call cli_lapse
-        wst(iwst)%weat = w
       
         !! set water body pointer to res
         wbody => res(jres)
@@ -167,8 +170,8 @@
         endif 
         
         !! calculate water balance for day
-        res_wat_d(jres)%evap = 10. * res_hyd(jres)%evrsv * wst(iwst)%weat%pet * res_wat_d(jres)%area_ha
-        res_wat_d(jres)%precip = 10. * wst(iwst)%weat%precip * res_wat_d(jres)%area_ha
+        res_wat_d(jres)%evap = 10. * res_hyd(jres)%evrsv * w%pet * res_wat_d(jres)%area_ha
+        res_wat_d(jres)%precip = 10. * w%precip * res_wat_d(jres)%area_ha
         if(bsn_cc%gwflow == 0) then !if gwflow active, seepage calculated via gwflow_reservoir (rtb gwflow)
           res_wat_d(jres)%seep = 240. * res_hyd(jres)%k * res_wat_d(jres)%area_ha
         else

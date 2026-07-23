@@ -1227,6 +1227,12 @@
       !$omp threadprivate(icmd, iwst, ht1, ht2, ht3, ht4, ht5, delrto, isdch, isd_chsur, jrch, ich)
       !$omp threadprivate(hdsep1, hdsep2)
       !$omp threadprivate(fp_dep, ch_dep, bank_ero, bed_ero, ch_trans)
+      !! OpenMP Stage 3: wbody is reassigned per-reservoir (=> res(jres)) in res_control.f90
+      !! and read throughout the res_hydro/res_sediment/res_nutrient call chain -- same
+      !! "shared pointer to current object" race class as ich (Stage 2). Its sibling
+      !! pointers wbody_wb/wbody_prm live in water_body_module/reservoir_data_module and
+      !! are threadprivate there.
+      !$omp threadprivate(wbody)
 
       contains
 
