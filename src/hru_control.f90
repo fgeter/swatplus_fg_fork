@@ -38,7 +38,7 @@
       use gwflow_module !rtb gwflow
 	    use tillage_data_module
       !use basin_module, only : bsn_cc
-      
+
       implicit none
       
       external :: actions, albedo, cbn_zhang2, conditions, cs_lch, cs_rain, cs_rctn_hru, &
@@ -853,7 +853,7 @@
         hpw_d(j)%strsw = strsw_av
         hpw_d(j)%strsa = strsa_av
         hpw_d(j)%strstmp = strstmp_av
-        hpw_d(j)%strsn = strsn_av      
+        hpw_d(j)%strsn = strsn_av
         hpw_d(j)%strsp = strsp_av
         hpw_d(j)%strss = strss_av
         hpw_d(j)%nplnt = pl_mass(j)%tot_com%n

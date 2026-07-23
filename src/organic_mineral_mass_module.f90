@@ -386,6 +386,7 @@
       !$omp threadprivate(soil_prof_srsd, soil_prof_sstr, soil_prof_str, soil_prof_tot, soil_prof_water)
       !$omp threadprivate(decomp, pl_mass_up, org_frt, abgr_drop, leaf_drop, seed_drop, stem_drop)
       !$omp threadprivate(mix_mn, mix_mp, mix_org, pl_yield)
+      !$omp threadprivate(harv_seed, harv_leaf, harv_stem, harv_left)
       !$omp threadprivate(transfer)
 
     contains

@@ -34,10 +34,10 @@
 !!    this subroutine outputs HRU variables on daily, monthly and annual time steps
 
       j = ihru
-      
+
       iob = sp_ob1%hru + j - 1   !!!!!! added for new output write
       ilu = hru(j)%land_use_mgt
-          
+
         hwb_m(j) = hwb_m(j) + hwb_d(j)
         hnb_m(j) = hnb_m(j) + hnb_d(j)
         hls_m(j) = hls_m(j) + hls_d(j) 
@@ -219,8 +219,8 @@
              hpw_y(j)%nplnt = pl_mass(j)%tot_com%n
              hpw_y(j)%pplnt = pl_mass(j)%tot_com%p
              write (2042,101) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_y(j),        &
-                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather yr             
-               if (pco%csvout == "y") then 
+                                                                          lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather yr
+               if (pco%csvout == "y") then
                  write (2046,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                 hpw_y(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
                end if 

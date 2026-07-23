@@ -52,11 +52,11 @@
 
       j = ihru
       
-      uno3d(ipl) = 0.
       uno3d_tot = 0.
-      uapd(ipl) = 0.
       uapd_tot = 0.
       do ipl = 1, pcom(j)%npl
+        uno3d(ipl) = 0.
+        uapd(ipl) = 0.
         idp = pcom(j)%plcur(ipl)%idplt
         if (pcom(j)%plcur(ipl)%idorm == 'n'.and.pcom(j)%plcur(ipl)%gro=="y")    &
                                                                    then
