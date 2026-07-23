@@ -59,7 +59,9 @@
         bioday, bsprev, canev, ep_day, ep_max, es_day, fertn, fertp, grazn, grazp,      &
         hhsedy, inflpcp, latqrunon, ls_overq, lyrtile, qp_cms,                          &
         pet_day, qday, qtile, sepday, snoev, snofall, snomlt,                           &
-        sw_excess, ubnrunoff, ubntss, uno3d, usle, usle_ei, voltot, vpd, fixn 
+        sw_excess, ubnrunoff, ubntss, uno3d, usle, usle_ei, voltot, vpd, fixn,          &
+        sedyld, sanyld, silyld, clayld, sagyld, lagyld, sedorgn, sedorgp,               &
+        sedminpa, sedminps, latno3
       use soil_module
       use hydrograph_module
       
@@ -108,6 +110,17 @@
         usle_ei(j) = 0.
         vpd(j) = 0.
         voltot(j) = 0.
+        sedyld(j) = 0.
+        sanyld(j) = 0.
+        silyld(j) = 0.
+        clayld(j) = 0.
+        sagyld(j) = 0.
+        lagyld(j) = 0.
+        sedorgn(j) = 0.
+        sedorgp(j) = 0.
+        sedminpa(j) = 0.
+        sedminps(j) = 0.
+        latno3(j) = 0.
 
     !! urban modeling by J.Jeong
       ubnrunoff = 0.

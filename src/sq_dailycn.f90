@@ -53,6 +53,6 @@
       r2 = Max(3.,r2)
 
       cnday(j) = 25400. / (r2 + 254.)
-      
+
       return
       end subroutine sq_dailycn

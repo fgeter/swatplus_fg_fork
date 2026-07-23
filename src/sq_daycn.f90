@@ -16,7 +16,7 @@
 
       use urban_data_module
       use hru_module, only : hru, cnday, surfq, ihru, precip_eff
-      
+
       implicit none
        
       real :: bb        !none          |variable used to store intermediate 

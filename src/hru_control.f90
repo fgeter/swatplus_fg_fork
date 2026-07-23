@@ -131,7 +131,7 @@
         w%tave = w%tave + ob(iob)%tlaps
       end if
       precip_eff = w%precip
-      
+
       hsc_d(j) = hscz
       hrc_d(j) = hrcz
       hpc_d(j) = hpcz

@@ -513,12 +513,12 @@
       !! OpenMP: per-HRU transient scratch + the HRU index made thread-private for the
       !! multi-threading effort. Inert without -fopenmp and at 1 thread.
       !! See tmp/threading_state_inventory.md.
-      !$omp threadprivate(ihru, ipl, isep)
+      !$omp threadprivate(ihru, ipl, isep, ulu)
       !$omp threadprivate(precip_eff)
       !$omp threadprivate(nd_30, satexq_chan)
       !$omp threadprivate(latlyr)
       !$omp threadprivate(wt_shall, fertnh3, fertno3, fertorgn, fertorgp)
-      !$omp threadprivate(fertsolp, enratio)
+      !$omp threadprivate(fertsolp, enratio, sdti)
       !$omp threadprivate(par)
       !$omp threadprivate(uno3d, uapd, un2, up2, htfac, epmax)
       !$omp threadprivate(rto_no3, rto_solp, uno3d_tot, uapd_tot, sum_no3, sum_solp)

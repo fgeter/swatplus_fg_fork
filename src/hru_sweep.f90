@@ -36,7 +36,12 @@
 
       j = 0
       j = ihru
-     
+
+      !! fr_curb isn't wired to a per-operation sweep database value here;
+      !! assume the full curb length is sweepable rather than reading
+      !! uninitialized memory.
+      fr_curb = 1.
+
 !! calculate amount of dirt on streets prior to sweeping
       dirt = 0.
       dirt = urbdb(ulu)%dirtmx * twash(j) / (urbdb(ulu)%thalf +twash(j))
