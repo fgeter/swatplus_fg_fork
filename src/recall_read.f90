@@ -33,8 +33,8 @@
             imax = Max(imax,i) 
           end do
           db_mx%recalldb_max = imax
-          
-      allocate (recall_db(0:imax))          
+
+      allocate (recall_db(0:imax))
       allocate (recall(0:imax))
       allocate (rec_d(imax))
       allocate (rec_m(imax))
@@ -60,7 +60,8 @@
         !! read all organic mineral files
         call recall_read (i)
       end do
-      
+
+      exit
     end do
     end if
     close (107)
@@ -174,9 +175,9 @@
           !! seet star year if recall starts after start of  simulation
           iyrs = recall(irec)%start_yr - time%yrc + 1
         end if
-        
+
         !! read and store data
-        do 
+        do
           iyr1 = iyr
           read (108,*,iostat=eof) jday1, mo1, day_mo, iyr
           if (eof < 0) exit
@@ -219,7 +220,7 @@
             end select
             
         end do    !! read and store data
-        
+
         !! save end year of recall data
         recall(i)%end_yr = iyr
         close (108)
