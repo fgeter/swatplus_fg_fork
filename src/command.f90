@@ -134,6 +134,30 @@
       integer :: icmd_save_a
       logical :: icmd_is_precomputed_aqu
 
+      !! === OpenMP Stage 4: per-wavefront-level pre-pass over routing units (ru) ===
+      !! Structurally DIFFERENT from Stages 1-3: ru_control gets its inputs via a SEPARATE
+      !! mechanism (ru_def(iru)%num -> ru_elem(ise)%obj, the ru's internal HRU-membership
+      !! list), NOT the standard ob(icmd)%obj_in/rcv_tot hydrograph network that channels/
+      !! reservoirs/aquifers all use. ru_control never reads ob(icmd)%hin/hin_sur/hin_lat/
+      !! hin_til, so no gather-loop replication is needed here (unlike Stages 2/3) -- but the
+      !! producer-order safety check MUST walk ru_def/ru_elem instead of obj_in (see
+      !! ru_elements_all_earlier), since that's ru_control's actual dependency.
+      !! Restricted to rcv_tot==0 ru's: some ru's CAN also receive inflow via the standard
+      !! network (sequential dispatch conditionally calls hyddep_output when rcv_tot>0), which
+      !! would require replicating the more complex "hru/ru" gather-loop branch; narrower gate,
+      !! same "narrowest safe wave first" philosophy as the floodplain-linked channel exclusion
+      !! in Stage 2. Also restricted to time%step<=1 (no subdaily/Green-Ampt): ru_control's
+      !! subdaily block and flow_hyd_ru_hru are unexercised by either validation fixture (both
+      !! run daily timestep), so left fully sequential rather than trusted unaudited.
+      integer, allocatable, save :: par_ru(:)
+      integer, allocatable, save :: par_ru_lvl_start(:)
+      integer, save :: max_ru_level = 0
+      integer, save :: n_par_ru = -1
+      logical :: use_par5                                !! run the ru wavefront pre-pass this day?
+      integer :: lvl_lo_u, lvl_hi_u
+      integer :: icmd_save_u
+      logical :: icmd_is_precomputed_ru
+
       icmd = sp_ob1%objs
       wallo(:)%trn_cur = 1
       if (allocated(res_ob)) res_ob(:)%wallo_call = 0
@@ -300,6 +324,49 @@
           par_aqu_lvl_start(1) = 1
           do k = 1, max_aqu_level
             par_aqu_lvl_start(k+1) = par_aqu_lvl_start(k) + aqu_lvl_cnt(k)
+          end do
+        end block
+      end if
+
+      !! === OpenMP Stage 4: build per-wavefront-level eligible routing-unit lists ===
+      !! Eligible = a ru with rcv_tot==0 whose every ru_def/ru_elem member has a strictly
+      !! lower cmd_order (see ru_elements_all_earlier -- this walks a DIFFERENT structure
+      !! than the other three stages' producer checks).
+      use_par5 = (use_par .and. cs_db%num_tot == 0 .and. time%step <= 1)
+      if (n_par_ru < 0) then
+        n_par_ru = 0
+        max_ru_level = 0
+        iob = sp_ob1%objs
+        do while (iob /= 0)
+          if (ob(iob)%typ == "ru" .and. ob(iob)%rcv_tot == 0) then
+            if (ru_elements_all_earlier(iob)) then
+              n_par_ru = n_par_ru + 1
+              max_ru_level = max(max_ru_level, ob(iob)%cmd_order)
+            end if
+          end if
+          iob = ob(iob)%cmd_next
+        end do
+        allocate (par_ru(max(1, n_par_ru)))
+        allocate (par_ru_lvl_start(max(1, max_ru_level) + 1))
+        block
+          integer, allocatable :: ru_lvl_cnt(:)
+          allocate (ru_lvl_cnt(max(1, max_ru_level)))
+          ru_lvl_cnt = 0
+          n_par_ru = 0
+          iob = sp_ob1%objs
+          do while (iob /= 0)
+            if (ob(iob)%typ == "ru" .and. ob(iob)%rcv_tot == 0) then
+              if (ru_elements_all_earlier(iob)) then
+                n_par_ru = n_par_ru + 1
+                par_ru(n_par_ru) = iob
+                ru_lvl_cnt(ob(iob)%cmd_order) = ru_lvl_cnt(ob(iob)%cmd_order) + 1
+              end if
+            end if
+            iob = ob(iob)%cmd_next
+          end do
+          par_ru_lvl_start(1) = 1
+          do k = 1, max_ru_level
+            par_ru_lvl_start(k+1) = par_ru_lvl_start(k) + ru_lvl_cnt(k)
           end do
         end block
       end if
@@ -716,6 +783,47 @@
           end if
         end if
 
+        !! === OpenMP Stage 4: this wavefront level's routing-unit pre-pass ===
+        !! No gather-loop replication: ru_control never reads ob(icmd)%hin/hin_sur/hin_lat/
+        !! hin_til (unlike Stages 2/3) -- it gathers its own inputs internally via
+        !! ru_def(iru)%num/ru_elem, walked entirely inside ru_control itself. Only the
+        !! day_cur bookkeeping (the "hru/ru" branch: increment without the day_cur=1 reset
+        !! first, unlike chandeg/res/aqu's "else" branch) and the hin*/tsin/peakrate reset
+        !! (a no-op here since rcv_tot==0, but kept for exact parity with the sequential
+        !! gather loop's unconditional preamble) need replicating.
+        if (use_par5 .and. ob(icmd)%cmd_order <= max_ru_level) then
+          lvl_lo_u = par_ru_lvl_start(ob(icmd)%cmd_order)
+          lvl_hi_u = par_ru_lvl_start(ob(icmd)%cmd_order + 1) - 1
+          if (lvl_hi_u >= lvl_lo_u) then
+            icmd_save_u = icmd   !! icmd is threadprivate; see icmd_save note above
+            !$omp parallel do schedule(dynamic)
+            do k = lvl_lo_u, lvl_hi_u
+              block
+                icmd = par_ru(k)                     !! threadprivate icmd
+                iru = ob(icmd)%num                    !! threadprivate iru
+
+                ob(icmd)%day_cur = ob(icmd)%day_cur + 1
+                if (ob(icmd)%day_cur > ob(icmd)%day_max) ob(icmd)%day_cur = 1
+
+                ob(icmd)%hin     = hz
+                ob(icmd)%hin_sur = hz
+                ob(icmd)%hin_lat = hz
+                ob(icmd)%hin_til = hz
+                ob(icmd)%tsin     = 0.
+                ob(icmd)%peakrate = 0.
+
+                !! ru_control is only reachable here for rcv_tot==0 (gated at par_ru build
+                !! time, matching the sequential dispatch's own condition around
+                !! hyddep_output -- rcv_tot==0 means the sequential path wouldn't call
+                !! hyddep_output for this object either, so nothing else to replicate)
+                call ru_control
+              end block
+            end do
+            !$omp end parallel do
+            icmd = icmd_save_u   !! restore the walk's position (see icmd_save note above)
+          end if
+        end if
+
         last_level_done = ob(icmd)%cmd_order
         end if   !! end "new wavefront level" trigger
 
@@ -746,9 +854,18 @@
             if (aqu_producers_all_earlier(icmd)) icmd_is_precomputed_aqu = .true.
           end if
         end if
+        !! same idea for routing units pre-passed in Stage 4 -- must match par_ru's build-time
+        !! eligibility EXACTLY (typ, rcv_tot==0, ru_elements_all_earlier).
+        icmd_is_precomputed_ru = .false.
+        if (use_par5 .and. ob(icmd)%typ == "ru") then
+          if (ob(icmd)%rcv_tot == 0) then
+            if (ru_elements_all_earlier(icmd)) icmd_is_precomputed_ru = .true.
+          end if
+        end if
         if (.not. ((use_par .and. ob(icmd)%cmd_order == 1 .and.  &
                    ob(icmd)%typ == "hru" .and. ob(icmd)%rcv_tot == 0) .or.  &
-                   icmd_is_precomputed_cha .or. icmd_is_precomputed_res .or. icmd_is_precomputed_aqu)) then
+                   icmd_is_precomputed_cha .or. icmd_is_precomputed_res .or.  &
+                   icmd_is_precomputed_aqu .or. icmd_is_precomputed_ru)) then
 
         !! allocate water for transfers that don't include a channel as a source
         !! check here in case channel is last object
@@ -1408,5 +1525,39 @@
           end if
         end do
       end function aqu_producers_all_earlier
+
+      !! true only if EVERY ru_def/ru_elem member of icmd_chk (a "ru" object) is already
+      !! guaranteed computed by the time the ru wavefront pre-pass runs. Structurally
+      !! DIFFERENT from the other three producers_all_earlier checks: ru_control's actual
+      !! dependency is the ru's internal HRU-membership list (ru_def(iru)%num ->
+      !! ru_elem(ise)%obj), not ob(icmd_chk)%obj_in -- walking obj_in here would check the
+      !! wrong thing entirely.
+      !!
+      !! A strictly-lower cmd_order is sufficient but NOT necessary: empirically, a ru's
+      !! member HRUs share the SAME cmd_order as the ru itself (both ==1), because the
+      !! ru<->HRU relationship isn't part of the graph cmd_order is computed from at all --
+      !! it's a separate membership list, not a hydrograph edge. Those HRUs are still safe
+      !! to depend on here because Stage 1's HRU pre-pass runs unconditionally, in full,
+      !! BEFORE the day-loop (and thus before any wavefront trigger) even begins -- so any
+      !! element matching Stage 1's OWN eligibility criteria (hru, cmd_order==1, rcv_tot==0)
+      !! is guaranteed already done regardless of its cmd_order relative to the ru's.
+      logical function ru_elements_all_earlier(icmd_chk)
+        integer, intent(in) :: icmd_chk
+        integer :: iru_chk, ii, ise_chk, iob_chk
+        logical :: elem_precomputed_by_stage1
+        ru_elements_all_earlier = .true.
+        iru_chk = ob(icmd_chk)%num
+        do ii = 1, ru_def(iru_chk)%num_tot
+          ise_chk = ru_def(iru_chk)%num(ii)
+          iob_chk = ru_elem(ise_chk)%obj
+          if (ob(iob_chk)%cmd_order < ob(icmd_chk)%cmd_order) cycle
+          elem_precomputed_by_stage1 = (ob(iob_chk)%typ == "hru" .and. ob(iob_chk)%cmd_order == 1  &
+                                         .and. ob(iob_chk)%rcv_tot == 0)
+          if (.not. elem_precomputed_by_stage1) then
+            ru_elements_all_earlier = .false.
+            return
+          end if
+        end do
+      end function ru_elements_all_earlier
 
       end subroutine command

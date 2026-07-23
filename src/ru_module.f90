@@ -38,4 +38,9 @@
       end type ru_parameters
       type (ru_parameters), dimension(:), allocatable :: ru
 
+      !! OpenMP Stage 4: iru is the shared "current routing unit" index, set by the caller
+      !! (command.f90) before calling ru_control -- same "shared current-object index" race
+      !! class as ich (Stage 2)/ires/iaq (Stage 3).
+      !$omp threadprivate(iru)
+
       end module ru_module
