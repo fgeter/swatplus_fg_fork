@@ -112,6 +112,28 @@
       logical :: icmd_is_precomputed_res                    !! true if THIS icmd was handled by the reservoir
                                                              !! pre-pass
 
+      !! === OpenMP Stage 3b: per-wavefront-level pre-pass over aquifers ===
+      !! Mirrors the reservoir mechanism exactly. Audited aqu_1d_control.f90 and found it
+      !! architecturally cleaner than res_control.f90: no wbody-style shared "current object"
+      !! pointer, and its one unconditional-looking derived-type reset (obcs(icmd)%hd = hin_csz)
+      !! is already correctly gated behind cs_db%num_tot > 0 (unlike res_control's hcs2 bug).
+      !! Aquifer recharge arrives via a single "ru" producer through the standard hydrograph
+      !! network (routing units aggregate their HRUs before routing downstream), not a
+      !! many-to-one HRU->aquifer accumulation, so the same single-producer wavefront model
+      !! applies. gwflow's channel<->aquifer exchange (the playbook's cyclic-coupling concern)
+      !! is a separate, optional subsystem never called from aqu_1d_control.f90 -- not
+      !! exercised here since bsn_cc%gwflow is 0 on both validation fixtures.
+      !! Sequential dispatch gates aqu_1d_control on dfn_tot==0 (NOT rcv_tot>0 like reservoirs
+      !! and channels) -- the pre-pass eligibility must match that exactly.
+      integer, allocatable, save :: par_aqu(:)
+      integer, allocatable, save :: par_aqu_lvl_start(:)
+      integer, save :: max_aqu_level = 0
+      integer, save :: n_par_aqu = -1
+      logical :: use_par4                                !! run the aquifer wavefront pre-pass this day?
+      integer :: lvl_lo_a, lvl_hi_a
+      integer :: icmd_save_a
+      logical :: icmd_is_precomputed_aqu
+
       icmd = sp_ob1%objs
       wallo(:)%trn_cur = 1
       if (allocated(res_ob)) res_ob(:)%wallo_call = 0
@@ -236,6 +258,48 @@
           par_res_lvl_start(1) = 1
           do k = 1, max_res_level
             par_res_lvl_start(k+1) = par_res_lvl_start(k) + res_lvl_cnt(k)
+          end do
+        end block
+      end if
+
+      !! === OpenMP Stage 3b: build per-wavefront-level eligible aquifer lists ===
+      !! Eligible = an aquifer with dfn_tot==0 (matching the sequential dispatch's own gate
+      !! on aqu_1d_control) whose every producer has a strictly lower cmd_order.
+      use_par4 = (use_par .and. cs_db%num_tot == 0)
+      if (n_par_aqu < 0) then
+        n_par_aqu = 0
+        max_aqu_level = 0
+        iob = sp_ob1%objs
+        do while (iob /= 0)
+          if (ob(iob)%typ == "aqu" .and. ob(iob)%dfn_tot == 0) then
+            if (aqu_producers_all_earlier(iob)) then
+              n_par_aqu = n_par_aqu + 1
+              max_aqu_level = max(max_aqu_level, ob(iob)%cmd_order)
+            end if
+          end if
+          iob = ob(iob)%cmd_next
+        end do
+        allocate (par_aqu(max(1, n_par_aqu)))
+        allocate (par_aqu_lvl_start(max(1, max_aqu_level) + 1))
+        block
+          integer, allocatable :: aqu_lvl_cnt(:)
+          allocate (aqu_lvl_cnt(max(1, max_aqu_level)))
+          aqu_lvl_cnt = 0
+          n_par_aqu = 0
+          iob = sp_ob1%objs
+          do while (iob /= 0)
+            if (ob(iob)%typ == "aqu" .and. ob(iob)%dfn_tot == 0) then
+              if (aqu_producers_all_earlier(iob)) then
+                n_par_aqu = n_par_aqu + 1
+                par_aqu(n_par_aqu) = iob
+                aqu_lvl_cnt(ob(iob)%cmd_order) = aqu_lvl_cnt(ob(iob)%cmd_order) + 1
+              end if
+            end if
+            iob = ob(iob)%cmd_next
+          end do
+          par_aqu_lvl_start(1) = 1
+          do k = 1, max_aqu_level
+            par_aqu_lvl_start(k+1) = par_aqu_lvl_start(k) + aqu_lvl_cnt(k)
           end do
         end block
       end if
@@ -536,6 +600,122 @@
           end if
         end if
 
+        !! === OpenMP Stage 3b: this wavefront level's aquifer pre-pass ===
+        if (use_par4 .and. ob(icmd)%cmd_order <= max_aqu_level) then
+          lvl_lo_a = par_aqu_lvl_start(ob(icmd)%cmd_order)
+          lvl_hi_a = par_aqu_lvl_start(ob(icmd)%cmd_order + 1) - 1
+          if (lvl_hi_a >= lvl_lo_a) then
+            icmd_save_a = icmd   !! icmd is threadprivate; see icmd_save note above
+            !$omp parallel do schedule(dynamic)
+            do k = lvl_lo_a, lvl_hi_a
+              block
+                integer :: in, iob, ihyd, iday, irec
+                real :: frac_in, sumflo
+                real, dimension(time%step) :: hyd_flo
+                type (hyd_sep) :: hdsep1_local
+
+                icmd = par_aqu(k)                     !! threadprivate icmd
+
+                ob(icmd)%day_cur = 1
+                ob(icmd)%day_cur = ob(icmd)%day_cur + 1
+                if (ob(icmd)%day_cur > ob(icmd)%day_max) ob(icmd)%day_cur = 1
+
+                ob(icmd)%hin     = hz
+                ob(icmd)%hin_sur = hz
+                ob(icmd)%hin_lat = hz
+                ob(icmd)%hin_til = hz
+                ht1 = hz                              !! threadprivate
+                ob(icmd)%tsin     = 0.
+                ob(icmd)%peakrate = 0.
+                hyd_flo = 0.
+
+                !! gather loop identical to the reservoir pre-pass above -- an aquifer is
+                !! never "hru"/"ru"/"hru_lte" either, so it takes the exact same "else"
+                !! (non-hru) branch of the sequential gather loop below
+                do in = 1, ob(icmd)%rcv_tot
+                  iob = ob(icmd)%obj_in(in)
+                  ihyd = ob(icmd)%ihtyp_in(in)
+                  frac_in = ob(icmd)%frac_in(in)
+                  ob(icmd)%peakrate = ob(iob)%peakrate
+
+                  ht1 = frac_in * ob(iob)%hd(ihyd)
+                  ob(icmd)%hin = ob(icmd)%hin + ht1
+
+                  hdsep1_local%flo_surq = frac_in * (ob(iob)%hdsep%flo_surq)
+                  hdsep1_local%flo_latq = frac_in * (ob(iob)%hdsep%flo_latq)
+                  hdsep1_local%flo_gwsw = frac_in * (ob(iob)%hdsep%flo_gwsw)
+                  hdsep1_local%flo_swgw = frac_in * (ob(iob)%hdsep%flo_swgw)
+                  hdsep1_local%flo_satex = frac_in * (ob(iob)%hdsep%flo_satex)
+                  hdsep1_local%flo_satexsw = frac_in * (ob(iob)%hdsep%flo_satexsw)
+                  hdsep1_local%flo_tile = frac_in * (ob(iob)%hdsep%flo_tile)
+                  ob(icmd)%hdsep_in%flo_surq = ob(icmd)%hdsep_in%flo_surq + hdsep1_local%flo_surq
+                  ob(icmd)%hdsep_in%flo_latq = ob(icmd)%hdsep_in%flo_latq + hdsep1_local%flo_latq
+                  ob(icmd)%hdsep_in%flo_gwsw = ob(icmd)%hdsep_in%flo_gwsw + hdsep1_local%flo_gwsw
+                  ob(icmd)%hdsep_in%flo_swgw = ob(icmd)%hdsep_in%flo_swgw + hdsep1_local%flo_swgw
+                  ob(icmd)%hdsep_in%flo_satex = ob(icmd)%hdsep_in%flo_satex + hdsep1_local%flo_satex
+                  ob(icmd)%hdsep_in%flo_satexsw = ob(icmd)%hdsep_in%flo_satexsw + hdsep1_local%flo_satexsw
+                  ob(icmd)%hdsep_in%flo_tile = ob(icmd)%hdsep_in%flo_tile + hdsep1_local%flo_tile
+
+                  ob(icmd)%hin_d(in) = ht1        !for hydrograph output
+
+                  iday = ob(iob)%day_cur
+                  if (ob(iob)%typ == "hru" .or. ob(iob)%typ == "ru") then
+                    select case (ob(icmd)%htyp_in(in))
+                    case ("tot")
+                      hyd_flo = ob(iob)%hyd_flo(iday,:) + (ob(iob)%hd(4)%flo + ob(iob)%hd(5)%flo) / time%step
+                    case ("sur")
+                      hyd_flo(:) = ob(iob)%hyd_flo(iday,:)
+                    case ("lat")
+                      hyd_flo(:) = (ob(iob)%hd(4)%flo) / time%step
+                    case ("til")
+                      hyd_flo(:) = (ob(iob)%hd(5)%flo) / time%step
+                    end select
+                  else
+                    select case (ob(icmd)%htyp_in(in))
+                    case ("tot")
+                      hyd_flo(:) = ob(iob)%hyd_flo(1,:)
+                    case ("rhg")
+                      hyd_flo(:) = ob(iob)%hd(2)%flo / time%step
+                    case ("lat")
+                      hyd_flo(:) = ob(iob)%hd(4)%flo / time%step
+                    case ("til")
+                      hyd_flo(:) = ob(iob)%hd(5)%flo / time%step
+                    end select
+                  end if
+                  select case (ob(iob)%typ)
+                  case ("aqu")
+                    hyd_flo(:) = ob(iob)%hd(ihyd)%flo / time%step
+                  case ("chandeg")
+                    hyd_flo(:) = ob(iob)%hyd_flo(1,:)
+                    sumflo = sum (hyd_flo(:))
+                    sumflo = 1. * sumflo
+                  case ("res")
+                    hyd_flo(:) = ob(iob)%hd(ihyd)%flo / time%step
+                  case ("outlet")
+                    hyd_flo(:) = ob(iob)%hd(ihyd)%flo / time%step
+                  case ("recall")
+                    irec = ob(iob)%num
+                    if (recall_db(irec)%org_min%tstep == "sub") then
+                      hyd_flo(:) = ob(iob)%hyd_flo(ob(iob)%day_cur,:)
+                    else
+                      hyd_flo(:) = ob(iob)%hd(1)%flo / time%step
+                    end if
+                  end select
+
+                  hyd_flo = frac_in * hyd_flo
+                  ob(icmd)%tsin = ob(icmd)%tsin + hyd_flo
+                end do   ! in = 1, rcv_tot
+
+                !! aqu_1d_control is only reachable here for dfn_tot==0 (gated at par_aqu
+                !! build time, matching the sequential dispatch's own gate)
+                call aqu_1d_control
+              end block
+            end do
+            !$omp end parallel do
+            icmd = icmd_save_a   !! restore the walk's position (see icmd_save note above)
+          end if
+        end if
+
         last_level_done = ob(icmd)%cmd_order
         end if   !! end "new wavefront level" trigger
 
@@ -558,9 +738,17 @@
             if (res_producers_all_earlier(icmd)) icmd_is_precomputed_res = .true.
           end if
         end if
+        !! same idea for aquifers pre-passed in Stage 3b -- must match par_aqu's build-time
+        !! eligibility EXACTLY (typ, dfn_tot==0, aqu_producers_all_earlier).
+        icmd_is_precomputed_aqu = .false.
+        if (use_par4 .and. ob(icmd)%typ == "aqu") then
+          if (ob(icmd)%dfn_tot == 0) then
+            if (aqu_producers_all_earlier(icmd)) icmd_is_precomputed_aqu = .true.
+          end if
+        end if
         if (.not. ((use_par .and. ob(icmd)%cmd_order == 1 .and.  &
                    ob(icmd)%typ == "hru" .and. ob(icmd)%rcv_tot == 0) .or.  &
-                   icmd_is_precomputed_cha .or. icmd_is_precomputed_res)) then
+                   icmd_is_precomputed_cha .or. icmd_is_precomputed_res .or. icmd_is_precomputed_aqu)) then
 
         !! allocate water for transfers that don't include a channel as a source
         !! check here in case channel is last object
@@ -1202,5 +1390,23 @@
           end if
         end do
       end function res_producers_all_earlier
+
+      !! true only if EVERY producer of icmd_chk has a strictly lower cmd_order than
+      !! icmd_chk itself -- aquifer analogue of res_producers_all_earlier/
+      !! cha_producers_all_earlier. Aquifer recharge arrives via a single "ru" producer
+      !! through the standard hydrograph network, not a many-to-one HRU accumulation, so
+      !! the same single-producer-order check applies.
+      logical function aqu_producers_all_earlier(icmd_chk)
+        integer, intent(in) :: icmd_chk
+        integer :: ii, iob_chk
+        aqu_producers_all_earlier = .true.
+        do ii = 1, ob(icmd_chk)%rcv_tot
+          iob_chk = ob(icmd_chk)%obj_in(ii)
+          if (ob(iob_chk)%cmd_order >= ob(icmd_chk)%cmd_order) then
+            aqu_producers_all_earlier = .false.
+            return
+          end if
+        end do
+      end function aqu_producers_all_earlier
 
       end subroutine command
