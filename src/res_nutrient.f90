@@ -159,8 +159,13 @@
       !! raw ht2%flo then dividing -- guarding each operand against the
       !! 1.e-30 denormal threshold independently isn't enough when BOTH
       !! wbody%X and ht2%flo individually clear that threshold but their
-      !! product still underflows (e.g. 1e-29 * 1e-29 = 1e-58).
-      if (flo_tot > 1.e-6 .and. abs(ht2%flo) >= 1.e-30) then
+      !! product still underflows (e.g. 1e-29 * 1e-29 = 1e-58). Seen in
+      !! practice: ht2%flo=2.86e-24 (floating-point noise, not real
+      !! outflow) cleared 1.e-30 and produced rto=8e-29, which underflowed
+      !! against a perfectly normal wbody%no2=7.24e-11. Gate ht2%flo at
+      !! the same 1.e-6 "meaningfully nonzero flow" threshold used
+      !! elsewhere in the codebase so rto can never land in that range.
+      if (flo_tot > 1.e-6 .and. abs(ht2%flo) >= 1.e-6) then
         rto = ht2%flo / flo_tot
         ht2%no3 = 0.
         if (abs(wbody%no3) >= 1.e-30 .and. abs(rto) >= 1.e-30) ht2%no3 = wbody%no3 * rto

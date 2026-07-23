@@ -5,11 +5,12 @@
 !!    quality calculations
 
       use channel_module
-      use hydrograph_module      
+      use hydrograph_module
       use climate_module
       use channel_data_module
       use sd_channel_module
       use water_body_module
+      use utils
       
       implicit none
       
@@ -48,6 +49,7 @@
       real :: thrk3 = 1.024
       real :: thrk4 = 1.060
       real :: soxy             !mg O2/L       |saturation concetration of dissolved oxygen
+      real :: dox_sat_exp      !none          |clamped exponent for the soxy Exp() below
       real :: rs2_s
       real :: rs3_s
       real :: rk4_s
@@ -94,22 +96,64 @@
       tday = amin1 (1., tday)
       rt_delt = 1.
       
-      !! ht3 is incoming concentration
-      ht3%orgn = 1000. * ht1%orgn / ht1%flo
-      ht3%sedp = 1000. * ht1%sedp / ht1%flo
-      ht3%no3 = 1000. * ht1%no3 / ht1%flo
-      ht3%solp = 1000. * ht1%solp / ht1%flo
-      ht3%chla = 1000. * ht1%chla / ht1%flo
-      ht3%nh3 = 1000. * ht1%nh3 / ht1%flo
-      ht3%no2 = 1000. * ht1%no2 / ht1%flo
-      ht3%cbod = 1000. * ht1%cbod / ht1%flo
-      ht3%dox = 1000. * ht1%dox / ht1%flo
+      !! ht3 is incoming concentration -- over long runs a constituent mass can decay
+      !! to a near-zero value (e.g. 1e-37) that, divided by a healthy flo, produces a
+      !! subnormal result and trips the underflow FPE trap; flush tiny masses to 0 first
+      if (ht1%orgn > 1.e-15) then
+        ht3%orgn = 1000. * ht1%orgn / ht1%flo
+      else
+        ht3%orgn = 0.
+      end if
+      if (ht1%sedp > 1.e-15) then
+        ht3%sedp = 1000. * ht1%sedp / ht1%flo
+      else
+        ht3%sedp = 0.
+      end if
+      if (ht1%no3 > 1.e-15) then
+        ht3%no3 = 1000. * ht1%no3 / ht1%flo
+      else
+        ht3%no3 = 0.
+      end if
+      if (ht1%solp > 1.e-15) then
+        ht3%solp = 1000. * ht1%solp / ht1%flo
+      else
+        ht3%solp = 0.
+      end if
+      if (ht1%chla > 1.e-15) then
+        ht3%chla = 1000. * ht1%chla / ht1%flo
+      else
+        ht3%chla = 0.
+      end if
+      if (ht1%nh3 > 1.e-15) then
+        ht3%nh3 = 1000. * ht1%nh3 / ht1%flo
+      else
+        ht3%nh3 = 0.
+      end if
+      if (ht1%no2 > 1.e-15) then
+        ht3%no2 = 1000. * ht1%no2 / ht1%flo
+      else
+        ht3%no2 = 0.
+      end if
+      if (ht1%cbod > 1.e-15) then
+        ht3%cbod = 1000. * ht1%cbod / ht1%flo
+      else
+        ht3%cbod = 0.
+      end if
+      if (ht1%dox > 1.e-15) then
+        ht3%dox = 1000. * ht1%dox / ht1%flo
+      else
+        ht3%dox = 0.
+      end if
 
 
       !! calculate temperature in stream Stefan and Preudhomme. 1993.  Stream temperature estimation 
       !! from air temperature.  Water Res. Bull. p. 27-45 SWAT manual equation 2.3.13
       wtmp = 5.0 + 0.75 * wst(iwst)%weat%tave
       if (wtmp <= 0.) wtmp = 0.1
+      !! clamp to a physically plausible stream-temp range before using it in the
+      !! QUAL2E dissolved-oxygen saturation exponent below -- an extreme/uninitialized
+      !! air-temp value here otherwise makes ww-xx+yy-zz blow up and Exp() overflow.
+      if (wtmp > 40.) wtmp = 40.
       ht2%temp = wtmp
 
       !! benthic sources/losses in mg  
@@ -137,7 +181,8 @@
         xx = 6.642308e07 / ((wtmp + 273.15)**2)
         yy = 1.243800e10 / ((wtmp + 273.15)**3)
         zz = 8.621949e11 / ((wtmp + 273.15)**4)
-        soxy = Exp(ww - xx + yy - zz)
+        dox_sat_exp = Max(-80., Min(80., ww - xx + yy - zz))
+        soxy = Exp(dox_sat_exp)
         if (soxy < 1.e-6) soxy = 0. 
         !! end initialize concentrations
 
@@ -179,7 +224,7 @@
         !! calculate growth attenuation factor for light, based on
         !! daylight average light intensity QUAL2E equation III-7b
         fl_1 = (1. / (lambda * rchdep)) * Log((ch_nut(jnut)%k_l + algi) /     &
-                (ch_nut(jnut)%k_l + algi *  (Exp(-lambda * rchdep))))
+                (ch_nut(jnut)%k_l + algi *  (exp_w(-lambda * rchdep))))
         fll = 0.92 * (wgn_pms(iwgn)%daylth / 24.) * fl_1
 
         !! calculate local algal growth rate
