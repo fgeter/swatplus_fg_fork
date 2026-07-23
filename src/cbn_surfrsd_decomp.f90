@@ -37,8 +37,8 @@
       use plant_module
       use plant_data_module
       use output_landscape_module, only : hnb_d
-      
-      implicit none 
+
+      implicit none
 
       type (organic_mass) :: photo_decomp   !! per-HRU local scratch (was shared module var -> race)
        
@@ -55,8 +55,8 @@
       real :: cprf          !              |carbon phosphorus ratio factor
       real :: ca            !              |
       real :: decr          !              |
-      real :: ipl           !              |plant number in plant community
-      real :: idp           !              |plant number in plant data module
+      integer :: ipl        !none          |plant number in plant community
+      integer :: idp        !none          |plant number in plant data module
       real :: cdg           !none          |soil temperature factor
       real :: sut           !none          |soil water factor
       real :: nactfr        !none          |nitrogen active pool fraction. The fraction
@@ -84,7 +84,12 @@
             sut = Max(.05, sut)
 
             !!compute soil temperature factor
+            !! clamp to a physically plausible soil temp range before using it
+            !! as an exponent below -- an out-of-range value here (e.g. from
+            !! an uninitialized/corrupted read) makes exp(9.93-.312*xx)
+            !! overflow and trap; exp_w only guards underflow, not overflow.
             xx = soil(j)%phys(1)%tmp
+            xx = Max(-50., Min(60., xx))
             cdg = .9 * xx / (xx + Exp(9.93 - .312 * xx)) + .1
             cdg = Max(.1, cdg)
 
