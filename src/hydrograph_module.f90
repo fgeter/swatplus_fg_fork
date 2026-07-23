@@ -1433,28 +1433,42 @@
         hyd2%temp = hyd1%temp
       end function hydout_add_const
       
+      !! guard against denormal underflow (const*x crashing under
+      !! -ffpe-trap=underflow when x has shrunk to a denormal over many
+      !! simulated years); such a value is physically zero. Same pattern as
+      !! organic_mineral_mass_module's fmul -- divisions elsewhere are
+      !! intentionally still trapped.
+      elemental real function fmul(const, x)
+        real, intent (in) :: const, x
+        if (abs(x) < 1.e-30) then
+          fmul = 0.
+        else
+          fmul = const * x
+        end if
+      end function fmul
+
       function hydout_mult_const (const, hyd1) result (hyd2)
         type (hyd_output), intent (in) :: hyd1
         real, intent (in) :: const
         type (hyd_output) :: hyd2
         hyd2%temp = hyd1%temp
-        hyd2%flo = const * hyd1%flo 
-        hyd2%sed = const * hyd1%sed !/ 1000.
-        hyd2%orgn = const * hyd1%orgn       
-        hyd2%sedp = const * hyd1%sedp 
-        hyd2%no3 = const * hyd1%no3
-        hyd2%solp = const * hyd1%solp
-        hyd2%chla = const * hyd1%chla
-        hyd2%nh3 = const * hyd1%nh3
-        hyd2%no2 = const * hyd1%no2
-        hyd2%cbod = const * hyd1%cbod
-        hyd2%dox = const * hyd1%dox
-        hyd2%san = const * hyd1%san
-        hyd2%sil = const * hyd1%sil
-        hyd2%cla = const * hyd1%cla
-        hyd2%sag = const * hyd1%sag
-        hyd2%lag = const * hyd1%lag
-        hyd2%grv = const * hyd1%grv
+        hyd2%flo = fmul(const, hyd1%flo)
+        hyd2%sed = fmul(const, hyd1%sed) !/ 1000.
+        hyd2%orgn = fmul(const, hyd1%orgn)
+        hyd2%sedp = fmul(const, hyd1%sedp)
+        hyd2%no3 = fmul(const, hyd1%no3)
+        hyd2%solp = fmul(const, hyd1%solp)
+        hyd2%chla = fmul(const, hyd1%chla)
+        hyd2%nh3 = fmul(const, hyd1%nh3)
+        hyd2%no2 = fmul(const, hyd1%no2)
+        hyd2%cbod = fmul(const, hyd1%cbod)
+        hyd2%dox = fmul(const, hyd1%dox)
+        hyd2%san = fmul(const, hyd1%san)
+        hyd2%sil = fmul(const, hyd1%sil)
+        hyd2%cla = fmul(const, hyd1%cla)
+        hyd2%sag = fmul(const, hyd1%sag)
+        hyd2%lag = fmul(const, hyd1%lag)
+        hyd2%grv = fmul(const, hyd1%grv)
         hyd2%temp = hyd1%temp
       end function hydout_mult_const
       

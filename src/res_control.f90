@@ -9,7 +9,8 @@
       use conditional_module
       use water_body_module
       use constituent_mass_module  !! added nbs
-      
+      use utils
+
       implicit none
 
       integer :: ii                   !none          |counter
@@ -141,13 +142,20 @@
           call res_hydro (jres, irel, pvol_m3, evol_m3)
           
           !! new lag to smooth condition jumps (volume or month conditions)
-          alpha_up = Exp(-res_ob(jres)%lag_up)
-          alpha_down = Exp(-res_ob(jres)%lag_down)
-          !! lag outflow when flows are receding
+          !! exp_w guards against underflow when lag_up/lag_down is large
+          !! enough that exp(-lag) would trap under -ffpe-trap=underflow.
+          alpha_up = exp_w(-res_ob(jres)%lag_up)
+          alpha_down = exp_w(-res_ob(jres)%lag_down)
+          !! lag outflow when flows are receding. Guard against denormal
+          !! underflow: prev_flo/ht2%flo can each be a legitimately tiny
+          !! (but still normal) flow, and multiplying by a fractional alpha
+          !! can push the product into subnormal range and trap under
+          !! -ffpe-trap=underflow; such a value is physically zero (same
+          !! class as organic_mineral_mass_module's fmul guard).
           if (res_ob(jres)%prev_flo < ht2%flo) then
-            ht2%flo = ht2%flo * alpha_up + res_ob(jres)%prev_flo * (1. - alpha_up)
+            ht2%flo = fmul(alpha_up, ht2%flo) + fmul((1. - alpha_up), res_ob(jres)%prev_flo)
           else
-            ht2%flo = ht2%flo * alpha_down + res_ob(jres)%prev_flo * (1. - alpha_down)
+            ht2%flo = fmul(alpha_down, ht2%flo) + fmul((1. - alpha_down), res_ob(jres)%prev_flo)
           end if
           res_ob(jres)%prev_flo = ht2%flo
             
