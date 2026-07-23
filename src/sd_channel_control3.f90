@@ -100,9 +100,13 @@
       !! adjust precip and temperature for elevation using lapse rates
       w = wst(iwst)%weat
       if (bsn_cc%lapse == 1) call cli_lapse
-      wst(iwst)%weat = w
-      ht1%temp = 5.0 + 0.75 * wst(iwst)%weat%tave
-      wtemp = 5.0 + 0.75 * wst(iwst)%weat%tave
+      !! w is threadprivate; wst(:) is shared station data that can be aliased by multiple
+      !! channels sharing a weather station -- never write w back into it (matches
+      !! hru_control.f90, which adjusts its own threadprivate w in place and never writes
+      !! back to wst either). cli_lapse only recomputes ob(:)%plaps/tlaps (unrelated to w),
+      !! so w%tave here is identical to the old wst(iwst)%weat%tave read in every case.
+      ht1%temp = 5.0 + 0.75 * w%tave
+      wtemp = 5.0 + 0.75 * w%tave
 
       if (sd_ch(ich)%msk%nsteps == 1) then
         ob(icmd)%tsin(1) = ht1%flo

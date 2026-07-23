@@ -78,6 +78,24 @@
       logical :: use_par                         !! run the parallel HRU pre-pass this day?
       integer :: k                               !! pre-pass loop counter
 
+      !! === OpenMP Stage 2: per-wavefront-level pre-pass over chandeg (SD channel) chains ===
+      integer, allocatable, save :: par_cha(:)          !! icmd indices of eligible chandeg objs, grouped by cmd_order
+      integer, allocatable, save :: par_cha_lvl_start(:) !! par_cha_lvl_start(L):par_cha_lvl_start(L+1)-1 = level L's objs
+      integer, save :: max_cha_level = 0                !! highest cmd_order among eligible chandeg objects
+      integer, save :: n_par_cha = -1                    !! -1 = not yet built
+      logical :: use_par2                                !! run the chandeg wavefront pre-pass this day?
+      integer :: last_level_done                          !! per-day: highest cmd_order level already pre-passed
+      integer :: lvl_lo, lvl_hi                            !! par_cha bounds for the level being pre-passed
+      integer :: icmd_save                                  !! preserves the sequential walk's position across
+                                                             !! the parallel pre-pass (icmd is threadprivate and
+                                                             !! gets reassigned by every thread inside the loop)
+      logical :: icmd_is_precomputed_cha                    !! true if THIS icmd was handled by the chandeg
+                                                             !! pre-pass; computed via nested if (Fortran does
+                                                             !! NOT guarantee short-circuit .and./.or. evaluation,
+                                                             !! so sd_ch(ob(icmd)%num) must not be reached when
+                                                             !! ob(icmd)%typ /= "chandeg" -- num may then index
+                                                             !! a different object class entirely, e.g. an HRU)
+
       icmd = sp_ob1%objs
       wallo(:)%trn_cur = 1
       if (allocated(res_ob)) res_ob(:)%wallo_call = 0
@@ -109,6 +127,60 @@
           iob = ob(iob)%cmd_next
         end do
       end if
+
+      !! === OpenMP Stage 2: build per-wavefront-level eligible chandeg (SD channel) lists ===
+      !! Eligible = a real channel (chl > 0; zero-length "artificial" channels take a different,
+      !! trivial non-parallelized path) whose EVERY producer has a strictly lower cmd_order than
+      !! its own. cmd_order is only an approximate depth diagnostic, not a strict guarantee: "ru"
+      !! objects get their cmd_order pinned to 2 by a special case in hyd_connect.f90 regardless of
+      !! true depth, so a channel can legitimately share its producer's cmd_order value despite a
+      !! real dependency (confirmed empirically: a chandeg and its upstream "ru" both at order 2).
+      !! The list (cmd_next chain) itself IS a valid topological order -- that's what the sequential
+      !! walk below relies on -- so any object failing this per-producer check is simply left out of
+      !! the pre-pass and falls back to the always-correct sequential path.
+      use_par2 = (use_par .and. cs_db%num_tot == 0)
+      if (n_par_cha < 0) then
+        n_par_cha = 0
+        max_cha_level = 0
+        iob = sp_ob1%objs
+        do while (iob /= 0)
+          if (ob(iob)%typ == "chandeg") then
+            if (sd_ch(ob(iob)%num)%chl > 1.e-3) then
+              if (cha_producers_all_earlier(iob)) then
+                n_par_cha = n_par_cha + 1
+                max_cha_level = max(max_cha_level, ob(iob)%cmd_order)
+              end if
+            end if
+          end if
+          iob = ob(iob)%cmd_next
+        end do
+        allocate (par_cha(max(1, n_par_cha)))
+        allocate (par_cha_lvl_start(max(1, max_cha_level) + 1))
+        block
+          integer, allocatable :: cha_lvl_cnt(:)
+          allocate (cha_lvl_cnt(max(1, max_cha_level)))
+          cha_lvl_cnt = 0
+          n_par_cha = 0
+          iob = sp_ob1%objs
+          do while (iob /= 0)
+            if (ob(iob)%typ == "chandeg") then
+              if (sd_ch(ob(iob)%num)%chl > 1.e-3) then
+                if (cha_producers_all_earlier(iob)) then
+                  n_par_cha = n_par_cha + 1
+                  par_cha(n_par_cha) = iob
+                  cha_lvl_cnt(ob(iob)%cmd_order) = cha_lvl_cnt(ob(iob)%cmd_order) + 1
+                end if
+              end if
+            end if
+            iob = ob(iob)%cmd_next
+          end do
+          par_cha_lvl_start(1) = 1
+          do k = 1, max_cha_level
+            par_cha_lvl_start(k+1) = par_cha_lvl_start(k) + cha_lvl_cnt(k)
+          end do
+        end block
+      end if
+
       if (use_par .and. n_par_hru > 0) then
         !$omp parallel do schedule(dynamic)
         do k = 1, n_par_hru
@@ -144,13 +216,163 @@
         !$omp end parallel do
       end if
       icmd = sp_ob1%objs                          !! reset for the sequential command loop
+      last_level_done = 0
 
       do while (icmd /= 0)
 
-        !! independent HRUs were computed in the parallel pre-pass above: skip their
-        !! recompute here, but still run the routing/output section below.
-        if (.not. (use_par .and. ob(icmd)%cmd_order == 1 .and.  &
-                   ob(icmd)%typ == "hru" .and. ob(icmd)%rcv_tot == 0)) then
+        !! === OpenMP Stage 2: trigger this wavefront level's chandeg pre-pass ===
+        !! The command list is sorted by non-decreasing cmd_order (built that way in
+        !! hyd_connect), so the first time we see a new cmd_order value, every object at
+        !! every lower level has already been fully processed (compute AND routing/output,
+        !! whether via a pre-pass above or sequentially below) -- upstream hydrographs for
+        !! this level are guaranteed current.
+        if (use_par2 .and. ob(icmd)%cmd_order > last_level_done .and.  &
+            ob(icmd)%cmd_order <= max_cha_level) then
+          lvl_lo = par_cha_lvl_start(ob(icmd)%cmd_order)
+          lvl_hi = par_cha_lvl_start(ob(icmd)%cmd_order + 1) - 1
+          if (lvl_hi >= lvl_lo) then
+            icmd_save = icmd   !! icmd is threadprivate; every thread below reassigns its own
+                                !! copy, so the walk's position must be saved/restored around it
+            !$omp parallel do schedule(dynamic)
+            do k = lvl_lo, lvl_hi
+              block
+                integer :: in, iob, ihyd, iday, irec
+                real :: frac_in, sumflo
+                real, dimension(time%step) :: hyd_flo
+                type (hyd_sep) :: hdsep1_local
+
+                !! hyd_rad/trav_time/flo_dep/timeint are threadprivate allocatable: OpenMP does
+                !! not propagate the master thread's allocation to workers, so each worker must
+                !! allocate its own copy the first time it reaches this loop (sized exactly as
+                !! sd_hydsed_read.f90 sizes the master's copy: ts_sed = Max(10, time%step)).
+                if (.not. allocated(hyd_rad)) then
+                  allocate (hyd_rad(max(10, time%step)))
+                  allocate (trav_time(max(10, time%step)))
+                  allocate (flo_dep(max(10, time%step)))
+                  allocate (timeint(max(10, time%step)))
+                end if
+
+                icmd = par_cha(k)                     !! threadprivate icmd
+                isdch = ob(icmd)%num                  !! threadprivate (see hydrograph_module.f90)
+                isd_chsur = ob(icmd)%props2            !! threadprivate; read by sd_channel_control3
+
+                ob(icmd)%day_cur = 1
+                ob(icmd)%day_cur = ob(icmd)%day_cur + 1
+                if (ob(icmd)%day_cur > ob(icmd)%day_max) ob(icmd)%day_cur = 1
+
+                ob(icmd)%hin     = hz
+                ob(icmd)%hin_sur = hz
+                ob(icmd)%hin_lat = hz
+                ob(icmd)%hin_til = hz
+                ht1 = hz                              !! threadprivate
+                ob(icmd)%tsin     = 0.
+                ob(icmd)%peakrate = 0.
+                hyd_flo = 0.
+
+                if (ob(icmd)%rcv_tot > 0) then
+                  do in = 1, ob(icmd)%rcv_tot
+                    iob = ob(icmd)%obj_in(in)
+                    ihyd = ob(icmd)%ihtyp_in(in)
+                    frac_in = ob(icmd)%frac_in(in)
+                    ob(icmd)%peakrate = ob(iob)%peakrate
+
+                    !! chandeg is never "hru"/"ru"/"hru_lte" -> mirrors only the "else"
+                    !! (non-hru) branch of the sequential gather loop below
+                    ht1 = frac_in * ob(iob)%hd(ihyd)
+                    ob(icmd)%hin = ob(icmd)%hin + ht1
+
+                    hdsep1_local%flo_surq = frac_in * (ob(iob)%hdsep%flo_surq)
+                    hdsep1_local%flo_latq = frac_in * (ob(iob)%hdsep%flo_latq)
+                    hdsep1_local%flo_gwsw = frac_in * (ob(iob)%hdsep%flo_gwsw)
+                    hdsep1_local%flo_swgw = frac_in * (ob(iob)%hdsep%flo_swgw)
+                    hdsep1_local%flo_satex = frac_in * (ob(iob)%hdsep%flo_satex)
+                    hdsep1_local%flo_satexsw = frac_in * (ob(iob)%hdsep%flo_satexsw)
+                    hdsep1_local%flo_tile = frac_in * (ob(iob)%hdsep%flo_tile)
+                    ob(icmd)%hdsep_in%flo_surq = ob(icmd)%hdsep_in%flo_surq + hdsep1_local%flo_surq
+                    ob(icmd)%hdsep_in%flo_latq = ob(icmd)%hdsep_in%flo_latq + hdsep1_local%flo_latq
+                    ob(icmd)%hdsep_in%flo_gwsw = ob(icmd)%hdsep_in%flo_gwsw + hdsep1_local%flo_gwsw
+                    ob(icmd)%hdsep_in%flo_swgw = ob(icmd)%hdsep_in%flo_swgw + hdsep1_local%flo_swgw
+                    ob(icmd)%hdsep_in%flo_satex = ob(icmd)%hdsep_in%flo_satex + hdsep1_local%flo_satex
+                    ob(icmd)%hdsep_in%flo_satexsw = ob(icmd)%hdsep_in%flo_satexsw + hdsep1_local%flo_satexsw
+                    ob(icmd)%hdsep_in%flo_tile = ob(icmd)%hdsep_in%flo_tile + hdsep1_local%flo_tile
+
+                    ob(icmd)%hin_d(in) = ht1        !for hydrograph output
+
+                    iday = ob(iob)%day_cur
+                    if (ob(iob)%typ == "hru" .or. ob(iob)%typ == "ru") then
+                      select case (ob(icmd)%htyp_in(in))
+                      case ("tot")
+                        hyd_flo = ob(iob)%hyd_flo(iday,:) + (ob(iob)%hd(4)%flo + ob(iob)%hd(5)%flo) / time%step
+                      case ("sur")
+                        hyd_flo(:) = ob(iob)%hyd_flo(iday,:)
+                      case ("lat")
+                        hyd_flo(:) = (ob(iob)%hd(4)%flo) / time%step
+                      case ("til")
+                        hyd_flo(:) = (ob(iob)%hd(5)%flo) / time%step
+                      end select
+                    else
+                      select case (ob(icmd)%htyp_in(in))
+                      case ("tot")
+                        hyd_flo(:) = ob(iob)%hyd_flo(1,:)
+                      case ("rhg")
+                        hyd_flo(:) = ob(iob)%hd(2)%flo / time%step
+                      case ("lat")
+                        hyd_flo(:) = ob(iob)%hd(4)%flo / time%step
+                      case ("til")
+                        hyd_flo(:) = ob(iob)%hd(5)%flo / time%step
+                      end select
+                    end if
+                    select case (ob(iob)%typ)
+                    case ("aqu")
+                      hyd_flo(:) = ob(iob)%hd(ihyd)%flo / time%step
+                    case ("chandeg")
+                      hyd_flo(:) = ob(iob)%hyd_flo(1,:)
+                      sumflo = sum (hyd_flo(:))
+                      sumflo = 1. * sumflo
+                    case ("res")
+                      hyd_flo(:) = ob(iob)%hd(ihyd)%flo / time%step
+                    case ("outlet")
+                      hyd_flo(:) = ob(iob)%hd(ihyd)%flo / time%step
+                    case ("recall")
+                      irec = ob(iob)%num
+                      if (recall_db(irec)%org_min%tstep == "sub") then
+                        hyd_flo(:) = ob(iob)%hyd_flo(ob(iob)%day_cur,:)
+                      else
+                        hyd_flo(:) = ob(iob)%hd(1)%flo / time%step
+                      end if
+                    end select
+
+                    hyd_flo = frac_in * hyd_flo
+                    ob(icmd)%tsin = ob(icmd)%tsin + hyd_flo
+                  end do   ! in = 1, rcv_tot
+                end if
+
+                !! sd_channel_control3 is only reachable here for chl > 1.e-3 (gated at
+                !! par_cha build time); the zero-length "artificial channel" branch of the
+                !! sequential dispatch below never applies to pre-passed objects
+                call sd_channel_control3
+              end block
+            end do
+            !$omp end parallel do
+            icmd = icmd_save   !! restore the walk's position (see icmd_save note above)
+          end if
+          last_level_done = ob(icmd)%cmd_order
+        end if
+
+        !! independent HRUs and pre-passed chandeg objects were computed above: skip their
+        !! recompute here, but still run the routing/output section below. Must match par_cha's
+        !! build-time eligibility EXACTLY (incl. cha_producers_all_earlier) -- re-checking only
+        !! typ/chl without the producer-order check would incorrectly skip an object that
+        !! par_cha itself excluded, leaving it computed by neither path.
+        icmd_is_precomputed_cha = .false.
+        if (use_par2 .and. ob(icmd)%typ == "chandeg") then
+          if (sd_ch(ob(icmd)%num)%chl > 1.e-3) then
+            if (cha_producers_all_earlier(icmd)) icmd_is_precomputed_cha = .true.
+          end if
+        end if
+        if (.not. ((use_par .and. ob(icmd)%cmd_order == 1 .and.  &
+                   ob(icmd)%typ == "hru" .and. ob(icmd)%rcv_tot == 0) .or.  &
+                   icmd_is_precomputed_cha)) then
 
         !! allocate water for transfers that don't include a channel as a source
         !! check here in case channel is last object
@@ -746,4 +968,33 @@
 8102  format(4i6,2i8,a18,7e13.4)      
 
       return
+
+      contains
+
+      !! true only if EVERY producer of icmd_chk has a strictly lower cmd_order than
+      !! icmd_chk itself -- see the long comment at the par_cha build site for why this
+      !! check (not the cmd_order value alone) is what determines pre-pass eligibility.
+      logical function cha_producers_all_earlier(icmd_chk)
+        integer, intent(in) :: icmd_chk
+        integer :: ii, iob_chk
+        cha_producers_all_earlier = .true.
+        !! A channel with floodplain-linked HRUs updates shared per-HRU wetland state
+        !! (wet(iihru), wet_in_d(iihru) in sd_channel_sediment3.f90) on overbank-flow days.
+        !! Two channels running concurrently can share an HRU in their floodplain list,
+        !! racing on that HRU's wetland state independent of the channels' own ordering --
+        !! exclude any such channel from the pre-pass; it falls back to the always-correct
+        !! sequential path.
+        if (sd_ch(ob(icmd_chk)%num)%fp%hru_tot > 0) then
+          cha_producers_all_earlier = .false.
+          return
+        end if
+        do ii = 1, ob(icmd_chk)%rcv_tot
+          iob_chk = ob(icmd_chk)%obj_in(ii)
+          if (ob(iob_chk)%cmd_order >= ob(icmd_chk)%cmd_order) then
+            cha_producers_all_earlier = .false.
+            return
+          end if
+        end do
+      end function cha_producers_all_earlier
+
       end subroutine command

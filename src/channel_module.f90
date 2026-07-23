@@ -56,8 +56,12 @@
       real :: rtwtr = 0.          !m^3 H2O           |water leaving reach on day
       real :: wtrin = 0.          !m^3               |water entering reach during day
       integer:: sed_ch = 0
-      
-      
+
+      !$omp threadprivate(jhyd, jsed, jnut, rttime, ben_area, rchdep, rtevp, rttlc, pet_ch)
+      !$omp threadprivate(peakr, rcharea, sdti, bnkrte, degrte, sedrch, rch_san, rch_sil, rch_cla)
+      !$omp threadprivate(rch_sag, rtwtr_d, rt_delt, rch_lag, rch_gra, rtwtr, wtrin, sed_ch)
+
+
       type channel
           real :: algae = 0.     ! mg alg/L      |algal biomass concentration in reach
           real :: ammonian = 0.  ! mg N/L        |ammonia concentration in reach

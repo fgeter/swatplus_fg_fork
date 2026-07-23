@@ -1224,7 +1224,9 @@
       !! OpenMP: the object/command index (icmd), weather-station index (iwst) and the
       !! working hydrographs are per-HRU; make them thread-private. Excludes the read-only
       !! zero-hydrograph hz.
-      !$omp threadprivate(icmd, iwst, ht1, ht2, ht3, ht4, ht5, delrto)
+      !$omp threadprivate(icmd, iwst, ht1, ht2, ht3, ht4, ht5, delrto, isdch, isd_chsur, jrch, ich)
+      !$omp threadprivate(hdsep1, hdsep2)
+      !$omp threadprivate(fp_dep, ch_dep, bank_ero, bed_ero, ch_trans)
 
       contains
 

@@ -44,7 +44,11 @@ endif()
 #   -DSWAT_TSAN=ON   : ThreadSanitizer build (implies OpenMP, requires dynamic link)
 option(SWAT_OPENMP "Build with OpenMP threading" OFF)
 option(SWAT_TSAN   "Build with ThreadSanitizer (implies OpenMP + dynamic link)" OFF)
+option(SWAT_ASAN   "Build with AddressSanitizer (implies OpenMP + dynamic link)" OFF)
 if(SWAT_TSAN)
+    set(SWAT_OPENMP ON)
+endif()
+if(SWAT_ASAN)
     set(SWAT_OPENMP ON)
 endif()
 # -----------------------------------------------------------------------------
@@ -75,7 +79,7 @@ if (UNIX)
             if (NOT ("${os_id}" STREQUAL "Arch" OR 
                      "${os_like}" MATCHES ".*arch.*" OR
                      "${os_id}" STREQUAL "fedora" ))
-                if(NOT SWAT_TSAN)   # ThreadSanitizer is incompatible with static linking
+                if(NOT SWAT_TSAN AND NOT SWAT_ASAN)   # sanitizers are incompatible with static linking
                     link_libraries("-static")
                 endif()
             endif()
@@ -148,6 +152,13 @@ if(SWAT_TSAN)
     # revisit only if underflow traps fire spuriously under the TSan/OpenMP runtime.
     string(APPEND CMAKE_Fortran_FLAGS " -fsanitize=thread -g -O1")
     string(APPEND CMAKE_EXE_LINKER_FLAGS " -fsanitize=thread")
+endif()
+if(SWAT_ASAN)
+    # Precisely locates heap corruption (buffer overflows, use-after-free) at the point
+    # of occurrence, unlike TSan which floods with false positives on this codebase's
+    # threadprivate/automatic access patterns (see tmp/threading_playbook.md Part 4).
+    string(APPEND CMAKE_Fortran_FLAGS " -fsanitize=address -g -O0")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -fsanitize=address")
 endif()
 # -----------------------------------------------------------------------------
 

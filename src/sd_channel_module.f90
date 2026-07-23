@@ -14,7 +14,15 @@
       real, dimension(:), allocatable :: trav_time  !days       |time spent in each hydrograph time step
       real, dimension(:), allocatable :: flo_dep    !m^2        |hydraulic radius for each hydrograph time step
       real, dimension(:), allocatable :: timeint    !days       |time spent in each hydrograph time step
-      
+
+      !$omp threadprivate(wtemp, peakrate, sed_reduc_t, no3_reduc_kg, tp_reduc_kg, tp_reduc, srp_reduc_kg)
+      !! hyd_rad/trav_time/flo_dep/timeint are per-time-step scratch (sized by ts_sed, NOT by
+      !! channel) reused across every channel's call to ch_rtmusk -- threadprivate, but allocatable
+      !! threadprivate arrays are only allocated on the master thread (OpenMP does not propagate
+      !! the master's allocation to workers), so every worker must explicitly allocate its own copy
+      !! before first use; see the allocation guard in command.f90's chandeg pre-pass.
+      !$omp threadprivate(hyd_rad, trav_time, flo_dep, timeint)
+
       type swatdeg_hydsed_data
         character(len=25) :: name = ""
         integer :: order = 0
@@ -237,7 +245,9 @@
       end type channel_rating_curve_parameters
       type (channel_rating_curve_parameters) :: rcurv   !rating curve at each time step
       type (channel_rating_curve_parameters) :: rcz     !zero rating curve
-      
+
+      !$omp threadprivate(rcurv)
+
       type channel_rating_curve
         integer :: npts = 4         !none       |number of points on the rating curve
         real :: wid_btm = 0.        !m          |bottom width of main channel
