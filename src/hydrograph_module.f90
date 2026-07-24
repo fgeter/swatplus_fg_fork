@@ -1446,9 +1446,17 @@
       !! simulated years); such a value is physically zero. Same pattern as
       !! organic_mineral_mass_module's fmul -- divisions elsewhere are
       !! intentionally still trapped.
+      !!
+      !! Guarding only x (and at 1e-30, sized for double precision when this is single) is
+      !! insufficient: x and const can BOTH be individually normal (non-subnormal) real*4
+      !! values and still produce a subnormal PRODUCT (confirmed in organic_mineral_mass_
+      !! module's sibling fmul: const=4.36e-11, x=1.68e-28, product ~7.3e-39 < normal-min
+      !! 1.18e-38). Guard both operands at a threshold whose worst-case product still clears
+      !! normal-min with margin (1e-18*1e-18=1e-36) and is far below any physically meaningful
+      !! hydrograph quantity.
       elemental real function fmul(const, x)
         real, intent (in) :: const, x
-        if (abs(x) < 1.e-30) then
+        if (abs(x) < 1.e-18 .or. abs(const) < 1.e-18) then
           fmul = 0.
         else
           fmul = const * x

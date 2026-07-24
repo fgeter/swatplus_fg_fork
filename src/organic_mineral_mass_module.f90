@@ -392,13 +392,24 @@
     contains
 
       !! Flush-guarded scalar multiply used by the mass "* const" operators. Returns const*x,
-      !! but exactly 0 when |x| has decayed to a denormal (~1e-308): a mass/nutrient pool can
-      !! shrink to a denormal over many simulated years, and const*x would then underflow and
+      !! but exactly 0 when the product would land in subnormal range: a mass/nutrient pool can
+      !! shrink to a tiny value over many simulated years, and const*x would then underflow and
       !! crash under -ffpe-trap=underflow. Such a value is physically zero. NOTE: this guards
       !! only the mass MULTIPLY operators; divisions elsewhere are intentionally still trapped.
+      !!
+      !! `real` here is single precision (normal-min ~1.18e-38, NOT ~1e-308 -- that's double
+      !! precision; the original 1e-30-on-x-only threshold was sized for the wrong precision).
+      !! Worse, guarding only `x` is insufficient regardless of precision: `x` and `const` can
+      !! BOTH be individually normal (non-subnormal) values and still produce a subnormal
+      !! PRODUCT. Observed in practice: const=4.36e-11, x=1.68e-28 (both comfortably normal on
+      !! their own) multiplying to ~7.3e-39, just below real*4's normal-min. Guard both operands
+      !! against a threshold whose worst-case product (both operands exactly at the threshold)
+      !! still clears normal-min with margin: 1e-18 * 1e-18 = 1e-36, ~2 orders of magnitude
+      !! above 1.18e-38. 1e-18 is far below any physically meaningful mass/rate value in this
+      !! model, so this cannot affect real physics, only genuinely-negligible decayed quantities.
       elemental real function fmul(const, x)
         real, intent (in) :: const, x
-        if (abs(x) < 1.e-30) then
+        if (abs(x) < 1.e-18 .or. abs(const) < 1.e-18) then
           fmul = 0.
         else
           fmul = const * x
