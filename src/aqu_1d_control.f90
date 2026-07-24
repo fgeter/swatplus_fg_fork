@@ -137,7 +137,16 @@
         conc_no3 = 0.
       endif
       !! kg = (kg/ha / mm) * mm * ha
-      ob(icmd)%hd(1)%no3 = (conc_no3 * aqu_d(iaq)%flo) * ob(icmd)%area_ha
+      !! guard against denormal underflow: conc_no3 can be a legitimately tiny (but
+      !! normal-magnitude, non-subnormal) ratio even when aqu_d(iaq)%stor is healthy, if
+      !! no3_st has decayed close to zero -- multiplying it by aqu_d(iaq)%flo and
+      !! ob(icmd)%area_ha can still push the result into subnormal range and trap under
+      !! -ffpe-trap=underflow (same class as ch_watqual4.f90/res_nutrient.f90's guards).
+      if (abs(conc_no3) >= 1.e-15) then
+        ob(icmd)%hd(1)%no3 = (conc_no3 * aqu_d(iaq)%flo) * ob(icmd)%area_ha
+      else
+        ob(icmd)%hd(1)%no3 = 0.
+      end if
       ob(icmd)%hd(1)%no3 = amin1(ob(icmd)%hd(1)%no3, (aqu_d(iaq)%no3_st * ob(icmd)%area_ha))
       aqu_d(iaq)%no3_lat = ob(icmd)%hd(1)%no3 / ob(icmd)%area_ha
       aqu_d(iaq)%no3_st = aqu_d(iaq)%no3_st - aqu_d(iaq)%no3_lat
@@ -151,7 +160,13 @@
       
       !! compute nitrate seepage out of aquifer
       !! kg/ha = (kg/ha / mm) * mm
-      aqu_d(iaq)%no3_seep = conc_no3 * aqu_d(iaq)%seep
+      !! same denormal-underflow guard as the no3 return-flow calc above -- conc_no3 can be
+      !! a legitimately tiny (but non-subnormal) ratio that underflows when multiplied by seep
+      if (abs(conc_no3) >= 1.e-15) then
+        aqu_d(iaq)%no3_seep = conc_no3 * aqu_d(iaq)%seep
+      else
+        aqu_d(iaq)%no3_seep = 0.
+      end if
       aqu_d(iaq)%no3_seep = amin1(aqu_d(iaq)%no3_seep, aqu_d(iaq)%no3_st)
       aqu_d(iaq)%no3_st = aqu_d(iaq)%no3_st - aqu_d(iaq)%no3_seep
       ob(icmd)%hd(2)%no3 = aqu_d(iaq)%no3_seep * ob(icmd)%area_ha
