@@ -15,19 +15,19 @@
 
       logical :: i_exist
       integer :: in_gw = 1230
-      integer :: s = 0
+      integer :: s
       character*4 aString
-      character(len=16) :: hydsep_hdr(10) = ""
+      character(len=16) :: hydsep_hdr(10)
       !general
-      character(len=13) :: header = ""
+      character(len=13) :: header
       character*100 file_name(50)
       character*100 file_name_scalar
-      integer :: i = 0
-      integer :: j = 0
-      integer :: n = 0
-      integer :: max_num = 0
-      integer :: wb_cell = 0
-      real :: group_area = 0.
+      integer :: i
+      integer :: j
+      integer :: n
+      integer :: max_num
+      integer :: wb_cell
+      real :: group_area
 
       !initialize groundwater balance ---------------------------------------------------------------------------------------------------------------
       write(out_gw,*)

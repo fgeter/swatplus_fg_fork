@@ -12,30 +12,30 @@
 
       integer, intent (in) :: cell_id       !       |id of cell passed in
       real, intent (in) :: gw_vol           !m3     |volume of groundwater in the cell
-      integer :: s = 0                      !       |solute counter
-      integer :: n = 0                      !       |shale counter
-      integer :: k = 0                      !       |counter for connected cells
-      integer :: shale_source = 0           !       |flag: cell contains shale
+      integer :: s                          !       |solute counter
+      integer :: n                          !       |shale counter
+      integer :: k                          !       |counter for connected cells
+      integer :: shale_source               !       |flag: cell contains shale
       integer :: cell_conn                  !       |connected cell
-      integer :: isalt = 0                  !       |salt ion counter
-      integer :: sol_index = 0              !       |index to keep track of number of solutes
-      real :: rctn_rate = 0.
-      real :: cseo4 = 0.
-      real :: cseo3 = 0.
-      real :: cno3 = 0.
-      real :: o2 = 0.
-      real :: no3inhib = 0.
-      real :: seo4red = 0.
-      real :: seo3red = 0.
-      real :: o2red = 0.
-      real :: no3red = 0.
-      real :: yseo4_o2 = 0.
-      real :: yseo4_no3 = 0.
-      real :: se_prod_o2 = 0.
-      real :: se_prod_no3 = 0.
-      real :: ko2a = 0.
-      real :: kno3a = 0.
-      real :: sseratio = 0.
+      integer :: isalt                      !       |salt ion counter
+      integer :: sol_index                  !       |index to keep track of number of solutes
+      real :: rctn_rate
+      real :: cseo4
+      real :: cseo3
+      real :: cno3
+      real :: o2
+      real :: no3inhib
+      real :: seo4red
+      real :: seo3red
+      real :: o2red
+      real :: no3red
+      real :: yseo4_o2
+      real :: yseo4_no3
+      real :: se_prod_o2
+      real :: se_prod_no3
+      real :: ko2a
+      real :: kno3a
+      real :: sseratio
 
 
       !track solute numbers

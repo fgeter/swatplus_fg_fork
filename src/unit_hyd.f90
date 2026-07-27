@@ -49,19 +49,19 @@
       
       implicit none
       
-      real :: ql = 0.           !           | 
-      real :: sumq = 0.         !           |
-      real :: tb = 0.           !           |
-      real :: tp = 0.           !           |
-      integer :: i = 0          !none       |counter
-      real :: q = 0.            !           |
+      real :: ql                !           | 
+      real :: sumq              !           |
+      real :: tb                !           |
+      real :: tp                !           |
+      integer :: i              !none       |counter
+      real :: q                 !           |
       integer :: max            !           |
-      integer :: istep = 0      !none       |time step that corresponds to time%step for routing
-      integer :: iday = 0       !none       |current day in the unit hydrograph
-      integer :: t_inc = 0      !none       |time increments within the time step to sum the unit hyd
-      integer :: ts_base = 0    !none       |number of time steps in base of hydrograph
-      real :: t_inc_hr = 0.     !hr         |time increment
-      real :: t_tot = 0.        !hr         |total time in the hydrograph
+      integer :: istep          !none       |time step that corresponds to time%step for routing
+      integer :: iday           !none       |current day in the unit hydrograph
+      integer :: t_inc          !none       |time increments within the time step to sum the unit hyd
+      integer :: ts_base        !none       |number of time steps in base of hydrograph
+      real :: t_inc_hr          !hr         |time increment
+      real :: t_tot             !hr         |total time in the hydrograph
       
       real, intent (in)  :: tc
       real, intent (out), dimension(bsn_prm%day_lag_mx,time%step) :: uh

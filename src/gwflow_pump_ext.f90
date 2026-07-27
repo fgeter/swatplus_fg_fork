@@ -9,15 +9,15 @@
 
       implicit none
 
-      integer :: i = 0                      !       |counter
-      integer :: j = 0                      !       |counter
-      integer :: s = 0                      !       |solute counter
-      integer :: cell_id = 0                !       |gwflow cell
-      integer :: pumpex_start_date = 0      !       |starting date of pumping period
-      integer :: pumpex_end_date = 0        !       |ending date of pumping period
-      real :: Q = 0.                        !m3     |pumping rate
-      real :: solmass(100) = 0.             !g      |solute mass in pumped groundwater
-      real :: heat_flux = 0.                !J      |heat in pumped groundwater
+      integer :: i                          !       |counter
+      integer :: j                          !       |counter
+      integer :: s                          !       |solute counter
+      integer :: cell_id                    !       |gwflow cell
+      integer :: pumpex_start_date          !       |starting date of pumping period
+      integer :: pumpex_end_date            !       |ending date of pumping period
+      real :: Q                             !m3     |pumping rate
+      real :: solmass(100)                  !g      |solute mass in pumped groundwater
+      real :: heat_flux                     !J      |heat in pumped groundwater
 
 
       !only proceed if external pumping has been specified

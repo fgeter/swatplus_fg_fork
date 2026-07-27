@@ -19,23 +19,23 @@
       integer, intent (in) :: iob
       integer :: jres              !reservoir number (incoming)
       integer :: icon              !none          |counter
-      integer :: iwst = 0          !none          |weather station number
-      integer :: ics = 0           !constituent counter
-      integer :: icmd = 0          !none  
-      real    :: k_react = 0.      !1/day - first-order rate constant, affected by temperature 
-      real    :: v_settle = 0.     !m/day   - settling rate
-      real    :: cs_mass_beg = 0.
-      real    :: cs_conc_beg = 0.
-      real    :: cs_mass_end = 0.
-      real    :: cs_conc_end = 0.
-      real    :: cs_inflow = 0.
-      real    :: cs_outflow = 0.
-      real    :: cs_seep = 0.
-      real    :: cs_settle = 0.
-      real    :: cs_rctn = 0.
-      real    :: cs_prod = 0.
-      real    :: seo4_convert = 0. !kg            |mass of seo4 converted to seo3
-      real    :: mass_avail = 0.   !track available constituent mass in the reservoir (kg)
+      integer :: iwst              !none          |weather station number
+      integer :: ics               !constituent counter
+      integer :: icmd              !none  
+      real    :: k_react           !1/day - first-order rate constant, affected by temperature 
+      real    :: v_settle          !m/day   - settling rate
+      real    :: cs_mass_beg
+      real    :: cs_conc_beg
+      real    :: cs_mass_end
+      real    :: cs_conc_end
+      real    :: cs_inflow
+      real    :: cs_outflow
+      real    :: cs_seep
+      real    :: cs_settle
+      real    :: cs_rctn
+      real    :: cs_prod
+      real    :: seo4_convert      !kg            |mass of seo4 converted to seo3
+      real    :: mass_avail        !track available constituent mass in the reservoir (kg)
       
       !object number
       icmd = res_ob(jres)%ob

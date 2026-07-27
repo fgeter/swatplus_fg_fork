@@ -11,14 +11,14 @@
       
       implicit none
       
-      character (len=4) :: salt_ion = ""!           |
-      character (len=15) :: station_name = ""!       |
-      integer :: eof = 0              !           |end of file
-      integer :: iadep = 0            !           |counter
-      integer :: imo = 0              !           |counter
-      integer :: iyr = 0              !           |counter
+      character (len=4) :: salt_ion     !           |
+      character (len=15) :: station_name     !       |
+      integer :: eof                  !           |end of file
+      integer :: iadep                !           |counter
+      integer :: imo                  !           |counter
+      integer :: iyr                  !           |counter
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: isalt = 0            !           |salt ion counter
+      integer :: isalt                !           |salt ion counter
       
       eof = 0
 

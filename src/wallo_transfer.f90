@@ -12,8 +12,8 @@
 
       integer, intent (in):: iwallo         !water allocation object number
       integer, intent (in) :: itrn          !water demand object number
-      integer :: isrc = 0                   !source object number
-      integer :: iconv = 0                  !conveyance object number (pipe or pump number)
+      integer :: isrc                       !source object number
+      integer :: iconv                      !conveyance object number (pipe or pump number)
 
       
       !! transfer water to receiving object from each source

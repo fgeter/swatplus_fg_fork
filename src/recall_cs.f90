@@ -16,10 +16,10 @@
       integer :: irec
       
       !local variables
-      integer :: ics = 0 !            |constituent counter
-      integer :: ichan = 0    !            |id of source channel
-      real :: cs_conc = 0.    !g/m3        |concentration of constituent in source channel
-      real :: div_mass = 0.   !kg          |mass of constituent in diversion water
+      integer :: ics     !            |constituent counter
+      integer :: ichan        !            |id of source channel
+      real :: cs_conc         !g/m3        |concentration of constituent in source channel
+      real :: div_mass        !kg          |mass of constituent in diversion water
       
       
       !depending on the point source type, add/remove constituent mass to object

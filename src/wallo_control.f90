@@ -15,17 +15,17 @@
       implicit none 
 
       integer, intent (inout) :: iwallo     !water allocation object number
-      integer :: itrn = 0                   !water demand object number
-      integer :: iosrc = 0                  !source object number
-      integer :: isrc = 0                   !source object number
-      integer :: j = 0                      !hru number
-      integer :: jj = 0                     !variable for passing
-      integer :: irec = 0                   !recall id
-      integer :: iob = 0                    !object number for passing transfers to a stream
-      integer :: dum = 0
-      real :: irr_mm = 0.                   !mm     |irrigation applied
-      real :: div_total = 0.                !m3     |cumulative available diversion water
-      real :: div_daily = 0.                !m3     |daily water diverted for irrigation
+      integer :: itrn                       !water demand object number
+      integer :: iosrc                      !source object number
+      integer :: isrc                       !source object number
+      integer :: j                          !hru number
+      integer :: jj                         !variable for passing
+      integer :: irec                       !recall id
+      integer :: iob                        !object number for passing transfers to a stream
+      integer :: dum
+      real :: irr_mm                        !mm     |irrigation applied
+      real :: div_total                     !m3     |cumulative available diversion water
+      real :: div_daily                     !m3     |daily water diverted for irrigation
       
       !! zero total transfer and treatment and use outflows
       wal_omd(iwallo)%trn(:)%h_tot = hz

@@ -7,27 +7,27 @@
 
       integer :: iaq
       integer :: k_slope
-      integer :: kk = 0
+      integer :: kk
       real :: conc_rg
       real :: k_rg
-      real :: cseo4 = 0.
-      real :: cseo3 = 0.
-      real :: no3inhib = 0.
-      real :: seo4red = 0.
-      real :: dseo4 = 0.
-      real :: dseo3 = 0.
-      real :: dno3 = 0.
-      real :: cno3 = 0.
-      real :: o2 = 0.
-      real :: o2red = 0.
-      real :: no3red = 0.
-      real :: yseo4_o2 = 0.
-      real :: yseo4_no3 = 0.
-      real :: se_prod_o2 = 0.
-      real :: se_prod_no3 = 0.
-      real :: ko2a = 0.
-      real :: kno3 = 0.
-      real :: sseratio = 0.
+      real :: cseo4
+      real :: cseo3
+      real :: no3inhib
+      real :: seo4red
+      real :: dseo4
+      real :: dseo3
+      real :: dno3
+      real :: cno3
+      real :: o2
+      real :: o2red
+      real :: no3red
+      real :: yseo4_o2
+      real :: yseo4_no3
+      real :: se_prod_o2
+      real :: se_prod_no3
+      real :: ko2a
+      real :: kno3
+      real :: sseratio
       dimension conc_rg(3),k_rg(4,3)
 
       !get concentration of SeO4 and SeO3

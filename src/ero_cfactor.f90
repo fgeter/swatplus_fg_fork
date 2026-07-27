@@ -35,16 +35,16 @@
       
       implicit none
 
-      integer :: j = 0              !none          |HRU number
-      integer :: ipl = 0            !none          |sequential plant number
-      integer :: idp = 0            !none          |plant number in data file - pldb
-      real :: c = 0.                !              |usle c factor
-      real :: ab_gr_t = 0.          !tons          |total above ground biomass of plant community
-      real :: rsd_covfact = 0.      !              |residue cover factor
-      real :: rsd_sumfac = 0.       !tons          |sum of residue cover factor by plant
-      real :: grcov_frac = 0.       !frac          |fraction of ground cover factor for all plants
-      real :: bio_covfact = 0.      !              |growing biomass factor
-      real :: cover = 0.            !kg/ha         |soil cover - sum of residue and biomass
+      integer :: j                  !none          |HRU number
+      integer :: ipl                !none          |sequential plant number
+      integer :: idp                !none          |plant number in data file - pldb
+      real :: c                     !              |usle c factor
+      real :: ab_gr_t               !tons          |total above ground biomass of plant community
+      real :: rsd_covfact           !              |residue cover factor
+      real :: rsd_sumfac            !tons          |sum of residue cover factor by plant
+      real :: grcov_frac            !frac          |fraction of ground cover factor for all plants
+      real :: bio_covfact           !              |growing biomass factor
+      real :: cover                 !kg/ha         |soil cover - sum of residue and biomass
       
       j = ihru
 

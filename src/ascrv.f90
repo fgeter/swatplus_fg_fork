@@ -11,7 +11,7 @@
 
       implicit none
       
-      real :: xx = 0.             !none          |temp variable, used to hold calculated
+      real :: xx                  !none          |temp variable, used to hold calculated
                                   !              |value needed in later equations
 
       real, intent (in) :: x1     !none          |value for x in the above equation for first

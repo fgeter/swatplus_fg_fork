@@ -11,7 +11,7 @@
       
       external :: soil_carbvar_write, soil_nutcarb_write
       integer, intent (in) :: iru             !             |
-      integer :: iob = 0                      !             |
+      integer :: iob                          !             |
       
       iob = sp_ob1%ru + iru - 1 
    

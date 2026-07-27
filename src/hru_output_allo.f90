@@ -11,10 +11,10 @@
       
       implicit none
       
-      integer :: ihru = 0       !               |
-      integer :: mhru = 0       !               |
-      integer :: isalt = 0      !               |salt ion counter
-      integer :: ics = 0        !               |constituent counter
+      integer :: ihru           !               |
+      integer :: mhru           !               |
+      integer :: isalt          !               |salt ion counter
+      integer :: ics            !               |constituent counter
       
       mhru = sp_ob%hru
      

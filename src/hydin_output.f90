@@ -9,7 +9,7 @@
 
       implicit none
       
-      integer :: iin = 0          !none          |counter
+      integer :: iin              !none          |counter
       
 
       do icmd = 1, sp_ob%objs

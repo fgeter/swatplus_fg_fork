@@ -12,25 +12,25 @@
       implicit none
 
       integer, intent (in) :: hru_id  !               |id of the HRU, in which the wetland resides
-      integer :: ires = 0             !               |wetland id
-      integer :: s = 0                !               |solute counter
-      integer :: icell = 0            !               |counter for cells connected to the HRU
-      integer :: cell_id = 0          !               |gwflow cell
-      real :: wt = 0.                 !m              |water table elevation within the cell
-      real :: wet_stage = 0.          !m              |water stage of the wetland
-      real :: wet_k = 0.              !m/day          |hydraulic conductivity of the wetland bottom sediments
-      real :: wet_area = 0.           !m2             |wetland area in connection with grid cell
-      real :: wet_seep = 0.           !m3             |aggregage seepage from wetland
-      real :: gw_inflow = 0.          !m3             |groundwater inflow to wetland (for single cell)
-      real :: wet_inflow = 0.         !m3             |groundwater inflow to wetland (from all connected cells)
-      real :: gwvol_avail = 0.        !m3             |current groundwater volume stored in grid cell
-      real :: mass_transfer = 0.      !kg             |solute mass transferred from aquifer to wetland
-      real :: gw_mass = 0.            !kg             |solute mass stored in groundwater cell
-      real :: wet_inflow_no3 = 0.     !kg             |groundwater no3 mass to wetland (from all connected cells)
-      real :: wet_inflow_solp = 0.    !kg             |groundwater p mass to wetland (from all connected cells)
-      real :: solmass(100) = 0.       !g              |solute mass in cell
-      real :: heat_flux = 0.          !J              |heat transport in groundwater inflow to wetland
-      real :: wet_depth = 0.          !m
+      integer :: ires                 !               |wetland id
+      integer :: s                    !               |solute counter
+      integer :: icell                !               |counter for cells connected to the HRU
+      integer :: cell_id              !               |gwflow cell
+      real :: wt                      !m              |water table elevation within the cell
+      real :: wet_stage               !m              |water stage of the wetland
+      real :: wet_k                   !m/day          |hydraulic conductivity of the wetland bottom sediments
+      real :: wet_area                !m2             |wetland area in connection with grid cell
+      real :: wet_seep                !m3             |aggregage seepage from wetland
+      real :: gw_inflow               !m3             |groundwater inflow to wetland (for single cell)
+      real :: wet_inflow              !m3             |groundwater inflow to wetland (from all connected cells)
+      real :: gwvol_avail             !m3             |current groundwater volume stored in grid cell
+      real :: mass_transfer           !kg             |solute mass transferred from aquifer to wetland
+      real :: gw_mass                 !kg             |solute mass stored in groundwater cell
+      real :: wet_inflow_no3          !kg             |groundwater no3 mass to wetland (from all connected cells)
+      real :: wet_inflow_solp         !kg             |groundwater p mass to wetland (from all connected cells)
+      real :: solmass(100)            !g              |solute mass in cell
+      real :: heat_flux               !J              |heat transport in groundwater inflow to wetland
+      real :: wet_depth               !m
 
 
 

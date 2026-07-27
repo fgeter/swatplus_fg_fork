@@ -8,25 +8,25 @@
       
       implicit none
 
-      character (len=80) :: titldum = "" !          |title of file
-      character (len=80) :: header = ""  !          |header of file
-      integer :: eof = 0               !          |end of file
-      integer :: ihru = 0              !          |number of hrus
+      character (len=80) :: titldum      !          |title of file
+      character (len=80) :: header       !          |header of file
+      integer :: eof                   !          |end of file
+      integer :: ihru                  !          |number of hrus
       logical :: i_exist               !          |check to determine if file exists
-      integer :: imax = 0              !          |determine max number for array (imax) and total number in file
-      integer :: mcal = 0              !units     |description
-      integer :: mreg = 0              !units     |description
-      integer :: i = 0                 !none      |counter
-      integer :: nspu = 0              !units     |description
-      integer :: isp = 0               !none      |counter
-      integer :: ielem = 0             !none      |counter
-      integer :: ii = 0                !none      |counter
-      integer :: ie = 0                !none      |counter
-      integer :: ie1 = 0               !beginning of loop
-      integer :: ie2 = 0               !ending of loop
-      integer :: iord_mx = 0           !ending of loop
-      integer :: iord = 0              !none      |counter
-      integer :: ich_s = 0             !none      |counter
+      integer :: imax                  !          |determine max number for array (imax) and total number in file
+      integer :: mcal                  !units     |description
+      integer :: mreg                  !units     |description
+      integer :: i                     !none      |counter
+      integer :: nspu                  !units     |description
+      integer :: isp                   !none      |counter
+      integer :: ielem                 !none      |counter
+      integer :: ii                    !none      |counter
+      integer :: ie                    !none      |counter
+      integer :: ie1                   !beginning of loop
+      integer :: ie2                   !ending of loop
+      integer :: iord_mx               !ending of loop
+      integer :: iord                  !none      |counter
+      integer :: ich_s                 !none      |counter
       
       imax = 0
       mcal = 0

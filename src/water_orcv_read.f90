@@ -11,15 +11,15 @@
       
       implicit none 
       
-      character (len=80) :: titldum = ""!         |title of file
-      character (len=80) :: header = "" !         |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum     !         |title of file
+      character (len=80) :: header      !         |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: i = 0                !none       |counter
-      integer :: ircv = 0             !none       |number of water treatment objects
-      integer :: iom = 0              !none       |counter
-      integer :: irec = 0             !none       |counter
+      integer :: i                    !none       |counter
+      integer :: ircv                 !none       |number of water treatment objects
+      integer :: iom                  !none       |counter
+      integer :: irec                 !none       |counter
       
       eof = 0
       imax = 0

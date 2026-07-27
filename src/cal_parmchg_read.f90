@@ -28,22 +28,22 @@
       external :: define_unit_elements
 
       !integer, dimension (:), allocatable :: elem_cnt1   !           |  
-      character (len=80) :: titldum = ""                  !           |title of file
-      character (len=80) :: header = ""                   !           |header of file
-      character (len=10) :: range = ""                    !           |real conditional variable range
-      integer :: eof = 0                                  !           |end of file  
-      integer :: imax = 0                                 !none       |determine max number for array (imax) and total number in file
-      integer :: nspu = 0                                 !           |
+      character (len=80) :: titldum                       !           |title of file
+      character (len=80) :: header                        !           |header of file
+      character (len=10) :: range                         !           |real conditional variable range
+      integer :: eof                                      !           |end of file  
+      integer :: imax                                     !none       |determine max number for array (imax) and total number in file
+      integer :: nspu                                     !           |
       logical :: i_exist                                  !none       |check to determine if file exists
-      integer :: i = 0                                    !none       |counter
-      integer :: ie = 0                                   !none       |counter
-      integer :: mcal = 0                                 !           |
-      integer :: isp = 0                                  !none       |counter
-      integer :: ical = 0                                 !none       |counter
-      integer :: ipar = 0                                 !           |
-      integer :: ielem1 = 0                               !none       |counter
-      integer :: nconds = 0                               !none       |counter
-      integer :: icond = 0                                !none       |counter
+      integer :: i                                        !none       |counter
+      integer :: ie                                       !none       |counter
+      integer :: mcal                                     !           |
+      integer :: isp                                      !none       |counter
+      integer :: ical                                     !none       |counter
+      integer :: ipar                                     !           |
+      integer :: ielem1                                   !none       |counter
+      integer :: nconds                                   !none       |counter
+      integer :: icond                                    !none       |counter
       
       imax = 0
       mcal = 0

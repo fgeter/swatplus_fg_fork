@@ -23,24 +23,24 @@
       integer, intent (inout) :: itrn       !water demand object number
       integer, intent (inout) :: ihru       !HRU that receives irrigation water
       character*10 :: irrig_type  
-      integer :: isrc = 0                   !irrigation source counter
-      integer :: irrig_nsource = 0          !number of irrigation sources for the object
-      integer :: irrig_ob = 0               !object number of irrigation source
-      integer :: ires = 0                   !reservoir ID
-      integer :: iaq = 0                    !aquifer ID
-      integer :: ichan = 0                  !channel ID
-      integer :: obnum = 0                  !object number
-      integer :: obnum_chan = 0             !channel object number
-      integer :: ics = 0                    !constituent counter
-      integer :: wetland = 0                !wetland flag
-      real :: irrig_volume = 0.             !volume (m3) of irrigation water
-      real :: mass_diff = 0.
-      real :: ion_mass = 0.
-      real :: res_mass = 0.
-      real :: mass_initial = 0.
-      real :: irrig_mass = 0.
-      real :: gw_volume = 0.
-      real :: cs_conc = 0.
+      integer :: isrc                       !irrigation source counter
+      integer :: irrig_nsource              !number of irrigation sources for the object
+      integer :: irrig_ob                   !object number of irrigation source
+      integer :: ires                       !reservoir ID
+      integer :: iaq                        !aquifer ID
+      integer :: ichan                      !channel ID
+      integer :: obnum                      !object number
+      integer :: obnum_chan                 !channel object number
+      integer :: ics                        !constituent counter
+      integer :: wetland                    !wetland flag
+      real :: irrig_volume                  !volume (m3) of irrigation water
+      real :: mass_diff
+      real :: ion_mass
+      real :: res_mass
+      real :: mass_initial
+      real :: irrig_mass
+      real :: gw_volume
+      real :: cs_conc
       
 
       !determine number of irrigation sources

@@ -29,31 +29,31 @@
       
       implicit none
 
-      integer :: j = 0       !none          |HRU number
-      integer :: ly = 0       !none          |soil layer number 
-      real :: flo_loss_co = 0.        !kg N/ha       |amount of organic N in first soil layer
-      real :: wt1 = 0.       !none          |conversion factor (mg/kg => kg/ha)
-      real :: er = 0.        !none          |enrichment ratio
-      real :: conc = 0.      !              |concentration of organic N in soil
-      real :: sol_mass = 0.  !              |  
-      real :: c_surlat = 0.         !              |c loss with runoff or lateral flow
-      real :: c_vert = 0.           !              |c loss with vertical flow
-      real :: c_horiz = 0.           !              |c loss with vertical flow
-      real :: c_microb = 0.         !              |BMC LOSS WITH SEDIMENT
-      real :: c_sed = 0.            !              |Organic C loss with sediment
-      real :: ero_fr = 0.           !frac          |fraction of soil erosion of total soil mass
-      real :: koc = 0.          !              |KOC FOR CARBON LOSS IN WATER AND SEDIMENT(500._1500.) KD = KOC * C
-      real :: c_microb_fac = 0.               !              |
-      real :: flo_tot = 0.          !mm            |total flow from the soil layer
-      real :: c_microb_loss = 0.               !              | 
-      real :: horiz_conc = 0.               !              | 
-      real :: vert_conc = 0.               !              | 
-      real :: perc_clyr = 0.        !              | 
-      real :: latc_clyr = 0.        !              | 
-      real :: n_left_rto = 0.              !              |
-      real :: c_microb_perc = 0.               !              |
-      real :: c_microb_sed = 0.               !              |
-      real :: c_ly1 = 0.
+      integer :: j           !none          |HRU number
+      integer :: ly           !none          |soil layer number 
+      real :: flo_loss_co             !kg N/ha       |amount of organic N in first soil layer
+      real :: wt1            !none          |conversion factor (mg/kg => kg/ha)
+      real :: er             !none          |enrichment ratio
+      real :: conc           !              |concentration of organic N in soil
+      real :: sol_mass       !              |  
+      real :: c_surlat              !              |c loss with runoff or lateral flow
+      real :: c_vert                !              |c loss with vertical flow
+      real :: c_horiz                !              |c loss with vertical flow
+      real :: c_microb              !              |BMC LOSS WITH SEDIMENT
+      real :: c_sed                 !              |Organic C loss with sediment
+      real :: ero_fr                !frac          |fraction of soil erosion of total soil mass
+      real :: koc               !              |KOC FOR CARBON LOSS IN WATER AND SEDIMENT(500._1500.) KD = KOC * C
+      real :: c_microb_fac                    !              |
+      real :: flo_tot               !mm            |total flow from the soil layer
+      real :: c_microb_loss                    !              | 
+      real :: horiz_conc                    !              | 
+      real :: vert_conc                    !              | 
+      real :: perc_clyr             !              | 
+      real :: latc_clyr             !              | 
+      real :: n_left_rto                   !              |
+      real :: c_microb_perc                    !              |
+      real :: c_microb_sed                    !              |
+      real :: c_ly1
       
       j = ihru
       

@@ -14,14 +14,14 @@
       
       external :: calsoft_hyd, calsoft_hyd_bfr, calsoft_plant, calsoft_sed, caltsoft_hyd, pl_write_parms_cal
       
-      integer :: ireg = 0    !none      |counter
-      integer :: ilum = 0    !none      |counter
-      integer :: icvmax = 0  !          |
-      integer :: nyskip = 0  !          |
-      integer :: ihru = 0    !none      |counter
-      integer :: isdh = 0    !none      |counter
-      integer :: idb = 0     !          |   
-      integer :: iord = 0    !none      |counter 
+      integer :: ireg        !none      |counter
+      integer :: ilum        !none      |counter
+      integer :: icvmax      !          |
+      integer :: nyskip      !          |
+      integer :: ihru        !none      |counter
+      integer :: isdh        !none      |counter
+      integer :: idb         !          |   
+      integer :: iord        !none      |counter 
       
       icvmax = 0
       nyskip = pco%nyskip

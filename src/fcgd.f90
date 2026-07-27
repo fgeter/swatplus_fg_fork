@@ -8,7 +8,7 @@
       real :: tn            !             |
       real :: top           !             |
       real :: tx            !             |
-      real :: qq = 0.       !             |
+      real :: qq            !             |
       real :: xx            !             |
       
       tn  = org_con%tn   ! orig hard coded value was -5. and default value if not supplied in carb_coefs.cbn

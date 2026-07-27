@@ -20,12 +20,12 @@
       
       implicit none
 
-      integer :: iadep = 0        !            |
-      integer :: j = 0            !none        |counter
-      integer :: iob = 0          !            |
-      integer :: ist = 0          !            |
-      integer :: ics = 0          !            |constituent counter
-      real :: const = 0.          !            |constant used for rate, days, etc
+      integer :: iadep            !            |
+      integer :: j                !none        |counter
+      integer :: iob              !            |
+      integer :: ist              !            |
+      integer :: ics              !            |constituent counter
+      real :: const               !            |constant used for rate, days, etc
 
       j = ihru
       

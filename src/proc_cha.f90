@@ -8,9 +8,9 @@
                   ch_read_sed, ch_ttcoef, overbank_read, sd_channel_read, sd_channel_surf_link, &
                   sd_hydsed_init, sd_hydsed_read, time_conc_init, cli_lapse
       
-      integer :: irch = 0               !              |
-      integer :: idat = 0               !              |
-      integer :: i = 0                  !none          |counter
+      integer :: irch                   !              |
+      integer :: idat                   !              |
+      integer :: i                      !none          |counter
          
       call ch_read_init
       call ch_read_init_cs

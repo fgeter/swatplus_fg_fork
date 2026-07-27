@@ -16,28 +16,28 @@
       
       external :: activity_coefficient, CaCO3, CaSO4, Ionic_strength, MgCO3, MgSO4, NaCl
 
-      integer :: j = 0
-      integer :: jj = 0
-      integer :: iter_count = 0
+      integer :: j
+      integer :: jj
+      integer :: iter_count
       integer :: hru_num
       integer :: lay_num
-      real :: ion1 = 0.
-      real :: ion2 = 0.
-      real :: ion3 = 0.
-      real :: ion4 = 0.
-      real :: ion5 = 0.
-      real :: ion6 = 0.
-      real :: ion7 = 0.
-      real :: ion8 = 0.
+      real :: ion1
+      real :: ion2
+      real :: ion3
+      real :: ion4
+      real :: ion5
+      real :: ion6
+      real :: ion7
+      real :: ion8
       real :: waterC
-      real :: sol_bd = 0.
-      real :: Sol_CaCO3_p(1000) = 0.
-      real :: Sol_MgCO3_p(1000) = 0.
-      real :: Sol_CaSO4_p(1000) = 0.
-      real :: Sol_MgSO4_p(1000) = 0.
-      real :: Sol_NaCl_p(1000) = 0.
-      real :: I_Prep_in = 0.
-      real :: I_diff = 0.
+      real :: sol_bd
+      real :: Sol_CaCO3_p(1000)
+      real :: Sol_MgCO3_p(1000)
+      real :: Sol_CaSO4_p(1000)
+      real :: Sol_MgSO4_p(1000)
+      real :: Sol_NaCl_p(1000)
+      real :: I_Prep_in
+      real :: I_diff
 
       double precision IonStr,IS_temp,&                 
           K_ADJ1,K_ADJ2,K_ADJ3,K_ADJ4,K_ADJ5,&                 

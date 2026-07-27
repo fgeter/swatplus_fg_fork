@@ -9,17 +9,17 @@
       
       implicit none
         
-      integer :: ihd = 0       !            |
-      integer :: iob = 0       !            | 
-      integer :: iunit = 0     !            |
-      integer :: itot = 0      !none        |counter       
-      integer :: nly = 0
-      integer :: ly = 0
-      integer :: j = 0
-      integer :: ii = 0
-      integer :: ipl = 0
+      integer :: ihd           !            |
+      integer :: iob           !            | 
+      integer :: iunit         !            |
+      integer :: itot          !none        |counter       
+      integer :: nly
+      integer :: ly
+      integer :: j
+      integer :: ii
+      integer :: ipl
       
-      character(100) :: lineFmt = ""!used to format plant status write statement
+      character(100) :: lineFmt     !used to format plant status write statement
       
       lineFmt ='1((4X, 1A),(16X, 1A),(18X, 1A), 10(4X,F)),1(17XA, 2(12X,A), 4X, 10(4X,F)))'
 

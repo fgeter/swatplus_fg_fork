@@ -27,18 +27,18 @@
       
       
       external :: aunif
-      real :: v6 = 0.             !none          |random number between 0.0 and 1.0
-      real :: v7 = 0.             !              |
-      real :: rdir2 = 0.          !              |
-      real :: pi2 = 0.            !              |
-      integer :: idir = 0         !none          |counter
-      integer :: idir1 = 0        !              |
-      integer :: idir2 = 0        !              |
-      integer :: mo = 0           !              |
+      real :: v6                  !none          |random number between 0.0 and 1.0
+      real :: v7                  !              |
+      real :: rdir2               !              |
+      real :: pi2                 !              |
+      integer :: idir             !none          |counter
+      integer :: idir1            !              |
+      integer :: idir2            !              |
+      integer :: mo               !              |
       integer :: iwgn             !              | 
-      integer :: iwndir = 0       !              |
+      integer :: iwndir           !              |
       real :: aunif               !              |
-      real :: g = 0.              !              |
+      real :: g                   !              |
 
       pi2 = 6.283185
       mo = time%mo

@@ -12,12 +12,12 @@
 
       implicit none
 
-      integer :: j = 0              !none          |HRU number
-      integer :: idp = 0            !              |
-      integer :: iob = 0            !              |
-      integer :: iwgn = 0           !              |
-      real :: rto = 0.              !              |
-      real :: lai_init = 0.         !
+      integer :: j                  !none          |HRU number
+      integer :: idp                !              |
+      integer :: iob                !              |
+      integer :: iwgn               !              |
+      real :: rto                   !              |
+      real :: lai_init              !
 
       j = ihru
       idp = pcom(j)%plcur(ipl)%idplt

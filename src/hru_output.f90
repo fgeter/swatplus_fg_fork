@@ -17,18 +17,18 @@
       external :: soil_nutcarb_write
       
       integer, intent (in) :: ihru             !            |
-      integer :: idp = 0                       !            |
-      integer :: j = 0
-      integer :: iob = 0
-      integer :: ipl = 0
-	  integer :: ilu = 0
-      real :: bm_max_m = 0.
-      real :: bm_max_y = 0.
-      real :: bm_max_a = 0.
-      real :: const = 0.
-      real :: sw_init = 0.
-      real :: sno_init = 0.
-      real :: percn_aa = 0.
+      integer :: idp                           !            |
+      integer :: j
+      integer :: iob
+      integer :: ipl
+	  integer :: ilu
+      real :: bm_max_m
+      real :: bm_max_y
+      real :: bm_max_a
+      real :: const
+      real :: sw_init
+      real :: sno_init
+      real :: percn_aa
                          
 !!    ~ ~ ~ PURPOSE ~ ~ ~
 !!    this subroutine outputs HRU variables on daily, monthly and annual time steps

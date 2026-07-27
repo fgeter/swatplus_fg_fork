@@ -8,9 +8,9 @@
       
       external :: cond_integer_c, cond_real_c
        
-       integer :: icon = 0
-       integer :: modu = 0
-       integer :: iscon = 0
+       integer :: icon
+       integer :: modu
+       integer :: iscon
        integer, intent(in) :: ictbl
        real, intent(in) :: stor
        real, intent(in) :: inflo

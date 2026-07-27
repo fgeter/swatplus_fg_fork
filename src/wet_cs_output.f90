@@ -13,10 +13,10 @@
       
       implicit none
       
-      integer :: ics = 0
+      integer :: ics
       integer :: j
-      integer :: iob = 0
-      real :: const = 0.
+      integer :: iob
+      real :: const
                          
 !!    ~ ~ ~ PURPOSE ~ ~ ~
 !!    this subroutine outputs constituent mass in wetlands (by HRU)

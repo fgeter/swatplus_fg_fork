@@ -7,8 +7,8 @@
       implicit none
       
       integer, intent (in) :: iwallo        !             |
-      integer :: itrn = 0
-      integer :: isrc = 0
+      integer :: itrn
+      integer :: isrc
 
       !! loop through and print each demand object
       do itrn = 1, wallo(iwallo)%trn_obs

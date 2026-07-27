@@ -12,11 +12,11 @@
       
       implicit none
       
-      integer :: ipest = 0
-      integer :: ls = 0
-      integer :: iihru = 0
-      integer :: iob = 0
-      real :: const = 0.
+      integer :: ipest
+      integer :: ls
+      integer :: iihru
+      integer :: iob
+      real :: const
                                
 !!    ~ ~ ~ PURPOSE ~ ~ ~
 !!    this subroutine outputs HRU variables on daily, monthly and annual time steps

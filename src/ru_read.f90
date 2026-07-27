@@ -14,18 +14,18 @@
       implicit none
       
       ! read subbasin parameters (ie drainage area and topographic inputs)
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: i = 0                !           |
+      integer :: i                    !           |
       integer :: max                  !           |
-      integer :: k = 0                !           |
-      integer :: ith = 0              !none       |counter
-      integer :: isalt = 0            !none       |salt ion counter (rtb salt)
-      integer :: ics = 0              !none       |constituent counter (rtb cs)
-      integer :: ihyd = 0             !none       |hydrograph counter
+      integer :: k                    !           |
+      integer :: ith                  !none       |counter
+      integer :: isalt                !none       |salt ion counter (rtb salt)
+      integer :: ics                  !none       |constituent counter (rtb cs)
+      integer :: ihyd                 !none       |hydrograph counter
       
       mru_db = 0
       eof = 0

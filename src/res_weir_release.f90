@@ -19,17 +19,17 @@
       real,  intent (in) :: weir_hgt  !m         |height of weir overflow crest from reservoir bottom
       integer,  intent (in) :: jres             !none      |hru number
       integer :: iweir = 1          !none      |weir ID 
-      integer :: nstep = 0          !none      |counter
-      integer :: tstep = 0          !none      |hru number
-      integer :: ic = 0             !none      |counter
+      integer :: nstep              !none      |counter
+      integer :: tstep              !none      |hru number
+      integer :: ic                 !none      |counter
       integer,  intent (in) :: id   !none      |unused hru number
       integer,  intent (in) :: ihyd !          |
-      real :: vol = 0.              !          |
-      real :: res_h = 0.            !m         |water depth
-      real :: wsa1 = 0.             !m2        |water surface area 
-      real :: qout = 0.             !m3        |weir discharge during short time step
-      real :: hgt_above = 0.        !m         |height of water above the above bottom of weir
-      real :: vol_above = 0.             !m3        |water volume above the bottom of weir !Jaehak 2024
+      real :: vol                   !          |
+      real :: res_h                 !m         |water depth
+      real :: wsa1                  !m2        |water surface area 
+      real :: qout                  !m3        |weir discharge during short time step
+      real :: hgt_above             !m         |height of water above the above bottom of weir
+      real :: vol_above                  !m3        |water volume above the bottom of weir !Jaehak 2024
       
       !! suppress unused variable warning
       if (id < 0) continue

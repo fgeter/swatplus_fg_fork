@@ -9,22 +9,22 @@
     
     implicit none    
 
-    real :: cum_rd = 0.               !            |
-    real :: cum_d = 0.                !            | 
-    real :: cum_rf = 0.               !            |
-    real :: x1 = 0.                   !            |
-    real :: x2 = 0.                   !            |
+    real :: cum_rd                    !            |
+    real :: cum_d                     !            | 
+    real :: cum_rf                    !            |
+    real :: x1                        !            |
+    real :: x2                        !            |
     integer, intent (in) :: j         !none        |HRU number
-    integer :: k = 0                  !            |
-    integer :: ly = 0                 !none        |number of soil layer that manure applied
-    real :: a = 0.                    !            |
-    real :: b = 0.                    !            |
-    real :: c = 0.                    !            | 
-    real :: d = 0.                    !            |
-    real :: rtfr = 0.                 !none        |root fraction
-    real :: xx1 = 0.                  !            |
-    real :: xx2 = 0.                  !            |
-    real :: xx = 0.                   !            |
+    integer :: k                      !            |
+    integer :: ly                     !none        |number of soil layer that manure applied
+    real :: a                         !            |
+    real :: b                         !            |
+    real :: c                         !            | 
+    real :: d                         !            |
+    real :: rtfr                      !none        |root fraction
+    real :: xx1                       !            |
+    real :: xx2                       !            |
+    real :: xx                        !            |
     
     ly = 0
     pcom(j)%plg(ipl)%rtfr = 0. ! First, reset all layer's root fractions to zero

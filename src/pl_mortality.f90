@@ -10,12 +10,12 @@
       
       implicit none 
       
-      integer :: j = 0          !none               |HRU number
-      integer :: idp = 0        !                   |
-      integer :: ly = 0         !                   |soil layer number
-      real :: bm_dieoff = 0.
-      real :: rto = 0.
-      real :: rto1 = 0.
+      integer :: j              !none               |HRU number
+      integer :: idp            !                   |
+      integer :: ly             !                   |soil layer number
+      real :: bm_dieoff
+      real :: rto
+      real :: rto1
                
       j = ihru
       idp = pcom(j)%plcur(ipl)%idplt

@@ -12,32 +12,32 @@
 
       implicit none
 
-      integer :: i = 0                !           |counter
-      integer :: j = 0                !           |counter for number of HRUs within an LSU
-      integer :: k = 0                !           |counter
-      integer :: n = 0                !           |counter
-      integer :: s = 0                !           |solute counter
-      integer :: hru_id = 0           !           |id of the HRU
-      integer :: ob_num = 0           !           |object number of the HRU
-      integer :: cell_id = 0          !           |id of the gwflow cell
-      integer :: cell_count = 0       !           |cell count
-      real :: recharge = 0.           !mm         |HRU recharge
-      real :: recharge_sol = 0.       !kg/ha      |solute mass in recharge water
-      real :: hru_recharge = 0.       !m3         |volume of recharge from the HRU
-      real :: rech_volume = 0.        !m3         |summation of recharge from multiple HRUs
-      real :: cell_rech_volume = 0.   !m3         |volume of recharge to the cell
-      real :: rech_solmass(100) = 0.  !g          |summation of solute mass in recharge from multiple HRUs
-      real :: cell_rech_solmass(100) = 0. !g      |solute mass in recharge to the cell
-      real :: cell_rech_heat = 0.     !J          |heat in recharge to the cell
-      real :: hru_total = 0.          !m3         |summation of recharge from multiple HRUs
-      real :: hru_cell_total = 0.     !m3         |summation of recharge for multiple cells
-      real :: sub_recharge = 0.       !m3         |summation of recharge for subbasin
-      real :: sub_heat = 0.           !J          |summation of recharge heat for subbasin
-      real :: sub_solmass(100) = 0.   !g          |total solute mass in recharge, for the subbasin
-      real :: perc_volm = 0.          !m3         |volume of deep percolation
-      real :: perc_temp = 0.          !deg C      |temperature of soil water in the lowest soil layer (= deep percolation)
-      real :: perc_heat = 0.          !J          |heat of deep percolation water
-      real :: recharge_heat = 0.      !J          |heat in recharge water
+      integer :: i                    !           |counter
+      integer :: j                    !           |counter for number of HRUs within an LSU
+      integer :: k                    !           |counter
+      integer :: n                    !           |counter
+      integer :: s                    !           |solute counter
+      integer :: hru_id               !           |id of the HRU
+      integer :: ob_num               !           |object number of the HRU
+      integer :: cell_id              !           |id of the gwflow cell
+      integer :: cell_count           !           |cell count
+      real :: recharge                !mm         |HRU recharge
+      real :: recharge_sol            !kg/ha      |solute mass in recharge water
+      real :: hru_recharge            !m3         |volume of recharge from the HRU
+      real :: rech_volume             !m3         |summation of recharge from multiple HRUs
+      real :: cell_rech_volume        !m3         |volume of recharge to the cell
+      real :: rech_solmass(100)       !g          |summation of solute mass in recharge from multiple HRUs
+      real :: cell_rech_solmass(100)      !g      |solute mass in recharge to the cell
+      real :: cell_rech_heat          !J          |heat in recharge to the cell
+      real :: hru_total               !m3         |summation of recharge from multiple HRUs
+      real :: hru_cell_total          !m3         |summation of recharge for multiple cells
+      real :: sub_recharge            !m3         |summation of recharge for subbasin
+      real :: sub_heat                !J          |summation of recharge heat for subbasin
+      real :: sub_solmass(100)        !g          |total solute mass in recharge, for the subbasin
+      real :: perc_volm               !m3         |volume of deep percolation
+      real :: perc_temp               !deg C      |temperature of soil water in the lowest soil layer (= deep percolation)
+      real :: perc_heat               !J          |heat of deep percolation water
+      real :: recharge_heat           !J          |heat in recharge water
 
 
       !calculate recharge and solute mass to the water table

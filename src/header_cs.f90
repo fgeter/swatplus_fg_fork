@@ -6,10 +6,10 @@
      
      implicit none 
      
-     integer :: ipest = 0
-     integer :: ipath = 0
-     integer :: imet = 0
-     integer :: isalt = 0
+     integer :: ipest
+     integer :: ipath
+     integer :: imet
+     integer :: isalt
            
      !! daily - HYDIN
      if (pco%hyd%d == "y") then   

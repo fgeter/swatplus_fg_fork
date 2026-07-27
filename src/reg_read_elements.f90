@@ -12,24 +12,24 @@
       
       external :: define_unit_elements
 
-      character (len=80) :: titldum = ""  !             |title of file
-      character (len=80) :: header = "" !             |header of file
-      integer :: eof = 0                !             |end of file
+      character (len=80) :: titldum       !             |title of file
+      character (len=80) :: header      !             |header of file
+      integer :: eof                    !             |end of file
       logical :: i_exist                !none         |check to determine if file exists
-      integer :: imax = 0               !             |determine max number for array (imax) and total number in file
-      integer :: mcal = 0               !             |
-      integer :: mreg = 0               !             |
-      integer :: mlug = 0
-      integer :: ireg = 0
-      integer :: i = 0                  !none         |counter
-      integer :: k = 0                  !             |
-      integer :: ilum = 0
-      integer :: nspu = 0               !             | 
-      integer :: isp = 0                !             |
-      integer :: ielem1 = 0             !none         |counter
-      integer :: iihru = 0              !none         |counter
-      integer :: ihru_tot = 0           !             |
-      integer :: ilsu = 0               !             |
+      integer :: imax                   !             |determine max number for array (imax) and total number in file
+      integer :: mcal                   !             |
+      integer :: mreg                   !             |
+      integer :: mlug
+      integer :: ireg
+      integer :: i                      !none         |counter
+      integer :: k                      !             |
+      integer :: ilum
+      integer :: nspu                   !             | 
+      integer :: isp                    !             |
+      integer :: ielem1                 !none         |counter
+      integer :: iihru                  !none         |counter
+      integer :: ihru_tot               !             |
+      integer :: ilsu                   !             |
       
       imax = 0
       mcal = 0

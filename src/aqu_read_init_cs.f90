@@ -10,27 +10,27 @@
       
       implicit none      
       
-      character (len=80) :: titldum = ""  !             |title of file
-      character (len=80) :: header = "" !             |header of file
-      integer :: eof = 0                !             |end of file
-      integer :: imax = 0               !             |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum       !             |title of file
+      character (len=80) :: header      !             |header of file
+      integer :: eof                    !             |end of file
+      integer :: imax                   !             |determine max number for array (imax) and total number in file
       logical :: i_exist                !none         |check to determine if file exists
-      integer :: iaqu = 0               !none         |counter
-      integer :: ictr = 0
-      integer :: isp_ini = 0            !             |                    !             |
-      integer :: idat = 0               !             |
-      integer :: iaq = 0
-      integer :: iob = 0
-      integer :: ipest = 0
-      integer :: ipath = 0
-      integer :: isalt = 0
-      integer :: ics = 0
-      integer :: iaqdb = 0
-      real :: gw_volume = 0.
-      real :: aqu_volume = 0.
-      real :: aqu_bd = 0.
-      real :: aqu_mass = 0.
-      real :: mass_sorbed = 0.
+      integer :: iaqu                   !none         |counter
+      integer :: ictr
+      integer :: isp_ini                !             |                    !             |
+      integer :: idat                   !             |
+      integer :: iaq
+      integer :: iob
+      integer :: ipest
+      integer :: ipath
+      integer :: isalt
+      integer :: ics
+      integer :: iaqdb
+      real :: gw_volume
+      real :: aqu_volume
+      real :: aqu_bd
+      real :: aqu_mass
+      real :: mass_sorbed
       eof = 0
       imax = 0
             

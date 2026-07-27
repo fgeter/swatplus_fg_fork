@@ -40,18 +40,18 @@
       
       implicit none 
 
-      integer :: j = 0      !none          |HRU number
-      integer :: k = 0      !none          |counter (soil layer)
-      real :: decr = 0.     !              |
-      integer :: ipl = 0      !              |plant number in plant community
-      real :: idp = 0.      !              |plant number in plant data module
-      real :: nactfr = 0.   !none          |nitrogen active pool fraction. The fraction
+      integer :: j          !none          |HRU number
+      integer :: k          !none          |counter (soil layer)
+      real :: decr          !              |
+      integer :: ipl          !              |plant number in plant community
+      real :: idp           !              |plant number in plant data module
+      real :: nactfr        !none          |nitrogen active pool fraction. The fraction
                             !              |of organic nitrogen in the active pool.
-      real :: clg = 0.      !none          |lignin fraction of the residue
-      real :: rln = 0.      !none          |lignin-to-nitrogen ratio of the residue
-      real :: lmf = 0.      !none          |metabolic fraction of residue (CENTURY: 0.85-0.018*RLN)
-      real :: lsf = 0.      !none          |structural fraction of residue (1-LMF)
-      real :: rlr = 0.      !none          |lignin fraction going to structural (<= LSF)
+      real :: clg           !none          |lignin fraction of the residue
+      real :: rln           !none          |lignin-to-nitrogen ratio of the residue
+      real :: lmf           !none          |metabolic fraction of residue (CENTURY: 0.85-0.018*RLN)
+      real :: lsf           !none          |structural fraction of residue (1-LMF)
+      real :: rlr           !none          |lignin fraction going to structural (<= LSF)
 
       j = ihru
       nactfr = .02

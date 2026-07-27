@@ -20,20 +20,20 @@
       external :: SYSTEM
 #endif
       
-      integer :: iaqu = 0
-      integer :: icha = 0
-      integer :: ires = 0
-      integer :: ihyd = 0
-      integer :: idat = 0
-      integer :: idb = 0
-      integer :: iobj_out = 0
-      integer :: irec = 0
-      integer :: iob = 0
-      integer :: i = 0                              ! loop counter
+      integer :: iaqu
+      integer :: icha
+      integer :: ires
+      integer :: ihyd
+      integer :: idat
+      integer :: idb
+      integer :: iobj_out
+      integer :: irec
+      integer :: iob
+      integer :: i                                  ! loop counter
       integer, parameter :: ifile = 14              ! number of SWAT input files to copy to SWIFT folder
-      character(len=100) :: folderPath = ""
-      character(len=100) :: command = ""
-      character(len=25)  :: file_list(ifile) = "" ! list of SWAT input files to copy to SWIFT folder
+      character(len=100) :: folderPath
+      character(len=100) :: command
+      character(len=25)  :: file_list(ifile)      ! list of SWAT input files to copy to SWIFT folder
       logical :: i_exist
       
       ! SWIFT file formats

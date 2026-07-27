@@ -24,159 +24,159 @@
       character*10 b(3),irrig_type
       character*4 aString
       !water balance and solute balance output file headers
-      character(len=13) :: gwflow_hdr(19) = ""
-      character(len=13) :: gwflow_hdr_day(26) = ""
-      character(len=13) :: gwflow_hdr_mon(21) = ""
-      character(len=13) :: gwflow_hdr_yr(20) = ""
-      character(len=13) :: gwflow_hdr_aa(20) = ""
-      character(len=13) :: gwflow_hdr_day_grp(25) = ""
+      character(len=13) :: gwflow_hdr(19)
+      character(len=13) :: gwflow_hdr_day(26)
+      character(len=13) :: gwflow_hdr_mon(21)
+      character(len=13) :: gwflow_hdr_yr(20)
+      character(len=13) :: gwflow_hdr_aa(20)
+      character(len=13) :: gwflow_hdr_day_grp(25)
       !canal/pond header arrays removed -- headers now use inline format 8000
-      character(len=13) :: sol_hdr_day(25) = ""
-      character(len=13) :: sol_hdr_mo(22) = ""
-      character(len=13) :: sol_hdr_yr(21) = ""
-      character(len=13) :: sol_hdr_aa(21) = ""
-      character(len=13) :: heat_hdr_day(24) = ""
-      character(len=13) :: heat_hdr_yr(22) = ""
-      character(len=13) :: heat_hdr_aa(22) = ""
-      character(len=16) :: hydsep_hdr(10) = ""
+      character(len=13) :: sol_hdr_day(25)
+      character(len=13) :: sol_hdr_mo(22)
+      character(len=13) :: sol_hdr_yr(21)
+      character(len=13) :: sol_hdr_aa(21)
+      character(len=13) :: heat_hdr_day(24)
+      character(len=13) :: heat_hdr_yr(22)
+      character(len=13) :: heat_hdr_aa(22)
+      character(len=16) :: hydsep_hdr(10)
       !general variables
-      character(len=13) :: header = ""
-      character(len=30) :: read_type = ""
+      character(len=13) :: header
+      character(len=30) :: read_type
       character*100 file_name(50)
-      character(len=13) :: cs_names(20) = ""
-      character(len=13) :: name = ""
+      character(len=13) :: cs_names(20)
+      character(len=13) :: name
       logical  i_exist
       logical  i_exist2
-      integer :: date_time(8) = 0
-      integer :: i = 0
-      integer :: j = 0
-      integer :: k = 0
-      integer :: m = 0
-      integer :: n = 0
-      integer :: s = 0
-      integer :: isalt = 0
-      integer :: count = 0
-      integer :: eof = 0
-      integer :: cell_num = 0
-      integer :: sol_index = 0
-      integer :: div = 0
-      integer :: channel = 0
-      integer :: chan_cell = 0
-      integer :: ob_num = 0
-      integer :: dum_id = 0
-      integer :: active_cell = 0
-      real :: cell_size = 0.
-      real :: x_coord = 0.
-      real :: y_coord = 0.
-      integer :: num_conn = 0
-      real :: sum = 0.
-      real :: dist_x = 0.
-      real :: dist_y = 0.
-      real :: min_dist = 0.
-      real :: distance = 0.
-      real :: gw_cell_volume = 0.
+      integer :: date_time(8)
+      integer :: i
+      integer :: j
+      integer :: k
+      integer :: m
+      integer :: n
+      integer :: s
+      integer :: isalt
+      integer :: count
+      integer :: eof
+      integer :: cell_num
+      integer :: sol_index
+      integer :: div
+      integer :: channel
+      integer :: chan_cell
+      integer :: ob_num
+      integer :: dum_id
+      integer :: active_cell
+      real :: cell_size
+      real :: x_coord
+      real :: y_coord
+      integer :: num_conn
+      real :: sum
+      real :: dist_x
+      real :: dist_y
+      real :: min_dist
+      real :: distance
+      real :: gw_cell_volume
       !input file numbers
-      integer :: in_gw = 0
-      integer :: in_wtdepth = 0
-      integer :: in_hru_cell = 0
-      integer :: in_cell_hru = 0
-      integer :: in_res_cell = 0
-      integer :: in_canal_cell = 0
-      integer :: in_gw_minl = 0
+      integer :: in_gw
+      integer :: in_wtdepth
+      integer :: in_hru_cell
+      integer :: in_cell_hru
+      integer :: in_res_cell
+      integer :: in_canal_cell
+      integer :: in_gw_minl
       !aquifer and streambed properties
-      integer :: K_zone = 0
-      integer :: Sy_zone = 0
-      integer :: nzones_aquK = 0
-      integer :: nzones_aquSy = 0
-      integer :: nzones_strK = 0
-      integer :: nzones_strbed = 0
+      integer :: K_zone
+      integer :: Sy_zone
+      integer :: nzones_aquK
+      integer :: nzones_aquSy
+      integer :: nzones_strK
+      integer :: nzones_strbed
       real, dimension (:), allocatable :: zones_aquK
       real, dimension (:), allocatable :: zones_aquSy
       real, dimension (:), allocatable :: zones_strK
       real, dimension (:), allocatable :: zones_strbed
       real, dimension (:), allocatable :: zones_Kt
       !water table depth for initial head
-      integer :: nzones_wt = 0
+      integer :: nzones_wt
       real, dimension (:), allocatable :: zones_wt
       !external pumping information
-      integer :: pumpex_cell = 0
+      integer :: pumpex_cell
       !tile drain information
-      real :: tile_depth_val = 0.
-      real :: tile_drain_area_val = 0.
-      real :: tile_K_val = 0.
+      real :: tile_depth_val
+      real :: tile_drain_area_val
+      real :: tile_K_val
       !reservoir information
-      integer :: res_cell = 0
-      integer :: res_id = 0
-      real :: res_stage = 0.
+      integer :: res_cell
+      integer :: res_id
+      real :: res_stage
       !canal information
       integer, allocatable :: canal_out(:)
       integer, allocatable :: canal_div(:)
       real, allocatable :: con_row_buf(:)
-      integer :: day_beg = 0
-      integer :: day_end = 0
-      integer :: canal_id = 0
-      integer :: ic = 0
-      integer :: obj_tot = 0
-      real :: thick = 0.
-      real :: depth = 0.
-      real :: width = 0.
-      real :: bed_K = 0.
-      real :: length = 0.
-      real :: frc_ret = 0
-      real :: stage = 0.
-      real :: fld_ro = 0.
-      real :: spk_ro = 0.
-      real :: drp_ro = 0.
+      integer :: day_beg
+      integer :: day_end
+      integer :: canal_id
+      integer :: ic
+      integer :: obj_tot
+      real :: thick
+      real :: depth
+      real :: width
+      real :: bed_K
+      real :: length
+      real :: frc_ret
+      real :: stage
+      real :: fld_ro
+      real :: spk_ro
+      real :: drp_ro
       !recharge pond information
-      integer :: month_days(12) = 0
-      integer :: yr_start = 0
-      integer :: mo_start = 0
-      integer :: dy_start = 0
-      integer :: num_yr = 0
-      integer :: num_dy = 0
+      integer :: month_days(12)
+      integer :: yr_start
+      integer :: mo_start
+      integer :: dy_start
+      integer :: num_yr
+      integer :: num_dy
       !HRU-cell, LSU-cell linkage
-      integer :: num_unique = 0
-      integer :: cell = 0
-      integer :: hru_count = 0
-      integer :: hru_cell = 0
-      integer :: nhru_connected = 0
-      integer :: num_hru = 0
-      real :: hru_area = 0.
-      integer :: hru_id = 0
-      integer :: lsu = 0
-      integer :: nlsu = 0
-      integer :: nlsu_connected = 0
-      integer :: lsu_id = 0
-      integer :: cell_count = 0
-      real :: poly_area = 0.
-      real :: cell_area = 0.
-      real :: lsu_area = 0.
+      integer :: num_unique
+      integer :: cell
+      integer :: hru_count
+      integer :: hru_cell
+      integer :: nhru_connected
+      integer :: num_hru
+      real :: hru_area
+      integer :: hru_id
+      integer :: lsu
+      integer :: nlsu
+      integer :: nlsu_connected
+      integer :: lsu_id
+      integer :: cell_count
+      real :: poly_area
+      real :: cell_area
+      real :: lsu_area
       !time-varying boundary conditions
-      integer :: bc_type_int = 0
-      integer :: in_tvh = 0
-      integer :: cell_id = 0
+      integer :: bc_type_int
+      integer :: in_tvh
+      integer :: cell_id
       !groundwater transit time
-      integer :: in_transit_time = 0
-      integer :: cell_transit = 0
+      integer :: in_transit_time
+      integer :: cell_transit
       !observation well cell IDs (local, before USG conversion)
       integer, dimension (:), allocatable :: gw_obs_cells_init
-      integer :: obs_cell_id = 0
+      integer :: obs_cell_id
       !dummy variables for reading
-      integer :: dum = 0
-      integer :: dum1 = 0
-      integer :: dum2 = 0
-      integer :: dum3 = 0
-      integer :: dum7 = 0
-      integer :: dum8 = 0
-      real :: dum4 = 0.
-      real :: dum5 = 0.
-      real :: dum6 = 0.
-      real :: single_value = 0.
-      integer :: max_num = 0
-      integer :: max_cells = 0
-      integer :: max_hrus = 0
-      integer :: wb_cell = 0
-      real :: group_area = 0.
+      integer :: dum
+      integer :: dum1
+      integer :: dum2
+      integer :: dum3
+      integer :: dum7
+      integer :: dum8
+      real :: dum4
+      real :: dum5
+      real :: dum6
+      real :: single_value
+      integer :: max_num
+      integer :: max_cells
+      integer :: max_hrus
+      integer :: wb_cell
+      real :: group_area
 
 
       !write message to screen

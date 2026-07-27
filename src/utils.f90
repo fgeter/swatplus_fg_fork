@@ -551,7 +551,7 @@ function get_num_data_lines(self) result(imax)
 !===============================================================================
     class(table_reader), intent(inout) :: self
     integer :: imax
-    integer :: eof = 0              !           |end of file
+    integer :: eof                  !           |end of file
     integer :: i              !           |end of file
     logical                     :: ignore_last_col
 
@@ -623,7 +623,7 @@ subroutine min_header_cols(self, min_cols)
 
     class(table_reader), intent(inout) :: self
     character(len=*), intent(in) :: min_cols
-    character(MAX_NAME_LEN)  :: min_hdr_cols(MAX_TABLE_COLS) = ''  !array of header column names
+    character(MAX_NAME_LEN)  :: min_hdr_cols(MAX_TABLE_COLS)       !array of header column names
     integer :: i, ncols 
     character(len=:), allocatable :: min_col
 

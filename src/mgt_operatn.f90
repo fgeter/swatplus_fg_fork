@@ -34,9 +34,9 @@
       
       external :: mgt_sched
 
-      integer :: j = 0       !none          |HRU number
-      real :: aphu = 0.      !heat units    |fraction of total heat units accumulated 
-      integer :: isched = 0  !              |
+      integer :: j           !none          |HRU number
+      real :: aphu           !heat units    |fraction of total heat units accumulated 
+      integer :: isched      !              |
 
       j = ihru
       isched = hru(j)%mgt_ops

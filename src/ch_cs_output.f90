@@ -13,10 +13,10 @@
       implicit none
       
       integer, intent (in) :: jrch             !            |
-      integer :: ics = 0                       !            |
-      integer :: iru = 0
-      integer :: iob = 0
-      real :: const = 0.
+      integer :: ics                           !            |
+      integer :: iru
+      integer :: iob
+      real :: const
       
                          
 !!    ~ ~ ~ PURPOSE ~ ~ ~

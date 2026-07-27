@@ -7,7 +7,7 @@
       
       external :: hru_lum_init
  
-      integer :: iihru = 0          !           |hru number
+      integer :: iihru              !           |hru number
 
       do iihru = 1, sp_ob%hru
         hru(iihru)%land_use_mgt = hru(iihru)%dbs%land_use_mgt

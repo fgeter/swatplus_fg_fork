@@ -8,9 +8,9 @@
 
       implicit none
 
-      real :: cklsp = 0.            !                 |
+      real :: cklsp                 !                 |
 
-      real :: zdb = 0.              !mm               |division term from net pesticide equation
+      real :: zdb                   !mm               |division term from net pesticide equation
 
       cklsp = 0.
 

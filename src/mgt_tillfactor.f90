@@ -25,18 +25,18 @@
     integer, intent (in) :: jj        !none           |HRU number
     logical, intent(in)  :: bio_mix_event !note       |True if this is a biological mixing event
     real, intent (inout) :: emix         !none           |mixing efficiency 
-    integer :: l = 0                  !none           |counter 
-    integer :: m1 = 0                 !none           |array location (see definition of ndays)
-    integer :: m2 = 0                 !               |
+    integer :: l                      !none           |counter 
+    integer :: m1                     !none           |array location (see definition of ndays)
+    integer :: m2                     !               |
     real :: dtil                      !mm             |depth of mixing
-    real :: XX = 0.                   !varies         |variable to hold calculation results
-    real :: zz = 0.                   !               |
-    real :: yy = 0.                   !               |
-    real :: xx1 = 0.                  !               | 
-    real :: xx2 = 0.                  !               | 
-    real :: csdr = 0.                 !               | 
-    real :: consf = 0.                !               |Moisture consolidation factor 
-    real :: frac_mixed = 0.       !               |fraction of soil layer not mixed.
+    real :: XX                        !varies         |variable to hold calculation results
+    real :: zz                        !               |
+    real :: yy                        !               |
+    real :: xx1                       !               | 
+    real :: xx2                       !               | 
+    real :: csdr                      !               | 
+    real :: consf                     !               |Moisture consolidation factor 
+    real :: frac_mixed            !               |fraction of soil layer not mixed.
     
       do l = 1, soil(jj)%nly
             

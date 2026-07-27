@@ -36,7 +36,7 @@
       
       implicit none
       
-      integer :: j = 0       !none           |hru number
+      integer :: j           !none           |hru number
         
       !! set variables
       j = ihru

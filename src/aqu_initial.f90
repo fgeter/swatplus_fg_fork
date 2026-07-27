@@ -11,11 +11,11 @@
        
       implicit none
       
-      integer :: iaq = 0               !none      |counter
-      integer :: iob = 0               !          | 
-      integer :: iaqdb = 0             !          | 
-      integer :: isalt = 0             !          |salt ion counter
-      integer :: ics = 0               !          |constituent counter 
+      integer :: iaq                   !none      |counter
+      integer :: iob                   !          | 
+      integer :: iaqdb                 !          | 
+      integer :: isalt                 !          |salt ion counter
+      integer :: ics                   !          |constituent counter 
 
       !allocate objects for each aquifer
       allocate (aqu_om_init(sp_ob%aqu))

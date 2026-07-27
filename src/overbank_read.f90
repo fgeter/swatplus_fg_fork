@@ -7,19 +7,19 @@
       
       implicit none 
 
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      character (len=16) :: namedum = ""!           |
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
-      integer :: nspu = 0             !           |
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      character (len=16) :: namedum     !           |
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
+      integer :: nspu                 !           |
       logical :: i_exist              !none       |check to determine if file exists
       integer :: max                  !           |
-      integer :: mcha_sp = 0          !           |
-      integer :: i = 0                !none       |counter
-      integer :: isp = 0              !none       |counter
-      integer :: numb = 0             !           |
-      integer :: ise = 0              !none       |counter  
+      integer :: mcha_sp              !           |
+      integer :: i                    !none       |counter
+      integer :: isp                  !none       |counter
+      integer :: numb                 !           |
+      integer :: ise                  !none       |counter  
           
       eof = 0
       imax = 0

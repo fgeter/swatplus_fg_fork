@@ -17,39 +17,39 @@
       external :: soil_phys_init, soils_test_adjust, layersplit
       
 
-      integer :: msoils = 0       !none          !ending of loop
-      integer :: isol = 0         !none          |counter
-      integer :: mlyr = 0         !none          |max number of soil layers
-      integer :: i = 0            !none          |counter
-      integer :: j = 0            !none          |counter
-      integer :: nly = 0          !              |end of loop
-      integer :: ly = 0           !none          |counter
-      integer :: npl = 0          !none          |counter
-      integer :: csld = 0         !mm            |current custom soil layer depth in millimeters
-      integer :: pcd = 0          !mm            |previous custom depth in millimeters
-      integer :: prev_depth = 0   !mm            |previous custom depth in millimeters
-      integer :: tot_soil_depth = 0 !mm          |total soil profile depth in millimeters 
-      integer :: eof = 0          !              |end of file
-      integer :: n = 0            !              |count to use to compute an average
-      real :: dep_new1 = 0.       !mm            |depth of top of septic layer
-      real :: dep_new2 = 0.       !mm            |depth of bottom of septic layer
-      real :: sum_bd = 0.         !              |temporary sum to do weighted average with 
-      real :: sum_awc = 0.        !              |temporary sum to do weighted average with 
-      real :: sum_cbn = 0.        !              |temporary sum to do weighted average with 
-      real :: sum_k = 0.          !              |temporary sum to do weighted average with 
-      real :: sum_clay = 0.       !              |temporary sum to do weighted average with 
-      real :: sum_silt = 0.       !              |temporary sum to do weighted average with 
-      real :: sum_sand = 0.       !              |temporary sum to do weighted average with 
-      real :: sum_rock = 0.       !              |temporary sum to do weighted average with 
-      real :: sum_alb = 0.        !              |temporary sum to do weighted average with 
-      real :: sum_usle_k = 0.     !              |temporary sum to do weighted average with 
-      real :: sum_ec = 0.         !              |temporary sum to do weighted average with 
-      real :: sum_cal = 0.        !              |temporary sum to do weighted average with 
-      real :: sum_ph = 0.         !              |temporary sum to do weighted average with   
+      integer :: msoils           !none          !ending of loop
+      integer :: isol             !none          |counter
+      integer :: mlyr             !none          |max number of soil layers
+      integer :: i                !none          |counter
+      integer :: j                !none          |counter
+      integer :: nly              !              |end of loop
+      integer :: ly               !none          |counter
+      integer :: npl              !none          |counter
+      integer :: csld             !mm            |current custom soil layer depth in millimeters
+      integer :: pcd              !mm            |previous custom depth in millimeters
+      integer :: prev_depth       !mm            |previous custom depth in millimeters
+      integer :: tot_soil_depth     !mm          |total soil profile depth in millimeters 
+      integer :: eof              !              |end of file
+      integer :: n                !              |count to use to compute an average
+      real :: dep_new1            !mm            |depth of top of septic layer
+      real :: dep_new2            !mm            |depth of bottom of septic layer
+      real :: sum_bd              !              |temporary sum to do weighted average with 
+      real :: sum_awc             !              |temporary sum to do weighted average with 
+      real :: sum_cbn             !              |temporary sum to do weighted average with 
+      real :: sum_k               !              |temporary sum to do weighted average with 
+      real :: sum_clay            !              |temporary sum to do weighted average with 
+      real :: sum_silt            !              |temporary sum to do weighted average with 
+      real :: sum_sand            !              |temporary sum to do weighted average with 
+      real :: sum_rock            !              |temporary sum to do weighted average with 
+      real :: sum_alb             !              |temporary sum to do weighted average with 
+      real :: sum_usle_k          !              |temporary sum to do weighted average with 
+      real :: sum_ec              !              |temporary sum to do weighted average with 
+      real :: sum_cal             !              |temporary sum to do weighted average with 
+      real :: sum_ph              !              |temporary sum to do weighted average with   
       logical :: i_exist          !none          |check to determine if a file exists
-      character (len=500) :: header = "" !       |header of file
-      character (len=80) :: titldum = "" !       |title of file
-      character (len=16) :: units = ""  !        |name
+      character (len=500) :: header      !       |header of file
+      character (len=80) :: titldum      !       |title of file
+      character (len=16) :: units       !        |name
       logical :: first_layer_flag !              |True if first non 10 mm layer.
       type (soil_database), dimension(:), allocatable :: sol_mm_db
       

@@ -49,17 +49,17 @@
       integer, intent (in) :: ielem                         !                | 
       integer, intent (in) :: ly                            !                |
       integer, intent (in) :: num_db                        !                |database number (unused in current implementation)
-      integer :: jj = 0                                     !                |soil layer counter
-      integer :: ipl = 0                                    !                |soil layer counter
-      integer :: ihru = 0                                   !                |hru counter
+      integer :: jj                                         !                |soil layer counter
+      integer :: ipl                                        !                |soil layer counter
+      integer :: ihru                                       !                |hru counter
       integer :: icell                                      !                |gwflow cell counter (rtb)
       integer :: ichan                                      !                |gwflow channel counter
       real :: exp                                           !                | 
-      real :: c_val = 0.                                    !                | 
-      real :: abmax = 0.                                    !                | 
+      real :: c_val                                         !                | 
+      real :: abmax                                         !                | 
       real :: chg_par                                       !variable        |new parameter value
-      real :: perc_ln_func = 0.                             !none       |function to convert perco to perc_lim
-      real :: rock = 0.                                     !                | 
+      real :: perc_ln_func                                  !none       |function to convert perco to perc_lim
+      real :: rock                                          !                | 
 
       !! suppress unused variable warning for num_db parameter
       if (num_db < 0) continue

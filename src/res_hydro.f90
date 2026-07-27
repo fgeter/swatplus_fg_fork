@@ -17,56 +17,56 @@
       real,  intent (in) :: pvol_m3
       real,  intent (in) :: evol_m3
       integer,  intent (in) :: jres             !none      |hru number
-      integer :: iweir = 0         !none      |weir ID 
-      integer :: nstep = 0         !none      |counter
-      integer :: tstep = 0         !none      |hru number
-      integer :: iac = 0           !none      |counter 
-      integer :: ic = 0            !none      |counter
+      integer :: iweir             !none      |weir ID 
+      integer :: nstep             !none      |counter
+      integer :: tstep             !none      |hru number
+      integer :: iac               !none      |counter 
+      integer :: ic                !none      |counter
       !integer :: weir_flg=0       !none      |counter
       integer,  intent (in) :: id  !none      |hru number
-      integer :: ial = 0           !none      |counter
-      integer :: irel = 0          !          |
-      integer :: iob = 0           !none      |hru or wro number
-      real :: vol = 0.             !          |
-      real :: vol_above = 0.       !          |
-      real :: b_lo = 0.            !          |
-      character(len=1) :: action = ""!        |
-      real :: res_h = 0.           !m         |water depth
-      real :: demand = 0.          !m3        |irrigation demand by hru or wro
-      real :: wsa1 = 0.            !m2        |water surface area 
-      real :: qout = 0.                !m3        |weir discharge during short time step
-      real :: hgt = 0.                 !m         |height of bottom of weir above bottom of impoundment
-      real :: hgt_above = 0.      !m         |height of water above the above bottom of weir
-      real :: sto_max = 0.             !m3        |maximum storage volume at the bank top
+      integer :: ial               !none      |counter
+      integer :: irel              !          |
+      integer :: iob               !none      |hru or wro number
+      real :: vol                  !          |
+      real :: vol_above            !          |
+      real :: b_lo                 !          |
+      character(len=1) :: action     !        |
+      real :: res_h                !m         |water depth
+      real :: demand               !m3        |irrigation demand by hru or wro
+      real :: wsa1                 !m2        |water surface area 
+      real :: qout                     !m3        |weir discharge during short time step
+      real :: hgt                      !m         |height of bottom of weir above bottom of impoundment
+      real :: hgt_above           !m         |height of water above the above bottom of weir
+      real :: sto_max                  !m3        |maximum storage volume at the bank top
 
 
       !! Jose T 2025 |  Doell method
-      real :: sto               = 0.                                          !m3         |Current lake storage
-      real :: smax              = 0.                                          !m3         |Maximum lake stirage
-      real :: so                = 0.                                          !m3         |Dead lake storage
-      real :: kr                = 0.                                          !1/d        |Release coefficient
-      real :: alpha             = 0.                                          !none       |Exponent
+      real :: sto                                                             !m3         |Current lake storage
+      real :: smax                                                            !m3         |Maximum lake stirage
+      real :: so                                                              !m3         |Dead lake storage
+      real :: kr                                                              !1/d        |Release coefficient
+      real :: alpha                                                           !none       |Exponent
 
       !! Jose T 2025 |  Hanazaki method
       real :: er                = 1.00                                        !           |Release rate
-      real :: I_mon             = 0.00                                        !m3         |Monthly inflow
-      real :: d_mon             = 0.00                                        !m3         |Monthly demand
+      real :: I_mon                                                           !m3         |Monthly inflow
+      real :: d_mon                                                           !m3         |Monthly demand
       real :: beta              = 0.10                                        !none       |Environmental flow req coefficient
-      real :: target_rel        = 0.                                          !m3         |Target release
+      real :: target_rel                                                      !m3         |Target release
 
 
       !! Jose T 2025 |  HYPE model for HP method
       real :: pi                = 3.14159265358979323846                      !Pi :)
-      real :: a_amp             = 0.                                          !none       |Amplitude of the sine function
-      real :: b_phase           = 0.                                          !none       |Phase of the sine function
-      real :: s_min_hype        = 0.                                          !m3         |Storage at turbine intake (no release below this)
-      real :: s_lim_hype        = 0.                                          !m3         |Storage at which energy production starts being limited (below 'desired' hydraulic head for turbines)
-      real :: F_sin             = 0.                                          !none       |Seasonal demand factor
-      real :: F_lin             = 0.                                           !none       |Storage limiting factor
+      real :: a_amp                                                           !none       |Amplitude of the sine function
+      real :: b_phase                                                         !none       |Phase of the sine function
+      real :: s_min_hype                                                      !m3         |Storage at turbine intake (no release below this)
+      real :: s_lim_hype                                                      !m3         |Storage at which energy production starts being limited (below 'desired' hydraulic head for turbines)
+      real :: F_sin                                                           !none       |Seasonal demand factor
+      real :: F_lin                                                            !none       |Storage limiting factor
 
-      integer :: dom            = 0                                           !           |Day of month
-      integer :: mon            = 0                                           !           |Month of year
-      integer :: end_of_mo      = 0                                           !           |End of month flag
+      integer :: dom                                                          !           |Day of month
+      integer :: mon                                                          !           |Month of year
+      integer :: end_of_mo                                                    !           |End of month flag
 
       dom          = time%day_mo
       mon          = time%mo

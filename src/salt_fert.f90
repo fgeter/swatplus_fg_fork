@@ -20,9 +20,9 @@
       integer, intent (in) :: ifrt        !               |fertilizer type from fert data base
       real, intent (in) :: frt_kg         !kg/ha          |amount of fertilizer applied
       integer, intent (in) :: fertop      !               | 
-      character(len=16) :: fert_type = ""
-      real :: xx = 0.                     !               |surface application fraction 
-      integer :: l = 0                    !none           |counter 
+      character(len=16) :: fert_type
+      real :: xx                          !               |surface application fraction 
+      integer :: l                        !none           |counter 
 
       
       !only proceed if salt ions are included in simulation

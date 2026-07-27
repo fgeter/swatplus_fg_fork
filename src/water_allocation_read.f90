@@ -14,25 +14,25 @@
       
       implicit none 
       
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: i = 0                !none       |counter
-      integer :: k = 0                !none       |counter
-      integer :: isrc = 0             !none       |counter
-      integer :: iwro = 0             !none       |number of water allocation objects
-      integer :: num_objs = 0
-      integer :: num_src = 0
-      integer :: itrn = 0
-      integer :: idb = 0
-      integer :: idb_irr = 0
-      integer :: ihru = 0
-      integer :: iexco = 0
-      integer :: iexco_om = 0
-      integer :: irec = 0
-      integer :: iom = 0
+      integer :: i                    !none       |counter
+      integer :: k                    !none       |counter
+      integer :: isrc                 !none       |counter
+      integer :: iwro                 !none       |number of water allocation objects
+      integer :: num_objs
+      integer :: num_src
+      integer :: itrn
+      integer :: idb
+      integer :: idb_irr
+      integer :: ihru
+      integer :: iexco
+      integer :: iexco_om
+      integer :: irec
+      integer :: iom
       
       eof = 0
       imax = 0

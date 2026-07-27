@@ -12,29 +12,29 @@
 
       implicit none
 
-      integer :: i = 0                    !       |cell counter
-      integer :: j = 0                    !       |general counter
-      integer :: k = 0                    !       |connected-cell counter
-      integer :: s = 0                    !       |solute counter
-      integer :: t = 0                    !       |transport time step counter
-      integer :: cell_id = 0              !       |id of connected cell
-      real :: gw_trans_time_step = 0.     !days   |length of transport sub-timestep
-      real :: time_fraction = 0.          !       |fraction of flow step for interpolation
-      real :: gw_volume_old = 0.          !m3     |gw volume at start of flow step
-      real :: gw_volume_new = 0.          !m3     |gw volume at end of flow step
-      real :: gw_volume_inter = 0.        !m3     |interpolated gw volume at transport step
-      real :: mass_adv(100) = 0.          !g/day  |advective mass flux per solute
-      real :: mass_dsp(100) = 0.          !g/day  |dispersive mass flux per solute
-      real :: m_change(100) = 0.          !g      |mass change per solute
-      real :: del_no_sorp = 0.            !g      |mass change without sorption
-      real :: mass_sorb(100) = 0.         !g      |mass removed by sorption per solute
-      real :: mass_rct_local(100) = 0.    !g/day  |mass from reactions (unused local; module mass_rct used)
-      real :: Q_cell = 0.                 !m3/day |lateral flow between cells
-      real :: face_sat = 0.               !m      |saturated thickness at cell interface
-      real :: area1 = 0.                  !m2     |area of connected cell
-      real :: area2 = 0.                  !m2     |area of current cell
-      real :: area = 0.                   !m2     |smaller of the two areas
-      real :: conn_length = 0.            !m      |connection length
+      integer :: i                        !       |cell counter
+      integer :: j                        !       |general counter
+      integer :: k                        !       |connected-cell counter
+      integer :: s                        !       |solute counter
+      integer :: t                        !       |transport time step counter
+      integer :: cell_id                  !       |id of connected cell
+      real :: gw_trans_time_step          !days   |length of transport sub-timestep
+      real :: time_fraction               !       |fraction of flow step for interpolation
+      real :: gw_volume_old               !m3     |gw volume at start of flow step
+      real :: gw_volume_new               !m3     |gw volume at end of flow step
+      real :: gw_volume_inter             !m3     |interpolated gw volume at transport step
+      real :: mass_adv(100)               !g/day  |advective mass flux per solute
+      real :: mass_dsp(100)               !g/day  |dispersive mass flux per solute
+      real :: m_change(100)               !g      |mass change per solute
+      real :: del_no_sorp                 !g      |mass change without sorption
+      real :: mass_sorb(100)              !g      |mass removed by sorption per solute
+      real :: mass_rct_local(100)         !g/day  |mass from reactions (unused local; module mass_rct used)
+      real :: Q_cell                      !m3/day |lateral flow between cells
+      real :: face_sat                    !m      |saturated thickness at cell interface
+      real :: area1                       !m2     |area of connected cell
+      real :: area2                       !m2     |area of current cell
+      real :: area                        !m2     |smaller of the two areas
+      real :: conn_length                 !m      |connection length
 
       !compute transport sub-timestep size
       gw_trans_time_step = gw_time_step / num_ts_transport

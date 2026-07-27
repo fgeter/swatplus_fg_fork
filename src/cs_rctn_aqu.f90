@@ -15,19 +15,19 @@
       
       external :: se_reactions_aquifer
 
-      integer :: n = 0
-      integer :: iaq = 0
+      integer :: n
+      integer :: iaq
       real :: conc_old
       real :: conc_new
       real :: conc_rg
       real :: k_rg
       real :: phi_value
-      real :: gw_volume = 0.
-      real :: mass_seo4_before = 0.
-      real :: mass_seo3_before = 0.
-      real :: mass_seo4_after = 0.
-      real :: mass_seo3_after = 0.
-      real :: cs_mass_kg = 0.
+      real :: gw_volume
+      real :: mass_seo4_before
+      real :: mass_seo3_before
+      real :: mass_seo4_after
+      real :: mass_seo3_after
+      real :: cs_mass_kg
       dimension conc_old(3),conc_new(3),conc_rg(3),k_rg(4,3),phi_value(3)
         
       !aquifer ID

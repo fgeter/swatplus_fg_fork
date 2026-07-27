@@ -11,26 +11,26 @@
 
       implicit none
 
-      integer :: i = 0                    !       |cell counter
-      integer :: k = 0                    !       |connected-cell counter
-      integer :: cell_id = 0              !       |id of connected cell
-      real :: heat_adv = 0.               !J/day  |total advective heat flux for current cell
-      real :: cell_adv = 0.               !J/day  |advective heat flux from one connection
-      real :: heat_dsp = 0.               !J/day  |total dispersive heat flux for current cell
-      real :: Q_heat = 0.                 !J/day  |dispersive heat flux from one connection
-      real :: heat_change = 0.            !J      |net change in heat storage for current cell
-      real :: face_thmc = 0.              !J/d-m-T|harmonic mean thermal conductivity at interface
-      real :: Q_cell = 0.                 !m3/day |lateral flow between cells
-      real :: dist_x = 0.                 !m      |x distance between cell centroids
-      real :: dist_y = 0.                 !m      |y distance between cell centroids
-      real :: grad_distance = 0.          !m      |distance between cell centroids
-      real :: gradient = 0.               !T/m    |temperature gradient
-      real :: area1 = 0.                  !m2     |area of connected cell
-      real :: area2 = 0.                  !m2     |area of current cell
-      real :: area = 0.                   !m2     |smaller of the two areas
-      real :: conn_length = 0.            !m      |connection length
-      real :: face_sat = 0.               !m      |saturated thickness at interface
-      real :: flow_area = 0.              !m2     |cross-section area at interface
+      integer :: i                        !       |cell counter
+      integer :: k                        !       |connected-cell counter
+      integer :: cell_id                  !       |id of connected cell
+      real :: heat_adv                    !J/day  |total advective heat flux for current cell
+      real :: cell_adv                    !J/day  |advective heat flux from one connection
+      real :: heat_dsp                    !J/day  |total dispersive heat flux for current cell
+      real :: Q_heat                      !J/day  |dispersive heat flux from one connection
+      real :: heat_change                 !J      |net change in heat storage for current cell
+      real :: face_thmc                   !J/d-m-T|harmonic mean thermal conductivity at interface
+      real :: Q_cell                      !m3/day |lateral flow between cells
+      real :: dist_x                      !m      |x distance between cell centroids
+      real :: dist_y                      !m      |y distance between cell centroids
+      real :: grad_distance               !m      |distance between cell centroids
+      real :: gradient                    !T/m    |temperature gradient
+      real :: area1                       !m2     |area of connected cell
+      real :: area2                       !m2     |area of current cell
+      real :: area                        !m2     |smaller of the two areas
+      real :: conn_length                 !m      |connection length
+      real :: face_sat                    !m      |saturated thickness at interface
+      real :: flow_area                   !m2     |cross-section area at interface
 
       !store current heat (J) - used to track heat storage during cell loop
       do i=1,ncell

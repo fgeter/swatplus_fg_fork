@@ -42,17 +42,17 @@
       
       external :: cli_bounds_check, cli_clgen, cli_precip_control, cli_rhgen, cli_slrgen, cli_tgen, cli_weatgn, cli_wndgen, atri
            
-      integer :: ii = 0           !none          |counter       
-      real :: half_hr_mn = 0.     !mm H2O        |lowest value half hour precip fraction can have
-      real :: half_hr_mx = 0.     !mm H2O        |highest value half hour precip fraction can have
-      integer :: iwgn = 0         !              |
-      integer :: ig = 0           !              |
-      integer :: yrs_to_start = 0 !              |
-      integer :: cur_day = 0
-      real :: ramm = 0.           !MJ/m2         |extraterrestrial radiation
-      real :: xl = 0.             !MJ/kg         |latent heat of vaporization
+      integer :: ii               !none          |counter       
+      real :: half_hr_mn          !mm H2O        |lowest value half hour precip fraction can have
+      real :: half_hr_mx          !mm H2O        |highest value half hour precip fraction can have
+      integer :: iwgn             !              |
+      integer :: ig               !              |
+      integer :: yrs_to_start     !              |
+      integer :: cur_day
+      real :: ramm                !MJ/m2         |extraterrestrial radiation
+      real :: xl                  !MJ/kg         |latent heat of vaporization
       real :: atri                !none          |daily value generated for distribution
-      real :: xx = 0.
+      real :: xx
       character(len=1) :: out_bounds = 'n'
         
       !! Precipitation:

@@ -11,10 +11,10 @@ subroutine wallo_demand (iwallo, itrn)
 
       integer, intent (in) :: iwallo            !water allocation object number
       integer, intent (in) :: itrn              !water demand object number
-      integer :: j = 0              !none       |hru number
-      integer :: id = 0             !none       |flo_con decision table number
-      integer :: iom = 0            !none       |recall organic/mineral number
-      integer :: isrc = 0           !none       |source object number
+      integer :: j                  !none       |hru number
+      integer :: id                 !none       |flo_con decision table number
+      integer :: iom                !none       |recall organic/mineral number
+      integer :: isrc               !none       |source object number
 
       !! compute total transfer from each transfer object
       select case (wallo(iwallo)%trn(itrn)%trn_typ)

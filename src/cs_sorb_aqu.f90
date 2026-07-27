@@ -11,38 +11,38 @@
       use cs_data_module
       
       implicit none
-      integer :: iaq = 0
-      integer :: iaqdb = 0
-      real :: mass_seo4_sol = 0.
-      real :: mass_seo3_sol = 0.
-      real :: mass_born_sol = 0.
-      real :: mass_seo4_sorb = 0.
-      real :: mass_seo3_sorb = 0.
-      real :: mass_born_sorb = 0.
-      real :: ratio = 0.
-      real :: mass_total = 0.
-      real :: val_num = 0.
-      real :: val_den = 0.
-      real :: val = 0.
-      real :: cseo4_new = 0.
-      real :: ccseo4_new = 0.
-      real :: cseo3_new = 0.
-      real :: ccseo3_new = 0.
-      real :: cborn_new = 0.
-      real :: ccborn_new = 0.
-      real :: gw_volume = 0.
-      real :: aqu_volume = 0.
-      real :: aqu_bd = 0.
-      real :: aqu_mass = 0.
-      real :: sorbed_seo4 = 0.
-      real :: sorbed_seo3 = 0.
-      real :: sorbed_born = 0.
-      real :: mass_seo4_before = 0.
-      real :: mass_seo4_after = 0.
-      real :: mass_seo3_before = 0.
-      real :: mass_seo3_after = 0.
-      real :: mass_born_before = 0.
-      real :: mass_born_after = 0.
+      integer :: iaq
+      integer :: iaqdb
+      real :: mass_seo4_sol
+      real :: mass_seo3_sol
+      real :: mass_born_sol
+      real :: mass_seo4_sorb
+      real :: mass_seo3_sorb
+      real :: mass_born_sorb
+      real :: ratio
+      real :: mass_total
+      real :: val_num
+      real :: val_den
+      real :: val
+      real :: cseo4_new
+      real :: ccseo4_new
+      real :: cseo3_new
+      real :: ccseo3_new
+      real :: cborn_new
+      real :: ccborn_new
+      real :: gw_volume
+      real :: aqu_volume
+      real :: aqu_bd
+      real :: aqu_mass
+      real :: sorbed_seo4
+      real :: sorbed_seo3
+      real :: sorbed_born
+      real :: mass_seo4_before
+      real :: mass_seo4_after
+      real :: mass_seo3_before
+      real :: mass_seo3_after
+      real :: mass_born_before
+      real :: mass_born_after
       
       
       !aquifer ID

@@ -11,8 +11,8 @@
       
       implicit none     
 
-      integer :: ires = 0       !             |
-      integer :: mres = 0       !             |
+      integer :: ires           !             |
+      integer :: mres           !             |
       
       mres = sp_ob%res
       allocate (res(0:mres))

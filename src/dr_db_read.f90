@@ -9,12 +9,12 @@
       
       external :: dr_read_om, dr_path_read, dr_read_hmet, dr_read_pest, dr_read_salt, ee
  
-      character (len=80) :: titldum = ""
-      character (len=80) :: header = ""
-      integer :: eof = 0
-      integer :: imax = 0
+      character (len=80) :: titldum
+      character (len=80) :: header
+      integer :: eof
+      integer :: imax
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: ii = 0
+      integer :: ii
 
       eof = 0
       

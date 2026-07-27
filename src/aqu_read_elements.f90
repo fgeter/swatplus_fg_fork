@@ -10,21 +10,21 @@
       
       external :: define_unit_elements
 
-      character (len=80) :: titldum = ""  !             |title of file
-      character (len=80) :: header = "" !             |header of file
-      integer :: eof = 0                !             |end of file
-      integer :: imax = 0               !             |determine max number for array (imax) and total number in file
-      integer :: mcal = 0               !             |
+      character (len=80) :: titldum       !             |title of file
+      character (len=80) :: header      !             |header of file
+      integer :: eof                    !             |end of file
+      integer :: imax                   !             |determine max number for array (imax) and total number in file
+      integer :: mcal                   !             |
       logical :: i_exist                !none         |check to determine if file exists
-      integer :: mreg = 0               !             |
-      integer :: i = 0                  !none         |counter
-      integer :: k = 0                  !             |
-      integer :: nspu = 0               !             | 
-      integer :: isp = 0                !             |
-      integer :: ielem1 = 0             !none         |counter
-      integer :: ihru = 0               !none         |counter
-      integer :: iaqu = 0               !none         |counter
-      integer :: ireg = 0               !none         |counter
+      integer :: mreg                   !             |
+      integer :: i                      !none         |counter
+      integer :: k                      !             |
+      integer :: nspu                   !             | 
+      integer :: isp                    !             |
+      integer :: ielem1                 !none         |counter
+      integer :: ihru                   !none         |counter
+      integer :: iaqu                   !none         |counter
+      integer :: ireg                   !none         |counter
                 
       mreg = 0
       imax = 0

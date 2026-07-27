@@ -66,19 +66,19 @@
       
       implicit none 
       
-      integer :: j = 0          !none               |HRU number
-      integer :: idp = 0        !                   |
-      real :: f = 0.            !none               |fraction of plant's maximum lai corresponding to a given fraction of phu (annual)
-      real :: f_p = 0.          !none               |fraction of plant's maximum lai corresponding to a given fraction of phu (perennial)
-      real :: ff = 0.           !                   |
-      real :: deltalai = 0.     !                   |
-      real :: laimax = 0.       !none               |maximum leaf area index
-      real :: lai_exp = 0.      !                   |
-      real :: rto_lin = 0.      !none               |ratio of current years of growth:years to maturity of perennial
-      real :: rto = 0.          !none               |ratio of current years of growth:years to maturity of perennial
-      real :: sumlaiht = 0.     !                   |
-      real :: exponent= 0.    !                   |
-      integer :: jpl = 0        !none               |counter
+      integer :: j              !none               |HRU number
+      integer :: idp            !                   |
+      real :: f                 !none               |fraction of plant's maximum lai corresponding to a given fraction of phu (annual)
+      real :: f_p               !none               |fraction of plant's maximum lai corresponding to a given fraction of phu (perennial)
+      real :: ff                !                   |
+      real :: deltalai          !                   |
+      real :: laimax            !none               |maximum leaf area index
+      real :: lai_exp           !                   |
+      real :: rto_lin           !none               |ratio of current years of growth:years to maturity of perennial
+      real :: rto               !none               |ratio of current years of growth:years to maturity of perennial
+      real :: sumlaiht          !                   |
+      real :: exponent        !                   |
+      integer :: jpl            !none               |counter
       
       j = ihru
       idp = pcom(j)%plcur(ipl)%idplt

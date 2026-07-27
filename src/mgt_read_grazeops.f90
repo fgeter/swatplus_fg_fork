@@ -7,14 +7,14 @@
       
       implicit none       
       
-      character (len=80) :: titldum = ""!           |title of file
-      character (len=80) :: header = "" !           |header of file
-      integer :: eof = 0              !           |end of file
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
+      character (len=80) :: titldum     !           |title of file
+      character (len=80) :: header      !           |header of file
+      integer :: eof                  !           |end of file
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: igrazop = 0          !none       |counter
-      integer :: mgrazops = 0         !           |
-      integer :: ifert = 0            !none       |counter
+      integer :: igrazop              !none       |counter
+      integer :: mgrazops             !           |
+      integer :: ifert                !none       |counter
 
       mgrazops = 0
       eof = 0

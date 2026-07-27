@@ -15,9 +15,9 @@
       real, parameter :: c3 = .00034             !              |
       real, parameter :: c4 = .019527            !              |
       real, intent (in) :: xx                    !              |
-      real :: x = 0.                             !none          |variable to hold intermediate 
+      real :: x                                  !none          |variable to hold intermediate 
                                                  !              |calculation result
-      real :: erf = 0.                           !              |
+      real :: erf                                !              |
       real :: hru_erfc                           !              |
 
       x = 0.

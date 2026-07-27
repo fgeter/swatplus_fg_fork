@@ -15,17 +15,17 @@
       implicit none 
       
       integer, intent (in)  :: isol     !none       |unused soil (hru) number
-      integer :: nly = 0
-      integer :: ly = 0
-      integer :: isolt = 0              !counter    |soil plant initialization file pointer
-      integer :: isol_pl = 0            !counter    |soil nutrient initialization pointer (nutrients.sol)
-      real :: wt1 = 0.                  !kg/ha      |weight of the soil layer
-      real :: dep_frac = 0.             !0-1        |fraction of surface concentration at depth
-      real :: frac_hum_active = 0.      !0-1        |fraction of humus in active pool - old SWAT
-      real :: actp = 0.
-      real :: solp = 0.
-      real :: ssp = 0.
-      real :: psp = 0.  
+      integer :: nly
+      integer :: ly
+      integer :: isolt                  !counter    |soil plant initialization file pointer
+      integer :: isol_pl                !counter    |soil nutrient initialization pointer (nutrients.sol)
+      real :: wt1                       !kg/ha      |weight of the soil layer
+      real :: dep_frac                  !0-1        |fraction of surface concentration at depth
+      real :: frac_hum_active           !0-1        |fraction of humus in active pool - old SWAT
+      real :: actp
+      real :: solp
+      real :: ssp
+      real :: psp
       real :: tot_mass                  !kg/ha      |total mass of the soil layer
       real :: mathers_stable_carbon_pct !pct        !The percent of carbon that is slow humas pool for the soil layer
       real :: mathers_stable_carbon_frac !frac      !The fraction of carbon that is slow humas pool for the soil layer

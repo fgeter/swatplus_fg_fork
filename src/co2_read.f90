@@ -8,17 +8,17 @@
        
        implicit none
        
-       character (len=80) :: titldum = "" !             |title of file
-       character (len=80) :: header = ""  !             |header
-       character (len=1) :: done = ""
-       integer :: eof = 0               !             |end of file
+       character (len=80) :: titldum      !             |title of file
+       character (len=80) :: header       !             |header
+       character (len=1) :: done
+       integer :: eof                   !             |end of file
        logical :: i_exist               !             |check to determine if file exists
-       integer:: iyr_start = 0
-       integer:: iyrc = 0
-       integer :: itot = 0
-       integer :: iyr = 0
-       integer :: iyr_co2 = 0
-       real :: co2_end = 0.
+       integer:: iyr_start
+       integer:: iyrc
+       integer :: itot
+       integer :: iyr
+       integer :: iyr_co2
+       real :: co2_end
               
       type co2
         integer :: iyr = 0

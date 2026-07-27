@@ -28,13 +28,13 @@
       
       
       external :: cli_lapse
-      integer :: j = 0             !none          |HRU number
-      real:: ul_excess = 0.        !              |
-      real :: rto = 0.             !              |
-      integer :: nn = 0            !none          |number of soil layers
-      integer :: ly = 0            !none          |counter
-      integer :: ly1 = 0           !none          |counter
-      integer :: ires = 0            !none          |counter
+      integer :: j                 !none          |HRU number
+      real:: ul_excess             !              |
+      real :: rto                  !              |
+      integer :: nn                !none          |number of soil layers
+      integer :: ly                !none          |counter
+      integer :: ly1               !none          |counter
+      integer :: ires                !none          |counter
 
       j = ihru
       ires =  hru(j)%dbs%surf_stor

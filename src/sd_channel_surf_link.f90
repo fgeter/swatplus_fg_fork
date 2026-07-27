@@ -8,11 +8,11 @@
       
       implicit none 
       
-      integer :: ics = 0              !none          |counter
-      character (len=3) :: iobtyp = ""  !none          |object type
-      integer :: ii = 0               !none          |counter 
-      integer :: iihru = 0            !none          |hru counter 
-      integer :: ihru_tot = 0         !none          |total number of hru in the flood plain   
+      integer :: ics                  !none          |counter
+      character (len=3) :: iobtyp       !none          |object type
+      integer :: ii                   !none          |counter 
+      integer :: iihru                !none          |hru counter 
+      integer :: ihru_tot             !none          |total number of hru in the flood plain   
 
       do ics = 1, sp_ob%chandeg
         if (sd_ch(ics)%fp%obj_tot > 0) then

@@ -17,8 +17,8 @@
       implicit none
  
       integer, intent (in) :: iob   !           |unused object number
-      integer :: j = 0              !           |hru number
-      integer :: lyr = 0            !           |tile soil layer
+      integer :: j                  !           |hru number
+      integer :: lyr                !           |tile soil layer
       real, intent (in)  :: tile_fr_surf    !m3     |overland tile flow
 
       !! suppress unused variable warning

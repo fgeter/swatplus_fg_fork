@@ -7,14 +7,14 @@
       
       integer, intent (in)  :: idr
       integer, intent (in)  :: iob
-      integer :: idr_pest = 0
-      integer :: ipest = 0
-      integer :: idr_path = 0
-      integer :: ipath = 0
-      integer :: idr_hmet = 0
-      integer :: ihmet = 0
-      integer :: idr_salt = 0
-      integer :: isalt = 0
+      integer :: idr_pest
+      integer :: ipest
+      integer :: idr_path
+      integer :: ipath
+      integer :: idr_hmet
+      integer :: ihmet
+      integer :: idr_salt
+      integer :: isalt
       
       idr_pest = dr_pest_num(idr)
       do ipest = 1, cs_db%num_pests

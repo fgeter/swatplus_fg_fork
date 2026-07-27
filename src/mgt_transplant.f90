@@ -10,11 +10,11 @@
       external :: pl_partition, pl_root_gro, pl_seed_gro
       
       integer, intent (in) :: itrans
-      integer :: j = 0               !none       |counter
-      integer :: icom = 0            !none       |plant community counter 
-      integer :: idp = 0             !none       |plant database number - plants.plt
-      real :: xx = 0.
-      real :: laimx_pop = 0.
+      integer :: j                   !none       |counter
+      integer :: icom                !none       |plant community counter 
+      integer :: idp                 !none       |plant database number - plants.plt
+      real :: xx
+      real :: laimx_pop
 
       j = ihru
       icom = hru(j)%plant_cov

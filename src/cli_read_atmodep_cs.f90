@@ -11,13 +11,13 @@
       
       implicit none
       
-      integer :: eof = 0              !           |end of file
-      integer :: iadep = 0            !           |counter
-      integer :: imo = 0              !           |counter
-      integer :: iyr = 0              !           |counter
+      integer :: eof                  !           |end of file
+      integer :: iadep                !           |counter
+      integer :: imo                  !           |counter
+      integer :: iyr                  !           |counter
       logical :: i_exist              !none       |check to determine if file exists
-      integer :: ics = 0              !           |constituent counter
-      real    :: station_name = 0.
+      integer :: ics                  !           |constituent counter
+      real    :: station_name
       
       eof = 0
 

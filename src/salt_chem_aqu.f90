@@ -33,30 +33,30 @@
       
       external :: activity_coefficient, CaCO3, CaSO4, cationexchange, Ionic_strength, MgCO3, MgSO4, NaCl
 
-      integer :: iaq = 0
-      integer :: m = 0
-      integer :: iter_count = 0
-      real :: ion1 = 0.
-      real :: ion2 = 0.
-      real :: ion3 = 0.
-      real :: ion4 = 0.
-      real :: ion5 = 0.
-      real :: ion6 = 0.
-      real :: ion7 = 0.
-      real :: ion8 = 0.
-      real :: hru_area_m2 = 0.
-      real :: gw_volume = 0.
-      real :: waterC = 0.
-      real :: Sol_CaCO3_p(1000) = 0.
-      real :: Sol_MgCO3_p(1000) = 0.
-      real :: Sol_CaSO4_p(1000) = 0.
-      real :: Sol_MgSO4_p(1000) = 0.
-      real :: Sol_NaCl_p(1000) = 0.
-      real :: I_Prep_in = 0.
-      real :: I_diff = 0.
-      real :: SkipedIEX = 0.
-      real :: mass_before = 0.
-      real :: mass_after = 0.
+      integer :: iaq
+      integer :: m
+      integer :: iter_count
+      real :: ion1
+      real :: ion2
+      real :: ion3
+      real :: ion4
+      real :: ion5
+      real :: ion6
+      real :: ion7
+      real :: ion8
+      real :: hru_area_m2
+      real :: gw_volume
+      real :: waterC
+      real :: Sol_CaCO3_p(1000)
+      real :: Sol_MgCO3_p(1000)
+      real :: Sol_CaSO4_p(1000)
+      real :: Sol_MgSO4_p(1000)
+      real :: Sol_NaCl_p(1000)
+      real :: I_Prep_in
+      real :: I_diff
+      real :: SkipedIEX
+      real :: mass_before
+      real :: mass_after
       double precision IonStr,IS_temp,K_ADJ1,K_ADJ2,K_ADJ3,K_ADJ4,K_ADJ5,error1ST,error2ND,error3RD,errorTotal
 
       SkipedIEX = 0.

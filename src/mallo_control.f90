@@ -14,13 +14,13 @@
       external :: actions, conditions, pl_fert
 
       integer, intent (in) :: imallo     !water allocation object number
-      integer :: itrn = 0                   !water demand object number
-      integer :: isrc = 0                   !source object number
-      integer :: j = 0                      !hru number
-      integer :: id = 0                     !decision table number
-      integer :: ifrt = 0                   !number in fertilizer.frt
-      integer :: ifertop = 0                !number in chem_app file
-      real :: frt_kg = 0.                   !m3     |demand
+      integer :: itrn                       !water demand object number
+      integer :: isrc                       !source object number
+      integer :: j                          !hru number
+      integer :: id                         !decision table number
+      integer :: ifrt                       !number in fertilizer.frt
+      integer :: ifertop                    !number in chem_app file
+      real :: frt_kg                        !m3     |demand
 
       isrc = 0
       frt_kg = 0.

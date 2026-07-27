@@ -20,20 +20,20 @@
 
       implicit none
       
-      integer :: i = 0
-      integer :: m = 0
-      integer :: ob_ctr = 0
-      integer :: num_days = 0
-      integer :: jj = 0
-      real :: saltsum = 0.
-      real :: hru_area_m2 = 0.
-      real :: soil_volume = 0.
-      real :: soil_mass = 0.
-      real :: aquifer_thickness = 0.
-      real :: aquifer_volume = 0.
-      real :: aquifer_mass = 0.
-      real :: soil_thick = 0.
-      real :: salt_basin(28) = 0.
+      integer :: i
+      integer :: m
+      integer :: ob_ctr
+      integer :: num_days
+      integer :: jj
+      real :: saltsum
+      real :: hru_area_m2
+      real :: soil_volume
+      real :: soil_mass
+      real :: aquifer_thickness
+      real :: aquifer_volume
+      real :: aquifer_mass
+      real :: soil_thick
+      real :: salt_basin(28)
   
       !basin-wide salt mass balance -------------------------------------------------------------------------------------------------------
       

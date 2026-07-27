@@ -7,21 +7,21 @@
       
       implicit none
       
-      character (len=80) :: titldum = ""
-      character (len=80) :: header = ""
-      integer :: eof = 0
-      integer :: icount = 0
-      integer :: igroup = 0
-      integer :: irct = 0
-      integer :: ishale = 0
-      integer :: group = 0
-      integer :: hru_dum = 0
-      integer :: aqu_dum = 0
+      character (len=80) :: titldum
+      character (len=80) :: header
+      integer :: eof
+      integer :: icount
+      integer :: igroup
+      integer :: irct
+      integer :: ishale
+      integer :: group
+      integer :: hru_dum
+      integer :: aqu_dum
       logical :: i_exist              !none          |check to determine if file exists
 
-      integer :: num_rct = 0          !              |number of reaction parameters
-      integer :: num_groups = 0       !              |number of reaction groups
-      real    :: shale_fractions(500) = 0.!              |fraction of shale that covers an area's object
+      integer :: num_rct              !              |number of reaction parameters
+      integer :: num_groups           !              |number of reaction groups
+      real    :: shale_fractions(500)     !              |fraction of shale that covers an area's object
       
       
       eof = 0

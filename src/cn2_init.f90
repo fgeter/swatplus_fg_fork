@@ -10,9 +10,9 @@
       external :: curno
   
       integer, intent (in)  :: j
-      integer :: icn = 0             !none       |counter 
-      integer :: isol = 0            !none       |counter 
-      integer :: ilum = 0            !none       |counter 
+      integer :: icn                 !none       |counter 
+      integer :: isol                !none       |counter 
+      integer :: ilum                !none       |counter 
       
       !!assign cn2
         ilum = hru(j)%land_use_mgt

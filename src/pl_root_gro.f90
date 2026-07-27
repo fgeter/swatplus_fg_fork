@@ -11,9 +11,9 @@
       implicit none 
       
       integer, intent (in) :: j     !none               |HRU number
-      integer :: idp = 0            !                   |
-      real :: rto = 0.              !none               |ratio of current years of growth:years to maturity of perennial
-      real :: phumax = 0.
+      integer :: idp                !                   |
+      real :: rto                   !none               |ratio of current years of growth:years to maturity of perennial
+      real :: phumax
              
       idp = pcom(j)%plcur(ipl)%idplt
 

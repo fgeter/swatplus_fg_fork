@@ -16,8 +16,8 @@
       
       implicit none
 
-      integer :: imax = 0             !none       |determine max number for array (imax) and total number in file
-      integer :: ii = 0               !none       |hru counter
+      integer :: imax                 !none       |determine max number for array (imax) and total number in file
+      integer :: ii                   !none       |hru counter
 
       imax = sp_ob%hru
       if (imax == 0) then

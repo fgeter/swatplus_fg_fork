@@ -15,12 +15,12 @@
       
       external :: pl_rootfr
    
-      integer :: j = 0                 !none           |HRU number
-      integer :: k = 0                 !none           |counter
+      integer :: j                     !none           |HRU number
+      integer :: k                     !none           |counter
       integer :: npl                   !none           |counter
       integer, intent (in) :: jj       !none           |counter
       integer, intent (in) :: iplant   !               |plant number xwalked from hlt_db()%plant and plants.plt
-      integer :: ly = 0                !none           |soil layer
+      integer :: ly                    !none           |soil layer
 
       j = jj
       ipl = iplant

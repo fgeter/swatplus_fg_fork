@@ -7,7 +7,7 @@
       
       implicit none
       integer, intent (in) :: ichan         !             |
-      integer :: iob = 0                    !             |
+      integer :: iob                        !             |
        
       iob = sp_ob1%chandeg + ichan - 1
 

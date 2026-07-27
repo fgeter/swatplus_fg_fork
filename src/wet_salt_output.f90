@@ -13,10 +13,10 @@
       
       implicit none
       
-      integer :: isalt = 0
+      integer :: isalt
       integer :: j
-      integer :: iob = 0
-      real :: const = 0.
+      integer :: iob
+      real :: const
                          
 !!    ~ ~ ~ PURPOSE ~ ~ ~
 !!    this subroutine outputs salt ion mass in wetlands (by HRU)
