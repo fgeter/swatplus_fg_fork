@@ -28,14 +28,14 @@
       
       implicit none 
 
-      integer :: j = 0       !none          |HRU number
-      integer :: jj = 0      !none          |counter
-      real :: xx = 0.        !none          |variable to hold intermediate calculation
+      integer :: j           !none          |HRU number
+      integer :: jj          !none          |counter
+      real :: xx             !none          |variable to hold intermediate calculation
                              !              |result
-      real :: vap = 0.       !kg P/ha       |exponential coefficient for P leached and tile flow
-      real :: plch = 0.      !kg P/ha       |amount of P leached from soil layer
+      real :: vap            !kg P/ha       |exponential coefficient for P leached and tile flow
+      real :: plch           !kg P/ha       |amount of P leached from soil layer
       
-      integer :: ly = 0      !none       
+      integer :: ly          !none       
       ! integer :: yrc
       ! integer :: mo
       ! integer :: day_mo
@@ -91,7 +91,7 @@
          endif
          !! tile p
          if (ly == hru(j)%lumv%ldrain) then
-           vap = -qtile / (.01 * soil(j)%phys(ly)%st + .1 * hru(j)%nut%pperco *  soil(j)%phys(ly)%bd)
+           vap = -qtile(j) / (.01 * soil(j)%phys(ly)%st + .1 * hru(j)%nut%pperco *  soil(j)%phys(ly)%bd)
            plch = .001 * soil1(j)%mp(ly)%lab * (1. - exp_w(vap))
            plch = Min(plch, soil1(j)%mp(ly)%lab)
            soil1(j)%mp(ly)%lab = soil1(j)%mp(ly)%lab - plch

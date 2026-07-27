@@ -10,10 +10,10 @@
       
       implicit none
         
-      real :: cej = 0.  !none           |constant
-      real :: eaj = 0.  !none           |soil cover index      
-      integer :: j = 0  ! none          |HRU number
-      real :: cover = 0.  !kg/ha          |soil cover
+      real :: cej       !none           |constant
+      real :: eaj       !none           |soil cover index      
+      integer :: j      ! none          |HRU number
+      real :: cover       !kg/ha          |soil cover
       
       j = ihru
 
@@ -24,13 +24,13 @@
 
       if (hru(j)%sno_mm <= .5) then
         !! equation 2.2.14 in SWAT manual
-        albday = soil(j)%ly(1)%alb
+        albday(j) = soil(j)%ly(1)%alb
 
         !! equation 2.2.15 in SWAT manual
-        if (pcom(j)%lai_sum > 0.) albday = .23 * (1. - eaj) + soil(j)%ly(1)%alb * eaj
+        if (pcom(j)%lai_sum > 0.) albday(j) = .23 * (1. - eaj) + soil(j)%ly(1)%alb * eaj
       else
         !! equation 2.2.13 in SWAT manual
-        albday = 0.8
+        albday(j) = 0.8
       end if
 
       return

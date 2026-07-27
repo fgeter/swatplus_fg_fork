@@ -46,16 +46,16 @@
       real, intent (in) :: biomix_eff    !               | 
       real :: fcgd                     !                     |
       real :: bmix                     !                     |
-      integer :: l = 0                 !none           |counter
-      integer :: kk = 0                !               |
-      integer :: npmx = 0              !               |
-      integer :: lyr_exit = 0
-      real :: avg_emix = 0.             !none           |weighted averagte mixing efficiency
-      real :: emix = 0.                !none           |mixing efficiency
-      real :: emix_sum = 0.            !none           |sum used in computing weighted average mixing efficiency
-      real :: dtil = 0.                !mm             |depth of mixing
-      real :: frac_mixed = 0.          !               |
-      real :: frac_non_mixed = 0.      !               |
+      integer :: l                     !none           |counter
+      integer :: kk                    !               |
+      integer :: npmx                  !               |
+      integer :: lyr_exit
+      real :: avg_emix                  !none           |weighted averagte mixing efficiency
+      real :: emix                     !none           |mixing efficiency
+      real :: emix_sum                 !none           |sum used in computing weighted average mixing efficiency
+      real :: dtil                     !mm             |depth of mixing
+      real :: frac_mixed               !               |
+      real :: frac_non_mixed           !               |
       real, dimension(:), allocatable :: sol_mass    !              |mass of the soil layer
       real, dimension(:), allocatable :: sol_msm     !              |sol_mass mixed
       real, dimension(:), allocatable :: sol_msn     !              |sol_mass not mixed 

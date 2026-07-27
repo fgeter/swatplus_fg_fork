@@ -100,7 +100,12 @@
         real, dimension(:), allocatable :: ts_next          !! mm           |subdaily precip - next day
       end type weather_daily
       type (weather_daily) :: w
-            
+      !! OpenMP: per-HRU weather scratch (w = wst(iwst)%weat at the top of hru_control). The
+      !! type has allocatable components (ts/ts_next), so a shared w races on their dealloc/
+      !! realloc -> heap corruption. threadprivate gives each thread its own; the intrinsic
+      !! assignment auto-allocates the components per-thread, written before read each HRU.
+      !$omp threadprivate(w)
+      
       type weather_codes_station
         integer :: wgn = 1        !!  weather generator station number
         integer :: pgage = 0      !!  gage number for rainfall (sim if generating)

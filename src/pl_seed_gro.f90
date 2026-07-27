@@ -16,14 +16,14 @@
       
       external :: aunif
       integer, intent (in) :: j     !none               |HRU number
-      integer :: idp = 0            !                   |
-      real :: ajhi = 0.             !
-      real :: ajhi_min = 0.         !
-      real :: dhi = 0.              !
-      real :: temp_dif = 0.         !
-      real :: temp_adj = 0.         !
-      real :: etr = 0.              !%          |plant uptake/PET 
-      integer :: xyz = 0
+      integer :: idp                !                   |
+      real :: ajhi                  !
+      real :: ajhi_min              !
+      real :: dhi                   !
+      real :: temp_dif              !
+      real :: temp_adj              !
+      real :: etr                   !%          |plant uptake/PET 
+      integer :: xyz
       
       idp = pcom(j)%plcur(ipl)%idplt
       iwst = ob(j)%wst
@@ -33,8 +33,8 @@
             
       !! calculate plant ET values when heat units exceed 0.5
       if (pcom(j)%plcur(ipl)%phuacc > 0.5) then  ! .and. pcom(j)%plcur(ipl)%phuacc < pldb(idp)%dlai) then 
-        pcom(j)%plg(ipl)%plet = pcom(j)%plg(ipl)%plet + ep_day !+ es_day
-        pcom(j)%plg(ipl)%plpet = pcom(j)%plg(ipl)%plpet + pet_day
+        pcom(j)%plg(ipl)%plet = pcom(j)%plg(ipl)%plet + ep_day(j) !+ es_day
+        pcom(j)%plg(ipl)%plpet = pcom(j)%plg(ipl)%plpet + pet_day(j)
       
         !! adjust harvest index for water stress
         if (pcom(j)%plg(ipl)%plpet > 1.e-6) then

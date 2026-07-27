@@ -11,26 +11,26 @@
       
       implicit none 
 
-      integer :: j = 0     !none        |HRU number
-      integer :: l = 0     !none        |number of soil layer that manure applied
-      integer :: it = 0    !none        |manure/fertilizer id from fertilizer.frt
-      real :: xx = 0.      !none        |variable to hold intermediate calculation result
-      real :: dmi = 0.     !kg/ha       |biomass in HRU prior to grazing and trampling
-      real :: zz = 0.      !none        |variable to hold intermediate calculation
+      integer :: j         !none        |HRU number
+      integer :: l         !none        |number of soil layer that manure applied
+      integer :: it        !none        |manure/fertilizer id from fertilizer.frt
+      real :: xx           !none        |variable to hold intermediate calculation result
+      real :: dmi          !kg/ha       |biomass in HRU prior to grazing and trampling
+      real :: zz           !none        |variable to hold intermediate calculation
                            !            |result
-      real :: yz = 0.
-      real :: yy = 0.      !none        |variable to hold intermediate calculation
+      real :: yz
+      real :: yy           !none        |variable to hold intermediate calculation
                            !            |result
-      real :: xz = 0.      !            |the amount of organic carbon allocated to structural litter C pool  
-      real :: x8 = 0.      !            |organic carbon applied (kg C/ha)   
-      real :: x10 = 0.     !frac        |the fraction of carbon in fertilizer that is allocated to metabolic litter C pool
-      real :: x1 = 0.      !            |fertlizer applied to layer (kg/ha)
-      real :: rln = 0.     !            | 
-      real :: orgc_f = 0.  !frac        |fraction of organic carbon in fertilizer
-      integer :: ipl = 0   !none        |counter
-      real :: manure_kg = 0.
-      real :: eat_plant = 0.  !frac       |fraction of above ground biomass of each plant eaten
-      real :: tramp_plant = 0.!frac       |fraction of above ground biomass of each plant trampled
+      real :: xz           !            |the amount of organic carbon allocated to structural litter C pool  
+      real :: x8           !            |organic carbon applied (kg C/ha)   
+      real :: x10          !frac        |the fraction of carbon in fertilizer that is allocated to metabolic litter C pool
+      real :: x1           !            |fertlizer applied to layer (kg/ha)
+      real :: rln          !            | 
+      real :: orgc_f       !frac        |fraction of organic carbon in fertilizer
+      integer :: ipl       !none        |counter
+      real :: manure_kg
+      real :: eat_plant       !frac       |fraction of above ground biomass of each plant eaten
+      real :: tramp_plant     !frac       |fraction of above ground biomass of each plant trampled
 
       j = ihru
 
@@ -91,8 +91,8 @@
         if (manure_kg > 0. .and. it > 0) then
           call pl_manure (it, manure_kg, 1.0)
           !! grazing manure N and P for the grazn/grazp landscape output
-          grazn = manure_kg * (manure_om(it)%forgn + manure_om(it)%fminn)
-          grazp = manure_kg * (manure_om(it)%forgp + manure_om(it)%fminp)
+          grazn(j) = manure_kg * (manure_om(it)%forgn + manure_om(it)%fminn)
+          grazp(j) = manure_kg * (manure_om(it)%forgp + manure_om(it)%fminp)
         end if
 
       return

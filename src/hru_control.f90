@@ -53,48 +53,48 @@
                   sq_crackvol, mgt_operatn, mgt_newtillmix, sep_biozone, pest_washp, pest_pesty, smp_buffer, &
                   cbn_surfrsd_decomp, cbn_rsd_transfer, mgt_biomix
 
-      integer :: j = 0              !none          |same as ihru (hru number)
-      integer :: j1 = 0             !none          |counter (rtb)
-      integer :: ulu = 0            !              | 
-      integer :: iob = 0            !              |
-      integer :: ith = 0            !              |
-      integer :: iwgn = 0           !              |
-      integer :: ires = 0           !none          |reservoir number
-      integer :: isched = 0         !              |
-      integer :: isalt = 0          !              |salt ion counter (rtb salt)
-      integer :: ics = 0            !              |constituent counter (rtb cs)
-      integer :: iauto = 0          !none          |counter
-      integer :: id = 0             !              |
-      integer :: jj = 0             !              |
-      integer :: ly = 0             !none          |soil layer
-      integer :: ipest = 0          !none          |sequential pesticide number
-      real :: strsa_av = 0.         !              |
-      integer :: icn = 0            !              |
-      real :: xx = 0.               !              |
-      integer :: iob_out = 0        !              |object type out 
-      integer :: iout = 0           !none          |counter
-      integer :: iac = 0
-      integer :: npl_gro = 0        !              |number of plants currently growing
-      real :: dep = 0.              !              |
-      real :: strsw_av = 0.
-      real :: strsn_av = 0.
-      real :: strsp_av = 0.
-      real :: strss_av = 0.         !none (rtb salt)
-      real :: strstmp_av = 0.
-      real :: wet_outflow = 0.      !mm             |outflow from wetland
-      real  :: tile_fr_surf = 0.    !m3             |fraction of tile flow that is overland
-      integer :: ifrt = 0
-      integer :: idp = 0
+      integer :: j                  !none          |same as ihru (hru number)
+      integer :: j1                 !none          |counter (rtb)
+      integer :: ulu                !              | 
+      integer :: iob                !              |
+      integer :: ith                !              |
+      integer :: iwgn               !              |
+      integer :: ires               !none          |reservoir number
+      integer :: isched             !              |
+      integer :: isalt              !              |salt ion counter (rtb salt)
+      integer :: ics                !              |constituent counter (rtb cs)
+      integer :: iauto              !none          |counter
+      integer :: id                 !              |
+      integer :: jj                 !              |
+      integer :: ly                 !none          |soil layer
+      integer :: ipest              !none          |sequential pesticide number
+      real :: strsa_av              !              |
+      integer :: icn                !              |
+      real :: xx                    !              |
+      integer :: iob_out            !              |object type out 
+      integer :: iout               !none          |counter
+      integer :: iac
+      integer :: npl_gro            !              |number of plants currently growing
+      real :: dep                   !              |
+      real :: strsw_av
+      real :: strsn_av
+      real :: strsp_av
+      real :: strss_av              !none (rtb salt)
+      real :: strstmp_av
+      real :: wet_outflow           !mm             |outflow from wetland
+      real  :: tile_fr_surf         !m3             |fraction of tile flow that is overland
+      integer :: ifrt
+      integer :: idp
       integer :: hru_rcv
       real :: rto
-      real :: sw_volume_begin = 0.
-      real :: soil_prof_labp = 0.
-      real :: sum_conc = 0.              !rtb salt
-      real :: sum_mass = 0.              !rtb salt
-      real :: sum_sorb = 0.              !rtb salt
-      real :: saltcon = 0.       !Jeong 2024
-      real :: qsurf = 0.         !Jeong 2024
-      real :: sedppm = 0.        !Jeong 2024
+      real :: sw_volume_begin
+      real :: soil_prof_labp
+      real :: sum_conc                   !rtb salt
+      real :: sum_mass                   !rtb salt
+      real :: sum_sorb                   !rtb salt
+      real :: saltcon            !Jeong 2024
+      real :: qsurf              !Jeong 2024
+      real :: sedppm             !Jeong 2024
       
       j = ihru
       
@@ -115,7 +115,7 @@
       ulu = hru(j)%luse%urb_lu
       iob = hru(j)%obj_no
       iwst = ob(iob)%wst
-      iwgen = wst(iwst)%wco%wgn
+      iwgen(j) = wst(iwst)%wco%wgn
       ith = hru(j)%dbs%topo
       iwgn = wst(iwst)%wco%wgn
       ires =  hru(j)%dbs%surf_stor
@@ -181,9 +181,13 @@
             id = sched(isched)%num_db(iauto)
             jj = j
             d_tbl => dtbl_lum(id)
+            !! decision-table eval writes shared dtbl_lum state (act_hit + cumulative
+            !! probabilistic/area counters); serialize so parallel HRUs don't race on it
+            !$omp critical (dtbl_eval)
             call conditions (jj, iauto)
             call actions (jj, iob, iauto)
-            
+            !$omp end critical (dtbl_eval)
+
             !! check day of future fertilizer application
             if (pcom(ihru)%fert_fut_num > 0) then
               do ifrt = 1, pcom(ihru)%fert_fut_num
@@ -335,12 +339,12 @@
         !! compute effective rainfall (amount that percs into soil)
         if (ires > 0) then
           !! for wetland use seepage into soil from ponded water
-          inflpcp = hru(j)%water_seep
+          inflpcp(j) = hru(j)%water_seep
         else
           !! no wetland (no ponded water)
-          inflpcp = precip_eff - surfq(j)
+          inflpcp(j) = precip_eff - surfq(j)
         end if
-        inflpcp = Max(0., inflpcp)
+        inflpcp(j) = Max(0., inflpcp(j))
          
         !! add irrigation to subdaily effective precip
         if (time%step > 1) then
@@ -496,12 +500,12 @@
         end do
         
         !! compute actual ET for day in HRU
-        etday = ep_day + es_day + canev
-        es_day = es_day
+        etday(j) = ep_day(j) + es_day(j) + canev(j)
+        es_day(j) = es_day(j)
 
         !rtb gwflow
         if(bsn_cc%gwflow.eq.1) then
-          etremain(j) = pet_day - etday
+          etremain(j) = pet_day(j) - etday(j)
         endif
  
         !! compute pesticide washoff   
@@ -519,7 +523,7 @@
         !! sum total pesticide in soil
         call pest_soil_tot
         
-        if (surfq(j) > 0. .and. qp_cms > 1.e-6) then
+        if (surfq(j) > 0. .and. qp_cms(j) > 1.e-6) then
           if (precip_eff > 0.) then
             call pest_enrsb
             if (sedyld(j) > 0.) call pest_pesty
@@ -551,7 +555,7 @@
           if (wet_dat_c(ires)%hyd.eq.'paddy') then !.and.time%yrs > pco%nyskip) then
             if (wet_ob(j)%depth > -0.1) then
            write(100100,'(4(I6,","),20(f20.1,","))') time%yrc,time%mo,time%day_mo,j,w%precip,irrig(j)%applied,hru(j)%water_seep,     &
-            pet_day,etday,wet_ob(j)%weir_hgt*1000,wet_ob(j)%depth*1000.,ht2%flo/(hru(j)%area_ha*10.),soil(j)%sw,sedppm,ht2%sed*1000, &
+            pet_day(j),etday(j),wet_ob(j)%weir_hgt*1000,wet_ob(j)%depth*1000.,ht2%flo/(hru(j)%area_ha*10.),soil(j)%sw,sedppm,ht2%sed*1000, &
             wet(j)%no3,ht2%no3,pcom(j)%lai_sum,saltcon 
             end if
           end if
@@ -621,7 +625,7 @@
         !! ht2%flo is outflow from wetland or total saturation excess if no wetland
         if(ht2%flo > 0.) then
           wet_outflow = ht2%flo / hru(j)%area_ha / 10.   !! mm = m3/ha *ha/10000m2 *1000mm/m
-          qday = qday + wet_outflow
+          qday(j) = qday(j) + wet_outflow
           qdr(j) = qdr(j) + wet_outflow
           ht2%flo = 0.
         end if
@@ -634,22 +638,24 @@
           !! use decision table
           id = hru(j)%sb%dtbl
           d_tbl => dtbl_flo(id)
+          !$omp critical (dtbl_eval)
           call conditions (j, id)
           call actions (j, iob, id)
+          !$omp end critical (dtbl_eval)
           
           !! set amount of tile flow to send to buffer hru
           hru_rcv = hru(j)%sb%sb_db%hru_rcv
           !! convert to mm of the receiving hru and adjust for fraction of incoming hru
           rto =  hru(hru_rcv)%area_ha / hru(j)%area_ha
           hru(hru_rcv)%sb%inflo = rto * hru(j)%sb%sb_db%frac_src * hru(hru_rcv)%sb%inflo 
-          qtile = (1. - hru(j)%sb%sb_db%frac_src) * hru(hru_rcv)%sb%inflo 
+          qtile(j) = (1. - hru(j)%sb%sb_db%frac_src) * hru(hru_rcv)%sb%inflo 
           hru(hru_rcv)%sb%no3 = hru(j)%sb%sb_db%frac_src * tileno3(j) 
           tileno3(j) = (1. - hru(j)%sb%sb_db%frac_src) * tileno3(j)
         end if
         !qday =  surfq(j)
 
         !! compute water yield for HRU
-        qdr(j) = qday + latq(j) + qtile
+        qdr(j) = qday(j) + latq(j) + qtile(j)
 
         if (qdr(j) < 0.) qdr(j) = 0.
 
@@ -726,9 +732,9 @@
 
       ! output_waterbal
         hwb_d(j)%precip = w%precip
-        hwb_d(j)%snofall = snofall
-        hwb_d(j)%snomlt = snomlt
-        hwb_d(j)%surq_gen = qday
+        hwb_d(j)%snofall = snofall(j)
+        hwb_d(j)%snomlt = snomlt(j)
+        hwb_d(j)%surq_gen = qday(j)
         hwb_d(j)%latq = latq(j)
         hwb_d(j)%wateryld = qdr(j)
         hwb_d(j)%perc = sepbtm(j)
@@ -736,10 +742,10 @@
           gwflow_perc(j) = sepbtm(j)
         end if
         !! add evap from impounded water (wetland) to et and esoil
-        hwb_d(j)%et = etday + hru(j)%water_evap
-        hwb_d(j)%ecanopy = canev
-        hwb_d(j)%eplant = ep_day
-        hwb_d(j)%esoil = es_day + hru(j)%water_evap 
+        hwb_d(j)%et = etday(j) + hru(j)%water_evap
+        hwb_d(j)%ecanopy = canev(j)
+        hwb_d(j)%eplant = ep_day(j)
+        hwb_d(j)%esoil = es_day(j) + hru(j)%water_evap 
         hwb_d(j)%wet_evap = hru(j)%water_evap 
         hwb_d(j)%wet_out = wet_outflow
         hwb_d(j)%wet_stor = wet(j)%flo / (10. * hru(j)%area_ha)
@@ -752,13 +758,13 @@
         hwb_d(j)%sw_final = soil(j)%sw
         hwb_d(j)%sw_300 = soil(j)%sw_300
         hwb_d(j)%snopack = hru(j)%sno_mm
-        hwb_d(j)%pet = pet_day
-        hwb_d(j)%qtile = qtile
+        hwb_d(j)%pet = pet_day(j)
+        hwb_d(j)%qtile = qtile(j)
         hwb_d(j)%irr = irrig(j)%applied
         irrig(j)%applied = 0.
         irrig(j)%runoff = 0.
-        hwb_d(j)%surq_runon = ls_overq
-        hwb_d(j)%latq_runon = latqrunon 
+        hwb_d(j)%surq_runon = ls_overq(j)
+        hwb_d(j)%latq_runon = latqrunon(j) 
         hwb_d(j)%overbank = hru(j)%wet_obank_in
         hru(j)%wet_obank_in = 0.
 
@@ -773,11 +779,11 @@
         
 
       ! output_nutbal
-        hnb_d(j)%grazn = grazn
-        hnb_d(j)%grazp = grazp
-        hnb_d(j)%fertn = fertn
-        hnb_d(j)%fertp = fertp
-        hnb_d(j)%fixn = fixn
+        hnb_d(j)%grazn = grazn(j)
+        hnb_d(j)%grazp = grazp(j)
+        hnb_d(j)%fertn = fertn(j)
+        hnb_d(j)%fertp = fertp(j)
+        hnb_d(j)%fixn = fixn(j)
         hnb_d(j)%gwsoiln = gwsoiln(j) !rtb gwflow
         hnb_d(j)%gwsoilp = gwsoilp(j) !rtb gwflow
 
@@ -868,7 +874,8 @@
       ! output_losses
         !! don't sum during skip years
         if (time%yrs > pco%nyskip) then
-          bsn_sedbud%upland_t = bsn_sedbud%upland_t + sedyld(j)
+          !$omp atomic update
+          bsn_sedbud%upland_t = bsn_sedbud%upland_t + sedyld(j)   !! basin reduction across HRUs
         end if
         hls_d(j)%sedyld = sedyld(j) / hru(j)%area_ha
         hls_d(j)%sedorgn = sedorgn(j)
@@ -876,7 +883,7 @@
         hls_d(j)%surqno3 = surqno3(j)
         hls_d(j)%latno3 = latno3(j)
         hls_d(j)%surqsolp = surqsolp(j)
-        hls_d(j)%usle = usle
+        hls_d(j)%usle = usle(j)
         hls_d(j)%sedminp = sedminpa(j) + sedminps(j)
         hls_d(j)%tileno3 = tileno3(j)
 

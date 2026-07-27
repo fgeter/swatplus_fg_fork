@@ -31,15 +31,15 @@
       
       
       external :: layersplit
-      integer :: j = 0          !none          |HRU number
-      integer :: ly = 0         !none          |counter (soil layer)
+      integer :: j              !none          |HRU number
+      integer :: ly             !none          |counter (soil layer)
       real :: crklch = 0.5      !none          | 
-      real :: xx = 0.           !mm H2O        |water deficiency in soil layer
-      real :: crk = 0.          !mm H2O        |percolation due to crack flow
+      real :: xx                !mm H2O        |water deficiency in soil layer
+      real :: crk               !mm H2O        |percolation due to crack flow
 
       j = ihru
 
-      sepcrk = Min(voltot, inflpcp)
+      sepcrk = Min(voltot(j), inflpcp(j))
       sepcrktot = sepcrk
       if (sepcrk > 1.e-4) then
         do ly = soil(j)%nly, 1, -1
@@ -47,7 +47,7 @@
           xx = 0.
           if (ly == soil(j)%nly) then
           crk = crklch*(soil(j)%ly(ly)%volcr/(soil(j)%phys(ly)%d -          &
-                soil(j)%phys(ly-1)%d) * voltot - volcrmin)
+                soil(j)%phys(ly-1)%d) * voltot(j) - volcrmin)
             if (crk < sepcrk) then
               sepcrk = sepcrk - crk
               sepbtm(j) = sepbtm(j) + crk

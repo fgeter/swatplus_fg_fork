@@ -5,7 +5,7 @@
       integer :: isep = 0            !          |
       integer :: ilu = 0             !          | 
       integer :: ulu = 0             !          |
-      integer :: iwgen = 0           !          |
+      integer, dimension(:), allocatable :: iwgen   !          |per-HRU weather-generator index
       character (len=1) :: timest = "" !          |
      
       type uptake_parameters
@@ -274,7 +274,7 @@
       
       real :: precip_eff = 0.   !! mm   |daily effective precip for runoff calculations = precipday + ls_overq + snomlt - canstor
                                 !!      |precip_eff = precipday + ls_overq - snofall + snomlt - canstor
-      real :: qday = 0.         !! mm   |surface runoff that reaches main channel during day in HRU
+      real, dimension(:), allocatable :: qday
       real :: satexq_chan = 0.  !! mm   |saturation excess runoff that reaches main channel during day in HRU
 
 
@@ -292,32 +292,31 @@
       real :: uapd_tot = 0.
       real :: sum_no3 = 0.
       real :: sum_solp = 0.
-      real, dimension (:), allocatable :: epmax
+      real :: epmax(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
       real, dimension (:), allocatable :: cvm_com
-      real, dimension (:), allocatable :: translt
-      real, dimension (:), allocatable :: uno3d
-      real, dimension (:), allocatable :: uapd
-      real, dimension (:), allocatable :: par
-      real, dimension (:), allocatable :: htfac
-      real, dimension (:), allocatable :: un2
-      real, dimension (:), allocatable :: up2
+      real :: uno3d(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
+      real :: uapd(20)    !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
+      real :: par(20)     !! per-HRU plant PAR scratch, fixed-size(mpc=20) for threadprivate
+      real :: htfac(20)   !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
+      real :: un2(20)     !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
+      real :: up2(20)     !! per-HRU plant scratch, fixed-size(mpc=20) for threadprivate
       integer, dimension (:), allocatable :: iseptic
      
 !! septic variables for output.std
-      real :: qp_cms = 0.
-      real :: sw_excess = 0.
-      real :: albday = 0.
+      real, dimension(:), allocatable :: qp_cms
+      real, dimension(:), allocatable :: sw_excess
+      real, dimension(:), allocatable :: albday
       real :: wt_shall = 0.
       real :: sq_rto = 0.
-      real :: snomlt = 0.
-      real :: snofall = 0.
-      real :: fixn = 0.
-      real :: qtile = 0.
+      real, dimension(:), allocatable :: snomlt
+      real, dimension(:), allocatable :: snofall
+      real, dimension(:), allocatable :: fixn
+      real, dimension(:), allocatable :: qtile
       real :: latlyr = 0.            !!mm            |lateral flow in soil layer for the day
-      real :: inflpcp = 0.           !!mm            |amount of precipitation that infiltrates
-      real :: fertn = 0.
-      real :: sepday = 0.
-      real :: bioday = 0.
+      real, dimension(:), allocatable :: inflpcp
+      real, dimension(:), allocatable :: fertn
+      real, dimension(:), allocatable :: sepday
+      real, dimension(:), allocatable :: bioday
       real :: sepcrk = 0.
       real :: sepcrktot = 0.
       real :: fertno3 = 0.
@@ -325,34 +324,35 @@
       real :: fertorgn = 0.
       real :: fertsolp = 0.
       real :: fertorgp = 0.
-      real :: fertp = 0.
-      real :: grazn = 0.
-      real :: grazp = 0.
+      real, dimension(:), allocatable :: fertp
+      real, dimension(:), allocatable :: grazn
+      real, dimension(:), allocatable :: grazp
       real :: sdti = 0.
-      real :: voltot = 0.            !!mm            |total volume of cracks expressed as depth per area unit
+      real, dimension(:), allocatable :: voltot
       real :: volcrmin = 0.          !!mm            |minimum crack volume allowed in any soil layer
-      real :: canev = 0.
-      real :: usle = 0.
+      real, dimension(:), allocatable :: canev
+      real, dimension(:), allocatable :: usle
       real :: rcn = 0.
       real :: enratio = 0.
-      real :: vpd = 0.
-      real :: pet_day = 0.
-      real :: ep_day = 0.
-      real :: snoev = 0.
-      real :: es_day = 0.
-      real :: ls_overq = 0.
-      real :: latqrunon = 0.
+      real, dimension(:), allocatable :: vpd
+      real, dimension(:), allocatable :: pet_day
+      real, dimension(:), allocatable :: ep_day
+      real, dimension(:), allocatable :: snoev
+      real, dimension(:), allocatable :: es_day
+      real, dimension(:), allocatable :: ls_overq
+      real, dimension(:), allocatable :: latqrunon
       real :: tilerunon = 0.
-      real :: ep_max = 0.
-      real :: bsprev = 0.
-      real :: usle_ei = 0.
+      real, dimension(:), allocatable :: ep_max
+      real, dimension(:), allocatable :: bsprev
+      real, dimension(:), allocatable :: usle_ei
       real :: snocov1 = 0.
       real :: snocov2 = 0.
-      real :: lyrtile = 0.
+      real, dimension(:), allocatable :: lyrtile
 
-      real :: etday = 0.
+      real, dimension(:), allocatable :: etday
       integer :: mo = 0
       integer :: ihru = 0         !!none          |HRU number
+      !$omp threadprivate(ihru)
       integer :: nd_30 = 0
       integer :: mpst = 0
       integer :: mlyr = 0
@@ -387,7 +387,7 @@
       integer, dimension (:), allocatable :: itb
       
 !!!!!! drains
-      real, dimension (:), allocatable :: wnan
+      !! wnan moved to a swr_drains local (per-HRU layer scratch) for OpenMP
 
       real, dimension (:), allocatable :: phusw
       integer, dimension (:), allocatable :: yr_skip
@@ -511,5 +511,19 @@
       real, dimension(:), allocatable :: tillage_depth
       integer, dimension(:), allocatable :: tillage_days
       real, dimension(:), allocatable :: tillage_factor
+
+      !! OpenMP: per-HRU transient scratch + the HRU index made thread-private for the
+      !! multi-threading effort. These are written-before-read within a single hru_control
+      !! call (not setup config), so threadprivate needs no holder-seeding. Inert without
+      !! -fopenmp and at 1 thread.
+      !$omp threadprivate(ipl, isep, ulu)
+      !$omp threadprivate(precip_eff)
+      !$omp threadprivate(nd_30, satexq_chan)
+      !$omp threadprivate(latlyr)
+      !$omp threadprivate(wt_shall, fertnh3, fertno3, fertorgn, fertorgp)
+      !$omp threadprivate(fertsolp, enratio, sdti)
+      !$omp threadprivate(par)
+      !$omp threadprivate(uno3d, uapd, un2, up2, htfac, epmax)
+      !$omp threadprivate(rto_no3, rto_solp, uno3d_tot, uapd_tot, sum_no3, sum_solp)
 
       end module hru_module

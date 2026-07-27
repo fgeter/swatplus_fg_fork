@@ -26,23 +26,23 @@
                                           !              |organic N & P concentration of septic effluent
                                           !              |between the fresh organic and the stable 
                                           !              |organic pools
-      integer :: j = 0                    !none          |counter
+      integer :: j                        !none          |counter
       integer, intent (in) :: ifrt        !              |fertilizer type from fert data base
       real, intent (in) :: frt_kg         !kg/ha         |amount of fertilizer applied
       
 
       !!added by zhang
       !!======================
-      real :: X1 = 0.
-      real :: X8 = 0.
-      real :: X10 = 0.
-      real :: XXX = 0.
-      real :: YY = 0.
-      real :: ZZ = 0.
-      real :: XZ = 0.
-      real :: YZ = 0.
-      real :: RLN = 0.
-      real :: orgc_f = 0.
+      real :: X1
+      real :: X8
+      real :: X10
+      real :: XXX
+      real :: YY
+      real :: ZZ
+      real :: XZ
+      real :: YZ
+      real :: RLN
+      real :: orgc_f
       
       j = ihru
       
@@ -73,7 +73,7 @@
       fertorgn = frt_kg * fertdb(ifrt)%forgn
       fertsolp = frt_kg * fertdb(ifrt)%fminp
       fertorgp = frt_kg * fertdb(ifrt)%forgp  
-      fertn = fertn + frt_kg * (fertdb(ifrt)%fminn + fertdb(ifrt)%forgn)
-      fertp = fertp + frt_kg * (fertdb(ifrt)%fminp + fertdb(ifrt)%forgp)
+      fertn(j) = fertn(j) + frt_kg * (fertdb(ifrt)%fminn + fertdb(ifrt)%forgn)
+      fertp(j) = fertp(j) + frt_kg * (fertdb(ifrt)%fminp + fertdb(ifrt)%forgp)
       return
       end subroutine pl_fert_wet

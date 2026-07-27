@@ -54,5 +54,9 @@
       type (decision_table), dimension(:), allocatable, target :: dtbl_scen
       type (decision_table), dimension(:), allocatable, target :: dtbl_flo
       type (decision_table), pointer :: d_tbl
-      
-      end module conditional_module   
+
+      !! OpenMP: d_tbl is reassigned per-HRU (=> dtbl_lum/dtbl_flo); make the pointer
+      !! thread-private so each thread has its own association (Part-11 shared-pointer race).
+      !$omp threadprivate(d_tbl)
+
+      end module conditional_module

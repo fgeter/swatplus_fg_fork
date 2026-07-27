@@ -47,41 +47,41 @@
       
       implicit none
 
-      integer :: j = 0           !none          |HRU number
+      integer :: j               !none          |HRU number
 !!    real, parameter :: esd = 500., etco = 0.80, effnup = 0.1
-      real :: esd = 0.           !mm            |maximum soil depth from which evaporation
+      real :: esd                !mm            |maximum soil depth from which evaporation
                                  !              |is allowed to occur
-      real :: etco = 0.          !              |
-      real :: effnup = 0.        !              ! 
-      real :: no3up = 0.         !kg N/ha       |amount of nitrate moving upward in profile 
-      real :: es_max = 0.        !mm H2O        |maximum amount of evaporation (soil et)
+      real :: etco               !              |
+      real :: effnup             !              ! 
+      real :: no3up              !kg N/ha       |amount of nitrate moving upward in profile 
+      real :: es_max             !mm H2O        |maximum amount of evaporation (soil et)
                                  !              |that can occur on current day in HRU
-      real :: eos1 = 0.          !none          |variable to hold intermediate calculation
+      real :: eos1               !none          |variable to hold intermediate calculation
                                  !              |result
-      real :: xx = 0.            !none          |variable to hold intermediate calculation 
+      real :: xx                 !none          |variable to hold intermediate calculation 
                                  !              |result
-      real :: cej = 0.           !              |
-      real :: eaj = 0.           !none          |weighting factor to adjust PET for impact of
+      real :: cej                !              |
+      real :: eaj                !none          |weighting factor to adjust PET for impact of
                                  !              |plant cover    
-      real :: pet = 0.           !mm H2O        |amount of PET remaining after water stored
+      real :: pet                !mm H2O        |amount of PET remaining after water stored
                                  !              |in canopy is evaporated
-      real :: esleft = 0.        !mm H2O        |potential soil evap that is still available
-      real :: evzp = 0.          !              |
-      real :: eosl = 0.          !mm H2O        |maximum amount of evaporation that can occur
+      real :: esleft             !mm H2O        |potential soil evap that is still available
+      real :: evzp               !              |
+      real :: eosl               !mm H2O        |maximum amount of evaporation that can occur
                                  !              |from soil profile
-      real :: dep = 0.           !mm            |soil depth from which evaporation will occur
+      real :: dep                !mm            |soil depth from which evaporation will occur
                                  !              |in current soil layer
-      real :: evz = 0.           !              | 
-      real :: sev = 0.           !mm H2O        |amount of evaporation from soil layer
-      real :: sev_st = 0.        !mm H2O        |evaporation / soil water for no3 flux from layer 1 -> 2
-      real :: cover = 0.         !kg/ha         |soil cover
-      real :: wetvol_mm = 0.     !mm            |wetland water volume - average depth over hru
-      integer :: ly = 0          !none          |counter     
-      integer:: ires = 0  !Jaehak 2022
-      integer:: ihyd = 0  !Jaehak 2022
+      real :: evz                !              | 
+      real :: sev                !mm H2O        |amount of evaporation from soil layer
+      real :: sev_st             !mm H2O        |evaporation / soil water for no3 flux from layer 1 -> 2
+      real :: cover              !kg/ha         |soil cover
+      real :: wetvol_mm          !mm            |wetland water volume - average depth over hru
+      integer :: ly              !none          |counter     
+      integer:: ires      !Jaehak 2022
+      integer:: ihyd      !Jaehak 2022
 
       j = ihru
-      pet = pet_day
+      pet = pet_day(j)
 !!    added statements for test of real statement above
       esd = 500.  !soil(j)%zmx
       etco = 0.80
@@ -94,16 +94,16 @@
 !! method is used to calculate surface runoff. The curve number methods
 !! take canopy effects into account in the equations. For either of the
 !! CN methods, canstor will always equal zero.
-      canev = 0.
+      canev(j) = 0.
       pet = pet - canstor(j)
       if (pet < 0.) then
         canstor(j) = -pet
-        canev = pet_day
+        canev(j) = pet_day(j)
         pet = 0.
-        ep_max = 0.
+        ep_max(j) = 0.
         es_max = 0.
       else
-        canev = canstor(j)
+        canev(j) = canstor(j)
         canstor(j) = 0.
       endif
 
@@ -112,11 +112,11 @@
         !! compute potential plant evap for methods other that Penman-Monteith
         !if (bsn_cc%pet /= 1) then
           if (pcom(j)%lai_sum <= 3.0) then
-            ep_max = pcom(j)%lai_sum * pet / 3.
+            ep_max(j) = pcom(j)%lai_sum * pet / 3.
           else
-            ep_max = pet
+            ep_max(j) = pet
           end if
-          if (ep_max < 0.) ep_max = 0.
+          if (ep_max(j) < 0.) ep_max(j) = 0.
         !end if
 
         !! compute potential soil evaporation
@@ -131,7 +131,7 @@
           eaj = Exp(cej * (cover + 0.1))
         end if
         es_max = pet * eaj
-        eos1 = pet / (es_max + ep_max + 1.e-10)
+        eos1 = pet / (es_max + ep_max(j) + 1.e-10)
         eos1 = es_max * eos1
         es_max = Min(es_max, eos1)
         es_max = Max(es_max, 0.)
@@ -148,11 +148,11 @@
         else  
         
           !! make sure maximum plant and soil ET doesn't exceed potential ET
-          if (pet_day < es_max + ep_max) then
-            es_max = pet_day - ep_max
-            if (pet < es_max + ep_max) then
-              es_max = pet * es_max / (es_max + ep_max)
-              ep_max = pet * ep_max / (es_max + ep_max)
+          if (pet_day(j) < es_max + ep_max(j)) then
+            es_max = pet_day(j) - ep_max(j)
+            if (pet < es_max + ep_max(j)) then
+              es_max = pet * es_max / (es_max + ep_max(j))
+              ep_max(j) = pet * ep_max(j) / (es_max + ep_max(j))
             end if
           end if
         end if
@@ -169,12 +169,12 @@
           if (hru(j)%sno_mm >= esleft) then
             !! take all soil evap from snow cover
             hru(j)%sno_mm = hru(j)%sno_mm - esleft
-            snoev = snoev + esleft
+            snoev(j) = snoev(j) + esleft
             esleft = 0.
           else
             !! take all soil evap from snow cover before taking from soil
             esleft = esleft - hru(j)%sno_mm
-            snoev = snoev + hru(j)%sno_mm
+            snoev(j) = snoev(j) + hru(j)%sno_mm
             hru(j)%sno_mm = 0.
           endif
         endif
@@ -260,8 +260,8 @@
       end do
 
       !! calculate actual amount of evaporation from soil
-      es_day = es_max - esleft
-      if (es_day < 0.) es_day = 0.
+      es_day(j) = es_max - esleft
+      if (es_day(j) < 0.) es_day(j) = 0.
 
       end if
 

@@ -37,12 +37,12 @@
       
       implicit none
 
-      integer :: j = 0      !none       |HRU number
-      real :: smfac = 0.    !           |
-      real :: rto_sno  = 0. !none       |ratio of current day's snow water to minimum amount needed to
+      integer :: j          !none       |HRU number
+      real :: smfac         !           |
+      real :: rto_sno       !none       |ratio of current day's snow water to minimum amount needed to
                             !           |cover ground completely 
-      real :: snocov = 0.   !none       |fraction of HRU area covered with snow
-      real :: snotmp = 0.   !deg C      |temperature of snow pack
+      real :: snocov        !none       |fraction of HRU area covered with snow
+      real :: snotmp        !deg C      |temperature of snow pack
 
       snotmp = 0.
 
@@ -54,7 +54,7 @@
         if (w%tave <= hru(j)%sno%falltmp) then
           !! calculate snow fall
           hru(j)%sno_mm = hru(j)%sno_mm + precip_eff
-          snofall = precip_eff
+          snofall(j) = precip_eff
           precip_eff = 0.
           !! set subdaily effective precip to zero
           if (time%step > 1) w%ts = 0.
@@ -64,7 +64,7 @@
           !! adjust melt factor for time of year
           smfac = (hru(j)%sno%meltmx + hru(j)%sno%meltmn) / 2. + Sin((time%day - 81) / 58.09) *     &
                         (hru(j)%sno%meltmx - hru(j)%sno%meltmn) / 2.        !! 365/2pi = 58.09
-          snomlt = smfac * (((snotmp + w%tmax)/2.) - hru(j)%sno%melttmp)
+          snomlt(j) = smfac * (((snotmp + w%tmax)/2.) - hru(j)%sno%melttmp)
 
           !! adjust for areal extent of snow cover
           if (hru(j)%sno_mm < hru(j)%sno%covmx) then
@@ -73,17 +73,17 @@
           else
             snocov = 1.
           endif
-          snomlt = snomlt * snocov
-          if (snomlt < 0.) snomlt = 0.
-          if (snomlt > hru(j)%sno_mm) snomlt = hru(j)%sno_mm
-          hru(j)%sno_mm = hru(j)%sno_mm - snomlt
-          precip_eff = precip_eff + snomlt
+          snomlt(j) = snomlt(j) * snocov
+          if (snomlt(j) < 0.) snomlt(j) = 0.
+          if (snomlt(j) > hru(j)%sno_mm) snomlt(j) = hru(j)%sno_mm
+          hru(j)%sno_mm = hru(j)%sno_mm - snomlt(j)
+          precip_eff = precip_eff + snomlt(j)
           if (time%step > 1) then
-            w%ts(:) = w%ts(:) + snomlt / time%step
+            w%ts(:) = w%ts(:) + snomlt(j) / time%step
           end if
           if (precip_eff < 0.) precip_eff = 0.
         else
-          snomlt = 0.
+          snomlt(j) = 0.
         end if
  
       return

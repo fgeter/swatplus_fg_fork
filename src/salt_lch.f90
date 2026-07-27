@@ -52,23 +52,23 @@
       
       implicit none
       
-      integer :: j = 0
-      integer :: jj = 0
-      integer :: isalt = 0
-      integer :: sol_index = 0
-      integer :: gw_soil_flag = 0
-      real :: cosalt = 0.
-      real :: cosurfsalt = 0.
-      real :: percsaltlyr(8) = 0.
-      real :: ssfsaltlyr = 0.
-      real :: vsalt = 0.
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
-      real :: salt_mass_kg = 0.
-      real :: ro_mass = 0.
-      real :: sro = 0.
-      real :: vv = 0.
-      real :: ww = 0.
+      integer :: j
+      integer :: jj
+      integer :: isalt
+      integer :: sol_index
+      integer :: gw_soil_flag
+      real :: cosalt
+      real :: cosurfsalt
+      real :: percsaltlyr(8)
+      real :: ssfsaltlyr
+      real :: vsalt
+      real :: hru_area_m2
+      real :: water_volume
+      real :: salt_mass_kg
+      real :: ro_mass
+      real :: sro
+      real :: vv
+      real :: ww
 
       j = 0
       j = ihru
@@ -116,7 +116,7 @@
             sro = 0.
           end if
           vv = soil(j)%ly(jj)%prk + sro + soil(j)%ly(jj)%flat + 1.e-10
-          if (hru(j)%lumv%ldrain == jj) vv = vv + qtile
+          if (hru(j)%lumv%ldrain == jj) vv = vv + qtile(j)
           ww = -vv / ((1. - soil(j)%anion_excl) * soil(j)%phys(jj)%ul)
           vsalt = cs_soil(j)%ly(jj)%salt(isalt) * (1. - Exp(ww))
           cosalt = Max(vsalt / vv, 0.)
@@ -133,7 +133,7 @@
           !Daniel 1/2012    
           !! calculate salt in tile flow 
           if (hru(j)%lumv%ldrain == jj) then
-            tilesalt(j,isalt) = cosalt * qtile
+            tilesalt(j,isalt) = cosalt * qtile(j)
             tilesalt(j,isalt) = Min(tilesalt(j,isalt), cs_soil(j)%ly(jj)%salt(isalt))
             cs_soil(j)%ly(jj)%salt(isalt) = cs_soil(j)%ly(jj)%salt(isalt) - tilesalt(j,isalt)
           endif

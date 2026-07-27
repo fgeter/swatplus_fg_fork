@@ -15,17 +15,17 @@
       
       implicit none
       
-      real :: crlag = 0.         !none          |lag factor for day
+      real :: crlag              !none          |lag factor for day
       real :: crlagdry = .99     !none          |lag in crack development when soil is dry
-      real :: crlagwet = 0.      !none          |lag in crack development when soil is wet
-      integer :: j = 0           !none          |HRU number
-      integer :: l = 0           !none          |counter
-      real :: volcrnew = 0.      !mm            |crack volume for soil layer based on new 
+      real :: crlagwet           !none          |lag in crack development when soil is wet
+      integer :: j               !none          |HRU number
+      integer :: l               !none          |counter
+      real :: volcrnew           !mm            |crack volume for soil layer based on new 
                                  !              |moisture conditions
 
       j = 0
       j = ihru
-      voltot = 0.
+      voltot(j) = 0.
 
       !! calculate volume of cracks in soil
       do l = 1, soil(j)%nly
@@ -45,7 +45,7 @@
         soil(j)%ly(l)%volcr = crlag * soil(j)%ly(l)%volcr + (1. - crlag) *   &
                   volcrnew
         if (soil(j)%ly(l)%volcr < 0.) soil(j)%ly(l)%volcr = 0.
-        voltot = voltot + soil(j)%ly(l)%volcr + volcrmin
+        voltot(j) = voltot(j) + soil(j)%ly(l)%volcr + volcrmin
       end do
 
       return

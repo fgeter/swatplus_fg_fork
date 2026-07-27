@@ -44,19 +44,19 @@
       
       external :: gwflow_soil, swr_drains, swr_origtile, swr_percmacro, swr_percmicro, swr_satexcess
       
-      integer :: j = 0       !none       |HRU number
-      integer :: j1 = 0      !none       |counter
-      integer :: ires = 0    !none       |counter
-      real :: slug = 0.      !           | 
-      real :: sep_left = 0.  !           |
-      real :: por_air = 0.   !           |
-      real :: d = 0.         !           |
-      real :: yy = 0.        !           |
-      real :: xx = 0.        !           |
-      real :: wat = 0.       !mm H2O     |shallow water table depth below the soil surface to up to impervious layer
-      real :: sw_del = 0.    !           |
-      real :: wt_del = 0.    !           |
-      real :: sumqtile = 0.  !           | 
+      integer :: j           !none       |HRU number
+      integer :: j1          !none       |counter
+      integer :: ires        !none       |counter
+      real :: slug           !           | 
+      real :: sep_left       !           |
+      real :: por_air        !           |
+      real :: d              !           |
+      real :: yy             !           |
+      real :: xx             !           |
+      real :: wat            !mm H2O     |shallow water table depth below the soil surface to up to impervious layer
+      real :: sw_del         !           |
+      real :: wt_del         !           |
+      real :: sumqtile       !           | 
     
       j = ihru
       ires =  hru(j)%dbs%surf_stor !Jaehak 2022
@@ -69,9 +69,9 @@
       !! initialize water entering first soil layer
       !! ht1%flo is infiltration from overland flow routing
       if (ires==0) then
-        sepday = inflpcp + irrig(j)%applied + ht1%flo / (hru(j)%area_ha * 10.)
+        sepday(j) = inflpcp(j) + irrig(j)%applied + ht1%flo / (hru(j)%area_ha * 10.)
       else
-        sepday = inflpcp + ht1%flo / (hru(j)%area_ha * 10.)
+        sepday(j) = inflpcp(j) + ht1%flo / (hru(j)%area_ha * 10.)
       endif
       
       !hru(j)%water_seep = 0.
@@ -79,19 +79,19 @@
       !! calculate crack flow 
       if (bsn_cc%crk == 1) then 
         call swr_percmacro
-        sepday = sepday - sepcrktot
+        sepday(j) = sepday(j) - sepcrktot
       endif
 
       !back to 4 mm slug for soil routing- keeps moisture above fc
       slug = 1000.  !4.  !1000.   !this should be an input in parameters.bsn
-      sep_left = sepday
+      sep_left = sepday(j)
       do                  !slug loop
-        sepday = amin1(sep_left, slug)
-        sep_left = sep_left - sepday
+        sepday(j) = amin1(sep_left, slug)
+        sep_left = sep_left - sepday(j)
         sep_left = max(0., sep_left)
       do j1 = 1, soil(j)%nly
         !! add water moving into soil layer from overlying layer
-        soil(j)%phys(j1)%st = soil(j)%phys(j1)%st + sepday
+        soil(j)%phys(j1)%st = soil(j)%phys(j1)%st + sepday(j)
         
       !! septic tank inflow to biozone layer  J.Jeong
       ! STE added to the biozone layer if soil temp is above zero. 
@@ -101,32 +101,32 @@
         end if
 
        !! determine gravity drained water in layer
-        sw_excess = soil(j)%phys(j1)%st - soil(j)%phys(j1)%fc
+        sw_excess(j) = soil(j)%phys(j1)%st - soil(j)%phys(j1)%fc
 
         !! initialize variables for current layer
-        sepday = 0.
+        sepday(j) = 0.
         latlyr = 0.
-        lyrtile = 0.
+        lyrtile(j) = 0.
 
-        if (sw_excess > 1.e-5) then
+        if (sw_excess(j) > 1.e-5) then
           !! calculate tile flow (lyrtile), lateral flow (latlyr) and
           !! percolation (sepday)
           call swr_percmicro(j1)
 
-          soil(j)%phys(j1)%st = soil(j)%phys(j1)%st - sepday - latlyr - lyrtile
+          soil(j)%phys(j1)%st = soil(j)%phys(j1)%st - sepday(j) - latlyr - lyrtile(j)
           soil(j)%phys(j1)%st = Max(1.e-6, soil(j)%phys(j1)%st)
         end if
 
         !! summary calculations
         if (j1 == soil(j)%nly) then
-          sepbtm(j) = sepbtm(j) + sepday
+          sepbtm(j) = sepbtm(j) + sepday(j)
         endif
         latq(j) = latq(j) + latlyr
-        qtile = qtile + lyrtile
-        soil(j)%ly(j1)%flat = latlyr + lyrtile
-        soil(j)%ly(j1)%prk = soil(j)%ly(j1)%prk + sepday
+        qtile(j) = qtile(j) + lyrtile(j)
+        soil(j)%ly(j1)%flat = latlyr + lyrtile(j)
+        soil(j)%ly(j1)%prk = soil(j)%ly(j1)%prk + sepday(j)
         if (latq(j) < 1.e-6) latq(j) = 0.
-        if (qtile < 1.e-6) qtile = 0.
+        if (qtile(j) < 1.e-6) qtile(j) = 0.
         if (soil(j)%ly(j1)%flat < 1.e-6) soil(j)%ly(j1)%flat = 0.
       end do
       if (sep_left <= 0.) exit
@@ -142,7 +142,7 @@
       end do
 
       !! compute shallow water table depth and tile flow
-      qtile = 0.
+      qtile(j) = 0.
       wt_shall = soil(j)%zmx
       !! drainmod tile equations   08/11/2006
       if (soil(j)%phys(2)%tmp > 0.) then   !Daniel 1/29/09
@@ -180,7 +180,7 @@
         if (hru(j)%tiledrain > 0) then
         if (hru(j)%lumv%sdr_dep > 0.) then
           if (wt_shall <= d) then
-            qtile = 0.
+            qtile(j) = 0.
           else
             !! Start Daniel"s tile equations modifications  01/2006
             if (bsn_cc%tdrn == 1) then
@@ -188,7 +188,7 @@
               call swr_drains           !! compute tile flow using drainmod tile equations 
             else                        
               call swr_origtile(d)      !! compute tile flow using existing tile equations 
-              if(qtile < 0.) qtile = 0.
+              if(qtile(j) < 0.) qtile(j) = 0.
             end if 
           end if
         end if
@@ -196,9 +196,9 @@
       end if
       !! End Daniel"s tile equations modifications  01/2006
 
-      if (qtile > 0.) then
+      if (qtile(j) > 0.) then
         !! update soil profile water after tile drainage
-        sumqtile = qtile
+        sumqtile = qtile(j)
         do j1 = 1, soil(j)%nly
           xx = soil(j)%phys(j1)%st - soil(j)%phys(j1)%fc
           if (xx > 0.) then
@@ -212,8 +212,8 @@
           end if
         end do
         if (sumqtile > 0.) then
-          qtile = qtile - sumqtile
-          qtile = Max(0., qtile)
+          qtile(j) = qtile(j) - sumqtile
+          qtile(j) = Max(0., qtile(j))
         end if
       end if
 

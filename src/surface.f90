@@ -32,10 +32,10 @@
       
       external :: ero_cfactor, ero_eiusle, ero_ovrsed, ero_pkq, ero_ysed, sq_dailycn, sq_volq, sq_crackflow
 
-      integer :: j = 0            !none          |HRU number 
-      real :: ulu = 0.            !              |
-      real :: hruirrday = 0.      !              |
-      integer :: irmmdt = 0       !              |
+      integer :: j                !none          |HRU number 
+      real :: ulu                 !              |
+      real :: hruirrday           !              |
+      integer :: irmmdt           !              |
 
       j = ihru
       ulu = hru(j)%luse%urb_lu
@@ -60,26 +60,26 @@
       !! calculate amount of surface runoff reaching main channel during day
       !! (qday) and store the remainder
       !call sq_surfst
-      qday =  surfq(j)
+      qday(j) =  surfq(j)
 
-      if (qday > 1.e-6) then
+      if (qday(j) > 1.e-6) then
         !! compute peak rate - qp_cms in m3/s  
         call ero_pkq 
       end if  
 
-      if (qday > 1.e-6 .and. qp_cms > 1.e-6) then
+      if (qday(j) > 1.e-6 .and. qp_cms(j) > 1.e-6) then
         call ero_eiusle
 
     !! calculate sediment erosion by rainfall and overland flow
         call ero_ovrsed
       end if
 
-      if (surfq(j) > 1.e-6 .and. qp_cms > 1.e-6) then
+      if (surfq(j) > 1.e-6 .and. qp_cms(j) > 1.e-6) then
         call ero_cfactor
         call ero_ysed
       end if
 
-      if (qday < 0.) qday = 0.
+      if (qday(j) < 0.) qday(j) = 0.
 
 !*** tu Wunused-label: 1010  format (2(i4,1x),a5,a4,1x,10f8.3)
       return

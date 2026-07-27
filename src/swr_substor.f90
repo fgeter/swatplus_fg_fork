@@ -45,13 +45,13 @@
       
       
       real, external :: qman
-      integer :: j = 0       !none          |HRU number  
+      integer :: j           !none          |HRU number  
 
       j = ihru
 
       bss(1,j) = bss(1,j) + latq(j)
       bss(2,j) = bss(2,j) + latno3(j)
-      bss(3,j) = bss(3,j) + qtile
+      bss(3,j) = bss(3,j) + qtile(j)
       bss(4,j) = bss(4,j) + tileno3(j)
       if (bss(1,j) < 1.e-6) bss(1,j) = 0.0
       if (bss(2,j) < 1.e-6) bss(2,j) = 0.0
@@ -60,16 +60,16 @@
 
       latq(j) = bss(1,j) * hru(j)%hyd%lat_ttime
       latno3(j) = bss(2,j) * hru(j)%hyd%lat_ttime
-      qtile = bss(3,j) * hru(j)%lumv%tile_ttime
+      qtile(j) = bss(3,j) * hru(j)%lumv%tile_ttime
       tileno3(j) = bss(4,j) * hru(j)%lumv%tile_ttime
       if (latq(j) < 1.e-6) latq(j) = 0.
       if (latno3(j) < 1.e-6) latno3(j) = 0.
-      if (qtile < 1.e-6) qtile = 0.
+      if (qtile(j) < 1.e-6) qtile(j) = 0.
       if (tileno3(j) < 1.e-6) tileno3(j) = 0.
 
       bss(1,j) = bss(1,j) - latq(j)
       bss(2,j) = bss(2,j) - latno3(j)
-      bss(3,j) = bss(3,j) - qtile
+      bss(3,j) = bss(3,j) - qtile(j)
       bss(4,j) = bss(4,j) - tileno3(j)
 
       return

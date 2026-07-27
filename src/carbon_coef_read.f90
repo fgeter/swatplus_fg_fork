@@ -11,13 +11,13 @@ subroutine carbon_coef_read
     
     implicit none
 
-    integer :: eof = 0                !           |end of file
-    integer :: soil_test_cntr  = 0    !           |counter for soil test, cannot exceed nmbr_soil_tests 
-    logical :: i_exist = .false.      !           |true if file exists
-    character (len=80) :: titldum  = "" !           |title of file
-    character (len=30) :: var_name = "" !
-    integer :: int_cbn_diagnostics = 0
-    integer :: int_mathers_method = 0
+    integer :: eof                    !           |end of file
+    integer :: soil_test_cntr         !           |counter for soil test, cannot exceed nmbr_soil_tests 
+    logical :: i_exist                !           |true if file exists
+    character (len=80) :: titldum       !           |title of file
+    character (len=30) :: var_name      !
+    integer :: int_cbn_diagnostics
+    integer :: int_mathers_method
     
     nmbr_soil_test_layers = 0     ! comes from soil module
     soil_test_cntr  = 0     ! local variable
@@ -163,5 +163,16 @@ subroutine carbon_coef_read
           endif
         endif
     endif
+
+    !! Snapshot the setup config (defaults + any carb_coefs.cbn overrides) into SHARED holders so
+    !! the OpenMP parallel HRU pre-pass can assign them into each thread's threadprivate copy --
+    !! worker threads do not inherit the master's threadprivate setup values. See command.f90.
+    org_con_hold   = org_con
+    org_allo_hold  = org_allo
+    carbdb_hold    = carbdb
+    org_tran_hold  = org_tran
+    org_ratio_hold = org_ratio
+    org_frac_hold  = org_frac
+
     return
 end subroutine carbon_coef_read                       

@@ -17,9 +17,9 @@
       
       external :: zero0, zero1, zero2, zeroini
       
-      integer :: mhru = 0
-      integer :: mch = 0
-      integer :: mpc = 0
+      integer :: mhru
+      integer :: mch
+      integer :: mpc
       
 !! initialize variables    
       mhyd = 1  !!added for jaehak vars
@@ -27,23 +27,47 @@
       mch = sp_ob%chan
 
 !!    drains
-      allocate (wnan(10), source = 0.)
       allocate (ranrns_hru(mhru), source = 0.)
       
       !dimension plant arrays used each day and not saved
+      !! uno3d/uapd/un2/up2/par/htfac/epmax are now fixed-size(20) threadprivate scratch
+      !! in hru_module (per-thread, no allocation needed); translt is now a pl_community local
        mpc = 20
-       allocate (uno3d(mpc), source = 0.)
-       allocate (uapd(mpc), source = 0.)
-       allocate (un2(mpc), source = 0.)
-       allocate (up2(mpc), source = 0.)
-       allocate (translt(mpc), source = 0.)
-       allocate (par(mpc), source = 0.)
-       allocate (htfac(mpc), source = 0.)
-       allocate (epmax(mpc), source = 0.)
-       epmax = 0.
 
 !!    arrays for plant communities
       allocate (cvm_com(mhru), source = 0.)
+      !! per-HRU daily scratch, hru-indexed for OpenMP (Stage 1 Cat 2)
+      allocate (etday(mhru), source = 0.)
+      allocate (iwgen(mhru), source = 0)
+      allocate (usle(mhru), source = 0.)
+      allocate (sw_excess(mhru), source = 0.)
+      allocate (qp_cms(mhru), source = 0.)
+      allocate (qtile(mhru), source = 0.)
+      allocate (fertn(mhru), source = 0.)
+      allocate (fertp(mhru), source = 0.)
+      allocate (fixn(mhru), source = 0.)
+      allocate (grazn(mhru), source = 0.)
+      allocate (grazp(mhru), source = 0.)
+      allocate (snofall(mhru), source = 0.)
+      allocate (snomlt(mhru), source = 0.)
+      allocate (albday(mhru), source = 0.)
+      allocate (bioday(mhru), source = 0.)
+      allocate (bsprev(mhru), source = 0.)
+      allocate (inflpcp(mhru), source = 0.)
+      allocate (lyrtile(mhru), source = 0.)
+      allocate (ls_overq(mhru), source = 0.)
+      allocate (latqrunon(mhru), source = 0.)
+      allocate (sepday(mhru), source = 0.)
+      allocate (vpd(mhru), source = 0.)
+      allocate (voltot(mhru), source = 0.)
+      allocate (usle_ei(mhru), source = 0.)
+      allocate (ep_day(mhru), source = 0.)
+      allocate (es_day(mhru), source = 0.)
+      allocate (ep_max(mhru), source = 0.)
+      allocate (pet_day(mhru), source = 0.)
+      allocate (snoev(mhru), source = 0.)
+      allocate (qday(mhru), source = 0.)
+      allocate (canev(mhru), source = 0.)
       allocate (percn(mhru), source = 0.)
 
 !! septic changes added 1/28/09 gsm

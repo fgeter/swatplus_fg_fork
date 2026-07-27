@@ -41,58 +41,58 @@
       integer, intent (in)  :: ob_cur      !none     |sequential number of individual objects
       integer, intent (in)  :: ob_num      !none     |sequential number for all objects
       integer, intent (in)  :: idtbl       !none     |
-      integer :: icom = 0                  !none     |
-      integer :: iac = 0                   !none     |counter
-      integer :: ial = 0                   !none     |counter
+      integer :: icom                      !none     |
+      integer :: iac                       !none     |counter
+      integer :: ial                       !none     |counter
       !integer :: jj                        !none     |counter
-      integer :: iburn = 0                 !none     |burn type from fire data base
-      integer :: idtill = 0                !none     |tillage type
-      integer :: ifertop = 0               !         |surface application fraction from chem app data base
-      integer :: ifrt = 0                  !         |fertilizer type from fert data base
-      integer :: ipestop = 0               !         |surface application fraction from chem app data base
-      integer :: ipst = 0                  !         |pesticide type from pest data base
-      integer :: iharvop = 0               !         |harvest operation type
-      integer :: iihru = 0                 !         |
-      integer :: ilu = 0                   !         |landuse type 
-      integer :: j = 0                     !none     |counter
-      integer :: iob = 0
-      integer :: idp = 0                   !         |
-      integer :: istr = 0                  !         |
-      integer :: istr1 = 0                 !         |
-      integer :: iplt_bsn = 0
-      integer :: irrop = 0                 !         |
-      integer :: igr = 0
-      integer :: ireg = 0                  !         |
-      integer :: ilum = 0
-      integer :: isrc = 0
-      integer :: isched = 0
-      integer :: ipud = 0
-      integer :: ipdl = 0
-      integer :: ires = 0
-      integer :: idb = 0
-      integer :: imallo = 0
-      integer :: itrn = 0
-      integer :: iplt = 0
-      integer :: num_plts_cur = 0
+      integer :: iburn                     !none     |burn type from fire data base
+      integer :: idtill                    !none     |tillage type
+      integer :: ifertop                   !         |surface application fraction from chem app data base
+      integer :: ifrt                      !         |fertilizer type from fert data base
+      integer :: ipestop                   !         |surface application fraction from chem app data base
+      integer :: ipst                      !         |pesticide type from pest data base
+      integer :: iharvop                   !         |harvest operation type
+      integer :: iihru                     !         |
+      integer :: ilu                       !         |landuse type 
+      integer :: j                         !none     |counter
+      integer :: iob
+      integer :: idp                       !         |
+      integer :: istr                      !         |
+      integer :: istr1                     !         |
+      integer :: iplt_bsn
+      integer :: irrop                     !         |
+      integer :: igr
+      integer :: ireg                      !         |
+      integer :: ilum
+      integer :: isrc
+      integer :: isched
+      integer :: ipud
+      integer :: ipdl
+      integer :: ires
+      integer :: idb
+      integer :: imallo
+      integer :: itrn
+      integer :: iplt
+      integer :: num_plts_cur
       integer :: hru_rcv
-      real :: hiad1 = 0.                   !         |
-      real :: biomass = 0.                 !         |
-      real :: frt_kg = 0.
-      real :: harveff = 0.
-      real :: wur = 0.                     !         |
-      real :: rto = 0.                     !         |
-      real :: rto1 = 0.                    !         |
-      real :: pest_kg = 0.                 !kg/ha    |amount of pesticide applied 
+      real :: hiad1                        !         |
+      real :: biomass                      !         |
+      real :: frt_kg
+      real :: harveff
+      real :: wur                          !         |
+      real :: rto                          !         |
+      real :: rto1                         !         |
+      real :: pest_kg                      !kg/ha    |amount of pesticide applied 
       real :: chg_par                      !variable |new parameter value
-      real :: yield = 0.
-      real :: sumpst = 0.
-      real :: rock = 0.
-      real :: p_factor = 0.
-      real :: cn_prev = 0.
-      real :: stor_m3 = 0.
-      character(len=1) :: action = ""      !         |
-      character(len=40) :: lu_prev = ""    !         |
-      character(len=40) :: snow_prev = ""  !         |
+      real :: yield
+      real :: sumpst
+      real :: rock
+      real :: p_factor
+      real :: cn_prev
+      real :: stor_m3
+      character(len=1) :: action           !         |
+      character(len=40) :: lu_prev         !         |
+      character(len=40) :: snow_prev       !         |
 
       do iac = 1, d_tbl%acts
         action = "n"
@@ -494,7 +494,9 @@
                             
                   !! sum basin crop yields and area harvested
                   iplt_bsn = pcom(j)%plcur(ipl)%bsn_num
+                  !$omp atomic
                   bsn_crop_yld(iplt_bsn)%area_ha = bsn_crop_yld(iplt_bsn)%area_ha + hru(j)%area_ha
+                  !$omp atomic
                   bsn_crop_yld(iplt_bsn)%yield = bsn_crop_yld(iplt_bsn)%yield + yield * hru(j)%area_ha / 1000.
                   
                   if (cal_codes%plt == "y") then
@@ -612,7 +614,9 @@
                             
                   !! sum basin crop yields and area harvested
                   iplt_bsn = pcom(j)%plcur(ipl)%bsn_num
+                  !$omp atomic
                   bsn_crop_yld(iplt_bsn)%area_ha = bsn_crop_yld(iplt_bsn)%area_ha + hru(j)%area_ha
+                  !$omp atomic
                   bsn_crop_yld(iplt_bsn)%yield = bsn_crop_yld(iplt_bsn)%yield + pl_yield%m * hru(j)%area_ha / 1000.
                   
                   !! sum regional crop yields for soft calibration
@@ -808,22 +812,22 @@
             select case (d_tbl%act(iac)%option)
                 
             case ("flo_mm")    !! set tile flow diverted - can't be more than actual flow
-              hru(hru_rcv)%sb%inflo = Min (qtile, d_tbl%act(iac)%const)
+              hru(hru_rcv)%sb%inflo = Min (qtile(j), d_tbl%act(iac)%const)
 
             case ("min_mm")    !! divert at least the minimum flow rate
-              hru(hru_rcv)%sb%inflo = Max (qtile, d_tbl%act(iac)%const)
+              hru(hru_rcv)%sb%inflo = Max (qtile(j), d_tbl%act(iac)%const)
               
             case ("max_mm")    !! divert the maximum flow rate - can't be more than actual flow
-              hru(hru_rcv)%sb%inflo = Min (qtile, d_tbl%act(iac)%const)
+              hru(hru_rcv)%sb%inflo = Min (qtile(j), d_tbl%act(iac)%const)
               
             case ("all_flo")    !! all flow diverted
-              hru(hru_rcv)%sb%inflo = qtile
+              hru(hru_rcv)%sb%inflo = qtile(j)
 
             case ("zero_flo")    !! no flow diverted
               hru(hru_rcv)%sb%inflo = 0.
 
             case ("frac")   !! minimum - constant fraction 
-              hru(hru_rcv)%sb%inflo = d_tbl%act(iac)%const * qtile
+              hru(hru_rcv)%sb%inflo = d_tbl%act(iac)%const * qtile(j)
                 
             end select
                                                             

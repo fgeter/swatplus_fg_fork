@@ -41,9 +41,9 @@
       
       implicit none
 
-      integer :: j = 0       !none                   |HRU number
+      integer :: j           !none                   |HRU number
       !real :: usle = 0.      !metric tons/ha         | daily soil loss predicted with USLE equation
-      real :: rock = 0.      !percent                |rock fragments
+      real :: rock           !percent                |rock fragments
 
       j = ihru
       
@@ -52,7 +52,7 @@
       rock = Exp(-.053 * soil(j)%phys(1)%rock)
 
       !! compute sediment yield with musle - t
-      sedyld(j) = (10. * surfq(j) * qp_cms * hru(j)%area_ha) ** .56 * cklsp(j)
+      sedyld(j) = (10. * surfq(j) * qp_cms(j) * hru(j)%area_ha) ** .56 * cklsp(j)
       !qp_cms = qp_cms * 3.6 / hru(j)%km !cms--> mm/h
       !! this is the form of MUSLE in APEX documentation - same results as swat equation above ! t/ha
       !sedyld(j) = 1.586 * rock * (surfq(j) * qp_cms) ** .56 * (hru(j)%area_ha) ** 0.12 * &
@@ -78,13 +78,13 @@
       !lagyld(j) = sedyld(j) * soil(j)%det_lag    !! Large Aggregate yield
 
       !! compute erosion with usle (written to output for comparison)
-      usle = 1.292 * usle_ei * cklsp(j) / 11.8
+      usle(j) = 1.292 * usle_ei(j) * cklsp(j) / 11.8
 
       !! erosion output variables
       ero_output(j)%ero_d%sedyld = sedyld(j)
       ero_output(j)%ero_d%precip = w%precip
       ero_output(j)%ero_d%surfq = surfq(j)
-      ero_output(j)%ero_d%peak = qp_cms
+      ero_output(j)%ero_d%peak = qp_cms(j)
       !! sum daily erosion output
       ero_output(j)%n_events = ero_output(j)%n_events
       ero_output(j)%ero_ave = ero_output(j)%ero_ave + ero_output(j)%ero_d

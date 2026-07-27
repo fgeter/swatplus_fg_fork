@@ -35,10 +35,10 @@
       
       implicit none 
       
-      integer :: j = 0         !none        |HRU number
-      integer :: idp = 0       !            | 
-      real :: tgx = 0.         !            |
-      real :: rto = 0.         !none        |cloud cover factor
+      integer :: j             !none        |HRU number
+      integer :: idp           !            | 
+      real :: tgx              !            |
+      real :: rto              !none        |cloud cover factor
 
       j = ihru
 
@@ -61,7 +61,7 @@
           pcom(j)%plstr(ipl)%strst = 0.
         end if
 
-        if(w%tmin <= wgn_pms(iwgen)%tmp_an - 15.) pcom(j)%plstr(ipl)%strst = 0.
+        if(w%tmin <= wgn_pms(iwgen(j))%tmp_an - 15.) pcom(j)%plstr(ipl)%strst = 0.
 
       end if
       

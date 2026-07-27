@@ -33,7 +33,7 @@
 
 !!    ~ ~ ~ ~ ~ ~ END SPECIFICATIONS ~ ~ ~ ~ ~ ~
 
-      use hru_module, only : ep_max, epmax, htfac, ihru, ipl, par, translt
+      use hru_module, only : ep_max, epmax, htfac, ihru, ipl, par
       use soil_module
       use plant_module
       use plant_data_module
@@ -41,21 +41,22 @@
       use time_module
       use climate_module
       
-      implicit none      
-      
+      implicit none
+      real :: translt(pcom(ihru)%npl)   !! per-HRU plant scratch (was module threadprivate-allocatable)
+
       external :: pl_waterup
 
-      integer :: j = 0          !none          |HRU number
-      integer :: idp = 0        !              | 
-      integer :: npl_gro = 0    !              | 
-      integer :: ip = 0
-      integer :: jpl = 0        !none          |counter
-      real :: x1 = 0.           !              |
-      real :: sum = 0.          !              |
-      real :: sumf = 0.         !              |
-      real :: sumle = 0.        !              |
-      real :: fi = 0.           !              |
-      character(len=1) :: comp_light = ""
+      integer :: j              !none          |HRU number
+      integer :: idp            !              | 
+      integer :: npl_gro        !              | 
+      integer :: ip
+      integer :: jpl            !none          |counter
+      real :: x1                !              |
+      real :: sum               !              |
+      real :: sumf              !              |
+      real :: sumle             !              |
+      real :: fi                !              |
+      character(len=1) :: comp_light
       
       j = ihru  
       par = 0.
@@ -68,7 +69,7 @@
       !! calc max water uptake for each plant
       do ipl = 1, pcom(j)%npl
         if (pcom(j)%lai_sum > 1.e-6) then
-          epmax(ipl) = ep_max * pcom(j)%plg(ipl)%lai / pcom(j)%lai_sum
+          epmax(ipl) = ep_max(j) * pcom(j)%plg(ipl)%lai / pcom(j)%lai_sum
         else
           epmax(ipl) = 0.
         end if

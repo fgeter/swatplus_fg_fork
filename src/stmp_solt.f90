@@ -33,23 +33,23 @@
       
       implicit none
 
-      integer :: j = 0           !none          |HRU number
-      integer :: k = 0           !none          |counter
-      real :: f = 0.             !none          |variable to hold intermediate calculation result
-      real :: dp = 0.            !mm            |maximum damping depth
-      real :: ww = 0.            !none          |variable to hold intermediate calculation
-      real :: b = 0.             !none          |variable to hold intermediate calculation
-      real :: wc = 0.            !none          |scaling factor for soil water impact on daily damping depth
-      real :: dd = 0.            !mm            |damping depth for day
-      real :: xx = 0.            !none          |variable to hold intermediate calculation
-      real :: st0 = 0.           !MJ/m^2        |radiation hitting soil surface on day
-      real :: tlag = 0.          !none          |lag coefficient for soil temperature
-      real :: df = 0.            !none          |depth factor
-      real :: zd = 0.            !none          |ratio of depth at center of layer to damping depth 
-      real :: bcv = 0.           !none          |lagging factor for cover
-      real :: tbare = 0.         !deg C         |temperature of bare soil surface
-      real :: tcov = 0.          !deg C         |temperature of soil surface corrected for cover
-      real :: cover = 0.         !kg/ha         |soil cover
+      integer :: j               !none          |HRU number
+      integer :: k               !none          |counter
+      real :: f                  !none          |variable to hold intermediate calculation result
+      real :: dp                 !mm            |maximum damping depth
+      real :: ww                 !none          |variable to hold intermediate calculation
+      real :: b                  !none          |variable to hold intermediate calculation
+      real :: wc                 !none          |scaling factor for soil water impact on daily damping depth
+      real :: dd                 !mm            |damping depth for day
+      real :: xx                 !none          |variable to hold intermediate calculation
+      real :: st0                !MJ/m^2        |radiation hitting soil surface on day
+      real :: tlag               !none          |lag coefficient for soil temperature
+      real :: df                 !none          |depth factor
+      real :: zd                 !none          |ratio of depth at center of layer to damping depth 
+      real :: bcv                !none          |lagging factor for cover
+      real :: tbare              !deg C         |temperature of bare soil surface
+      real :: tcov               !deg C         |temperature of soil surface corrected for cover
+      real :: cover              !kg/ha         |soil cover
 
       j = ihru
 
@@ -101,7 +101,7 @@
       tcov = 0.
       soil(j)%tmp_srf = 0.
       !! SWAT manual equation 2.3.10
-      st0 = (w%solrad * (1. - albday) - 14.) / 20.
+      st0 = (w%solrad * (1. - albday(j)) - 14.) / 20.
       !! SWAT manual equation 2.3.9
       tbare = w%tave + 0.5 * (w%tmax - w%tmin) * st0
       !! SWAT manual equation 2.3.12
@@ -124,7 +124,7 @@
         df = zd / (zd + Exp(-.8669 - 2.0775 * zd))
         !! SWAT manual equation 2.3.3
         soil(j)%phys(k)%tmp = tlag * soil(j)%phys(k)%tmp + (1. - tlag) *       &
-                      (df * (wgn_pms(iwgen)%tmp_an - soil(j)%tmp_srf) + soil(j)%tmp_srf)
+                      (df * (wgn_pms(iwgen(j))%tmp_an - soil(j)%tmp_srf) + soil(j)%tmp_srf)
         xx = soil(j)%phys(k)%d
 
         ! Temperature correction for Onsite Septic systems

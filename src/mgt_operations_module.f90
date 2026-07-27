@@ -186,5 +186,10 @@
         integer :: irr = 0
       end type management_schedule
       type (management_schedule), dimension (:), allocatable :: sched
-      
-      end module mgt_operations_module 
+      !! OpenMP: mgt is the shared "current management operation" set right before use in
+      !! mgt_sched/actions -- a classic Part-11 shared-current-object race across concurrent
+      !! HRUs (one thread's mgt%op1 read another's, indexing irrop_db out of bounds). Written
+      !! before read each operation, so threadprivate needs no seeding.
+      !$omp threadprivate(mgt)
+
+      end module mgt_operations_module

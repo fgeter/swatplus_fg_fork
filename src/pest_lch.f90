@@ -15,17 +15,17 @@
       
       implicit none        
       
-      integer :: j = 0     !none          |HRU number
-      integer :: k = 0     !none          |counter
-      integer :: ipest_db = 0!none          |pesticide number from pest.dat
-      integer :: ly = 0    !none          |counter (soil layers)
-      real :: kd = 0.           !(mg/kg)/(mg/L) |koc * carbon
-      real :: yy = 0.      !              |
-      real :: vf = 0.      !              |
-      real :: xx = 0.      !kg/ha         |amount of pesticide removed from soil layer
-      real :: zdb1 = 0.    !              |
-      real :: co = 0.      !kg/mm-ha      |concentration of pesticide in water
-      real :: csurf = 0.   !kg/mm-ha      |concentration of pesticide in surq and latq            | 
+      integer :: j         !none          |HRU number
+      integer :: k         !none          |counter
+      integer :: ipest_db    !none          |pesticide number from pest.dat
+      integer :: ly        !none          |counter (soil layers)
+      real :: kd                !(mg/kg)/(mg/L) |koc * carbon
+      real :: yy           !              |
+      real :: vf           !              |
+      real :: xx           !kg/ha         |amount of pesticide removed from soil layer
+      real :: zdb1         !              |
+      real :: co           !kg/mm-ha      |concentration of pesticide in water
+      real :: csurf        !kg/mm-ha      |concentration of pesticide in surq and latq            | 
 
       j = ihru
 
@@ -48,7 +48,7 @@
             !! compute volume of flow through the layer
             vf = soil(j)%ly(ly)%prk + soil(j)%ly(ly)%flat
             if (ly == 1) vf = vf + surfq(j)
-            if (ly == hru(j)%lumv%ldrain) vf = vf + qtile
+            if (ly == hru(j)%lumv%ldrain) vf = vf + qtile(j)
               
             !! compute concentration in the flow
             if (cs_soil(j)%ly(ly)%pest(k) >= 0.0001 .and. vf > 0.) then
@@ -66,8 +66,8 @@
               endif
 
               !! calculate pesticide lost in tile flow
-              if (qtile > 0. .and. ly == hru(j)%lumv%ldrain) then
-                yy = co * qtile
+              if (qtile(j) > 0. .and. ly == hru(j)%lumv%ldrain) then
+                yy = co * qtile(j)
                 if (yy > cs_soil(j)%ly(ly)%pest(k)) yy = cs_soil(j)%ly(ly)%pest(k)
                 cs_soil(j)%ly(ly)%pest(k) = cs_soil(j)%ly(ly)%pest(k) - yy
                 hpestb_d(j)%pest(k)%tileq = yy

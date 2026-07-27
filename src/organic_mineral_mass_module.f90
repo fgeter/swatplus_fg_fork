@@ -377,6 +377,21 @@
         module procedure ro_mult_const
       end interface
 
+      !! OpenMP: per-HRU carbon/residue/soil-profile working scratch made thread-private.
+      !! Written-before-read within a single hru_control call (decomp/transfer are seeded from
+      !! the orgz/rsd_originz zero-constants in the command.f90 pre-pass since they are read
+      !! before write on the residue-decomp path). None are allocatable, so no per-thread alloc.
+      !$omp threadprivate(soil_prof_hact, soil_prof_hp, soil_prof_hs, soil_prof_hsta)
+      !$omp threadprivate(soil_prof_lig, soil_prof_man, soil_prof_meta, soil_prof_microb)
+      !$omp threadprivate(soil_prof_mn, soil_prof_mp, soil_prof_nonlig, soil_prof_root)
+      !$omp threadprivate(soil_prof_root_frac, soil_prof_rsd, soil_prof_seq_hp, soil_prof_seq_hs)
+      !$omp threadprivate(soil_prof_seq_microb, soil_prof_slig, soil_prof_smeta, soil_prof_somc)
+      !$omp threadprivate(soil_prof_srsd, soil_prof_sstr, soil_prof_str, soil_prof_tot, soil_prof_water)
+      !$omp threadprivate(decomp, photo_decomp, pl_mass_up, org_frt, abgr_drop, leaf_drop, seed_drop, stem_drop)
+      !$omp threadprivate(mix_mn, mix_mp, mix_org, pl_yield)
+      !$omp threadprivate(harv_seed, harv_leaf, harv_stem, harv_left)
+      !$omp threadprivate(transfer)
+
     contains
 
       !! Flush-guarded scalar multiply used by the mass "* const" operators. Returns const*x,
@@ -386,7 +401,9 @@
       !! only the mass MULTIPLY operators; divisions elsewhere are intentionally still trapped.
       elemental real function fmul(const, x)
         real, intent (in) :: const, x
-        if (abs(x) < 1.e-30) then
+        !! Part 12: guard BOTH operands (a normal*normal product can be subnormal in real*4);
+        !! 1e-18 threshold -> worst-case product 1e-36, safely above normal-min 1.18e-38.
+        if (abs(x) < 1.e-18 .or. abs(const) < 1.e-18) then
           fmul = 0.
         else
           fmul = const * x

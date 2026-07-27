@@ -31,23 +31,23 @@
       
       implicit none
 
-      integer :: j = 0
-      integer :: jj = 0
-      integer :: gw_soil_flag = 0
-      integer :: ics = 0
-      integer :: sol_index = 0
-      real :: cocs = 0.
-      real :: cosurfcs = 0.
-      real :: perccslyr(3) = 0.
-      real :: ssfcslyr = 0.
-      real :: vcs = 0.
-      real :: hru_area_m2 = 0.
-      real :: water_volume = 0.
-      real :: cs_mass_kg = 0.
-      real :: ro_mass = 0.
-      real :: sro = 0.
-      real :: vv = 0.
-      real :: ww = 0.
+      integer :: j
+      integer :: jj
+      integer :: gw_soil_flag
+      integer :: ics
+      integer :: sol_index
+      real :: cocs
+      real :: cosurfcs
+      real :: perccslyr(3)
+      real :: ssfcslyr
+      real :: vcs
+      real :: hru_area_m2
+      real :: water_volume
+      real :: cs_mass_kg
+      real :: ro_mass
+      real :: sro
+      real :: vv
+      real :: ww
 
 
       j = 0
@@ -94,7 +94,7 @@
             sro = 0.
           end if
           vv = soil(j)%ly(jj)%prk + sro + soil(j)%ly(jj)%flat + 1.e-10
-          if (hru(j)%lumv%ldrain == jj) vv = vv + qtile
+          if (hru(j)%lumv%ldrain == jj) vv = vv + qtile(j)
           ww = -vv / ((1. - soil(j)%anion_excl) * soil(j)%phys(jj)%ul)
           vcs = cs_soil(j)%ly(jj)%cs(ics) * (1. - Exp(ww))
           cocs = Max(vcs / vv, 0.)
@@ -112,7 +112,7 @@
           !Daniel 1/2012    
           !! calculate constituent mass in tile flow 
           if (hru(j)%lumv%ldrain == jj) then
-            tilecs(j,ics) = cocs * qtile
+            tilecs(j,ics) = cocs * qtile(j)
             tilecs(j,ics) = Min(tilecs(j,ics),cs_soil(j)%ly(jj)%cs(ics))
             cs_soil(j)%ly(jj)%cs(ics) = cs_soil(j)%ly(jj)%cs(ics) - tilecs(j,ics)
           endif

@@ -365,8 +365,23 @@
         
       interface operator (/)
         module procedure carbon_plant_gl_div
-      end interface 
-        
+      end interface
+
+      !! OpenMP: per-HRU carbon working scratch (cbn_zhang2 etc.) made thread-private.
+      !$omp threadprivate(org_con, org_tran, org_allo, org_flux, org_ratio, carbdb)
+      !$omp threadprivate(org_frac)
+
+      !! OpenMP: SHARED snapshot of the setup config that carbon_coef_read establishes on the
+      !! master thread. threadprivate worker copies do NOT inherit master's setup values (and
+      !! gfortran copyin is unreliable for derived-type arrays), so the parallel HRU pre-pass
+      !! assigns these into each thread's threadprivate copy before use. See command.f90.
+      type (organic_controls)   :: org_con_hold
+      type (organic_allocations), dimension(2) :: org_allo_hold
+      type (carbon_inputs), dimension(2) :: carbdb_hold
+      type (organic_transformations) :: org_tran_hold
+      type (organic_ratio) :: org_ratio_hold
+      type (organic_fractions) :: org_frac_hold
+
       contains
 
       function carbon_soil_flux__add (hru1, hru2) result (hru3)

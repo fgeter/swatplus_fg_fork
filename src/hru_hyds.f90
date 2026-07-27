@@ -21,22 +21,22 @@
       
       external :: flow_hyd_ru_hru
 
-      integer :: j = 0               !none          |same as ihru (hru number)
-      real :: cnv_m3 = 0.            !              |
-      real :: cnv_kg = 0.            !              |
-      real :: cnv_ppm = 0.            !              |
-      integer :: iob = 0             !              |
-      integer :: ihyd = 0            !none          |counter
-      integer :: ipest = 0           !none          |counter
-      integer :: ipath = 0           !none          |counter 
-      integer :: isalt = 0           !none          |counter for salt ions (rtb salt)
-      integer :: ics = 0             !none          |counter for constituents (rtb cs)
-      integer :: istep = 0           !none          |counter
-      integer :: istep_bak = 0       !none          |counter
-      integer :: day_cur = 0         !none          |counter
-      integer :: day_next = 0        !none          |counter
-      integer :: tinc = 0            !none          |
-      integer :: inext_step = 0
+      integer :: j                   !none          |same as ihru (hru number)
+      real :: cnv_m3                 !              |
+      real :: cnv_kg                 !              |
+      real :: cnv_ppm                 !              |
+      integer :: iob                 !              |
+      integer :: ihyd                !none          |counter
+      integer :: ipest               !none          |counter
+      integer :: ipath               !none          |counter 
+      integer :: isalt               !none          |counter for salt ions (rtb salt)
+      integer :: ics                 !none          |counter for constituents (rtb cs)
+      integer :: istep               !none          |counter
+      integer :: istep_bak           !none          |counter
+      integer :: day_cur             !none          |counter
+      integer :: day_next            !none          |counter
+      integer :: tinc                !none          |
+      integer :: inext_step
       
       j = ihru
       cnv_m3 = hru(j)%area_ha * 10.
@@ -59,11 +59,11 @@
       end if
 
       !! surface runoff hydrograph (3)
-      ob(icmd)%hdsep%flo_surq = qday * cnv_m3            !!rtb gwflow - hydrograph separation (surface runoff)
+      ob(icmd)%hdsep%flo_surq = qday(j) * cnv_m3            !!rtb gwflow - hydrograph separation (surface runoff)
       ob(icmd)%hdsep%flo_satexsw = satexq_chan * cnv_m3  !!rtb gwflow - hydrograph separation (saturation excess runoff)
-      ob(icmd)%peakrate = qp_cms
+      ob(icmd)%peakrate = qp_cms(j)
       ob(icmd)%hd(3)%temp = 5. + .75 * w%tave         !!wtmp
-      ob(icmd)%hd(3)%flo = qday * cnv_m3              !!qdr m3/d
+      ob(icmd)%hd(3)%flo = qday(j) * cnv_m3              !!qdr m3/d
       ob(icmd)%hd(3)%sed = sedyld(j)                  !!sedyld
       ob(icmd)%hd(3)%orgn = sedorgn(j) * cnv_kg       !!sedorgn
       ob(icmd)%hd(3)%sedp = (sedorgp(j) + sedminpa(j) +                 &
@@ -137,7 +137,7 @@
       enddo
       
       !tile flow hydrograph (5)
-      ob(icmd)%hd(5)%flo = qtile * cnv_m3               !! tile flow
+      ob(icmd)%hd(5)%flo = qtile(j) * cnv_m3               !! tile flow
       ob(icmd)%hd(5)%no3 = tileno3(j) * cnv_kg          !! tile flow nitrate 
       !set constituents
       do ipest = 1, cs_db%num_pests

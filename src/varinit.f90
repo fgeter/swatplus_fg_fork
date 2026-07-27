@@ -65,15 +65,8 @@
       
       implicit none
 
-      integer :: j = 0          !none          |HRU number
-      integer :: ly = 0         !none          |counter
-      real :: crk = 0.          !mm H2O        |percolation due to crack flow
-      real :: enratio = 0.      !none          |enrichment ratio calculated for day in HRU
-      real :: etday = 0.        !mm H2O        |actual amount of evapotranspiration that 
-                                !              |occurs on day in HRU
-      real :: over_flow = 0.    !              |
-      real :: sedprev = 0.      !              | 
-      integer :: irmmdt = 0     !              | 
+      integer :: j              !none          |HRU number
+      integer :: ly             !none          |counter
 
       j = ihru
 
@@ -84,46 +77,40 @@
       end do
       
       !!initialize variables NUBS - all these need to be checked
-        albday = 0.
-        bioday = 0.
-        bsprev = 0.
-        canev = 0.
-        crk = 0.
-        enratio = 0.
-        ep_day = 0.
-        ep_max = 0.
-        es_day = 0.
-        etday = 0.
-        fertn = 0.
-        fertp = 0.
-        fixn = 0.
-        grazn = 0.
-        grazp = 0.
+        albday(j) = 0.
+        bioday(j) = 0.
+        bsprev(j) = 0.
+        canev(j) = 0.
+        ep_day(j) = 0.
+        ep_max(j) = 0.
+        es_day(j) = 0.
+        fertn(j) = 0.
+        fertp(j) = 0.
+        fixn(j) = 0.
+        grazn(j) = 0.
+        grazp(j) = 0.
         if (time%step > 1)  hhqday(j,:) = 0.
-        inflpcp = 0.
-        lyrtile = 0.
-        qp_cms = 0.
-        pet_day = 0.
-        qday = 0.
-        qtile = 0.
-        ls_overq = 0.
-        over_flow = 0.
-        latqrunon = 0.
-        sepday = 0.
-        snoev = 0.
-        snofall = 0.
-        snomlt = 0.
-        sw_excess = 0.
+        inflpcp(j) = 0.
+        lyrtile(j) = 0.
+        qp_cms(j) = 0.
+        pet_day(j) = 0.
+        qday(j) = 0.
+        qtile(j) = 0.
+        ls_overq(j) = 0.
+        latqrunon(j) = 0.
+        sepday(j) = 0.
+        snoev(j) = 0.
+        snofall(j) = 0.
+        snomlt(j) = 0.
+        sw_excess(j) = 0.
         uno3d = 0.
-        usle = 0.
-        usle_ei = 0.
-        vpd = 0.
-        voltot = 0.
+        usle(j) = 0.
+        usle_ei(j) = 0.
+        vpd(j) = 0.
+        voltot(j) = 0.
 
     !! urban modeling by J.Jeong
-      sedprev = 0.
       ubnrunoff = 0.
-      irmmdt = 0.
         hhsedy = 0.
         ubntss = 0.
         wet_seep_day(j)%no3 = 0
