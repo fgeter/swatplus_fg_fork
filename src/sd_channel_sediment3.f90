@@ -19,46 +19,46 @@
       
       external :: rcurv_interp_flo
 
-      integer :: iob = 0            !               |object number
-      integer :: ihru = 0
-      integer :: iihru = 0
-      integer :: ires = 0
-      real :: rto = 0.
-      real :: rto1 = 0.
-      real :: trap_eff = 0.         !frac           |trap efficiency in the flood plain
-      real :: cohesion = 0.         !               |soil bank cohesion 
-      real :: b_exp = 0.            !               |exponent for bank erosion equation
-      real :: ebtm_m = 0.           !m              |erosion of bottom of channel
-      real :: ebank_m = 0.          !m              |meander cut on one side
-      real :: ebtm_t = 0.           !tons           |bottom erosion
-      real :: ebank_t = 0.          !tons           |bank erosion
-      real :: shear_btm_cr = 0.     !               |
-      real :: shear_btm = 0.        !               |  
-      real :: flo_time = 0.         !s              |estimate of total flow time through the channel
-      real :: bf_flow = 0.          !m3/s           |bankfull flow rate * adjustment factor
-      real :: pk_rto = 0.           !ratio          |peak to mean flow rate ratio
-      real :: bd_fac = 0.           !               |bulk density factor for critical velocity calculation
-      real :: cohes_fac = 0.        !               |cohesion factor for critical velocity calculation
+      integer :: iob                !               |object number
+      integer :: ihru
+      integer :: iihru
+      integer :: ires
+      real :: rto
+      real :: rto1
+      real :: trap_eff              !frac           |trap efficiency in the flood plain
+      real :: cohesion              !               |soil bank cohesion 
+      real :: b_exp                 !               |exponent for bank erosion equation
+      real :: ebtm_m                !m              |erosion of bottom of channel
+      real :: ebank_m               !m              |meander cut on one side
+      real :: ebtm_t                !tons           |bottom erosion
+      real :: ebank_t               !tons           |bank erosion
+      real :: shear_btm_cr          !               |
+      real :: shear_btm             !               |  
+      real :: flo_time              !s              |estimate of total flow time through the channel
+      real :: bf_flow               !m3/s           |bankfull flow rate * adjustment factor
+      real :: pk_rto                !ratio          |peak to mean flow rate ratio
+      real :: bd_fac                !               |bulk density factor for critical velocity calculation
+      real :: cohes_fac             !               |cohesion factor for critical velocity calculation
       real :: florate               !m^3/s          |flow rate below the triangle for flow lasting more than a day
-      real :: vel = 0.
-      real :: veg = 0.
-      real :: vel_cr = 0.
-      real :: rad_curv = 0.
-      real :: vel_bend = 0.
-      real :: vel_rch = 0.
-      real :: arc_len = 0.
-      real :: prot_len = 0.
-      real :: h_rad = 0.
-      real :: fp_m2 = 0.
-      real :: exp_co = 0.
-      real :: florate_ob = 0.
-      real :: precip = 0.
-      real :: flovol_ob = 0.
-      real :: wet_fill = 0.
+      real :: vel
+      real :: veg
+      real :: vel_cr
+      real :: rad_curv
+      real :: vel_bend
+      real :: vel_rch
+      real :: arc_len
+      real :: prot_len
+      real :: h_rad
+      real :: fp_m2
+      real :: exp_co
+      real :: florate_ob
+      real :: precip
+      real :: flovol_ob
+      real :: wet_fill
       real :: ave_rate
-      real :: v_vc = 0.
-      real :: m_exhaust = 0.
-      real :: dur_scale = 0.
+      real :: v_vc
+      real :: m_exhaust
+      real :: dur_scale
 
       ich = isdch
       iob = sp_ob1%chandeg + jrch - 1
@@ -126,7 +126,9 @@
         !! trap efficiency from Dynamic SedNet Component Model Reference Guide: Update 2017
         fp_m2 = 3. * sd_ch(ich)%chw * sd_ch(ich)%chl * 1000.
         exp_co = 0.0001 * fp_m2 / florate_ob
-        trap_eff = sd_ch(ich)%fp_inun_days * (florate_ob / ave_rate) * (1. - exp(-exp_co))
+        !! exp_w guards against underflow when florate_ob is tiny enough
+        !! that exp_co blows up and exp(-exp_co) would trap.
+        trap_eff = sd_ch(ich)%fp_inun_days * (florate_ob / ave_rate) * (1. - exp_w(-exp_co))
         trap_eff = Min (1., trap_eff)
         fp_dep%sed = trap_eff * ht1%sed
 

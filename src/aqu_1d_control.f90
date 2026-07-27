@@ -17,42 +17,42 @@
       
       external :: cs_rctn_aqu, cs_sorb_aqu, salt_chem_aqu
       
-      integer :: iaq = 0        !none       |counter
-      integer :: iaqdb = 0      !           |
-      integer :: icha = 0       !           |
-      integer :: iob_out = 0    !           !object type out
-      integer :: iout = 0       !none       |counter
-      integer :: ii = 0         !none       |counter
-      integer :: icontrib = 0   !none       |counter
-      integer :: ipest = 0      !none       |counter
-      integer :: ipest_db = 0   !none       |pesticide number from pesticide data base
-      integer :: ipseq = 0      !none       |sequential basin pesticide number
-      integer :: ipdb = 0       !none       |sequential pesticide number of daughter pesticide
-      integer :: imeta = 0      !none       |pesticide metabolite counter
-      real :: mol_wt_rto = 0.   !ratio      |molecular weight ratio of duaghter to parent pesticide
-      real :: stor_init = 0.    !           |
-      real :: conc_no3 = 0.     !           |
-      real :: step = 0.         !           |
-      real :: contrib_len = 0.
-      real :: contrib_len_left = 0.
-      real :: pest_init = 0.    !kg/ha      |amount of pesticide present at beginning of day
-      real :: no3_init = 0.     !kg/ha      |amount of nitrate present at beginning of day
-      real :: flow_mm = 0.      !mm         |total flow through aquifer - return flow + seepage
-      real :: pest_kg = 0.      !kg         |soluble pesticide moving with flow
-      real :: conc = 0.         !kg/mm      |concentration of pesticide in flow
-      real :: zdb1 = 0.         !mm         |kd - flow factor for pesticide transport
-      real :: kd = 0.           !(mg/kg)/(mg/L) |koc * carbon
-      real :: gw_volume = 0.    !m3         |m3 of groundwater in aquifer
-      real :: salt_recharge = 0.  !kg         |kg of salt in recharge water
-      real :: gw_discharge = 0. !m3         |m3 of groundwater discharging to channels
-      real :: salt_discharge = 0. !kg         |kg of salt in groundwater discharge
-      real :: gw_seep = 0.      !m3         |m3 of groundwater seeping from the aquifer
-      real :: salt_seep = 0.    !kg         |kg of salt in groundwater seepage 
-      real :: cs_recharge = 0.                 !rtb cs
-      real :: cs_discharge = 0.                !rtb cs
-      real :: cs_seep = 0.                     !rtb cs
-      integer :: m = 0!rtb salt
-      integer :: ics = 0 !rtb cs
+      integer :: iaq            !none       |counter
+      integer :: iaqdb          !           |
+      integer :: icha           !           |
+      integer :: iob_out        !           !object type out
+      integer :: iout           !none       |counter
+      integer :: ii             !none       |counter
+      integer :: icontrib       !none       |counter
+      integer :: ipest          !none       |counter
+      integer :: ipest_db       !none       |pesticide number from pesticide data base
+      integer :: ipseq          !none       |sequential basin pesticide number
+      integer :: ipdb           !none       |sequential pesticide number of daughter pesticide
+      integer :: imeta          !none       |pesticide metabolite counter
+      real :: mol_wt_rto        !ratio      |molecular weight ratio of duaghter to parent pesticide
+      real :: stor_init         !           |
+      real :: conc_no3          !           |
+      real :: step              !           |
+      real :: contrib_len
+      real :: contrib_len_left
+      real :: pest_init         !kg/ha      |amount of pesticide present at beginning of day
+      real :: no3_init          !kg/ha      |amount of nitrate present at beginning of day
+      real :: flow_mm           !mm         |total flow through aquifer - return flow + seepage
+      real :: pest_kg           !kg         |soluble pesticide moving with flow
+      real :: conc              !kg/mm      |concentration of pesticide in flow
+      real :: zdb1              !mm         |kd - flow factor for pesticide transport
+      real :: kd                !(mg/kg)/(mg/L) |koc * carbon
+      real :: gw_volume         !m3         |m3 of groundwater in aquifer
+      real :: salt_recharge       !kg         |kg of salt in recharge water
+      real :: gw_discharge      !m3         |m3 of groundwater discharging to channels
+      real :: salt_discharge      !kg         |kg of salt in groundwater discharge
+      real :: gw_seep           !m3         |m3 of groundwater seeping from the aquifer
+      real :: salt_seep         !kg         |kg of salt in groundwater seepage 
+      real :: cs_recharge                      !rtb cs
+      real :: cs_discharge                     !rtb cs
+      real :: cs_seep                          !rtb cs
+      integer :: m    !rtb salt
+      integer :: ics     !rtb cs
       
       !! set pointers to aquifer database and weather station
       iaq = ob(icmd)%num
@@ -137,7 +137,13 @@
         conc_no3 = 0.
       endif
       !! kg = (kg/ha / mm) * mm * ha
-      ob(icmd)%hd(1)%no3 = (conc_no3 * aqu_d(iaq)%flo) * ob(icmd)%area_ha
+      !! Part 12: guard denormal underflow -- conc_no3 can be a tiny (but normal) ratio that
+      !! underflows when multiplied by flo*area_ha (same class as ch_watqual4/res_nutrient guards)
+      if (abs(conc_no3) >= 1.e-15) then
+        ob(icmd)%hd(1)%no3 = (conc_no3 * aqu_d(iaq)%flo) * ob(icmd)%area_ha
+      else
+        ob(icmd)%hd(1)%no3 = 0.
+      end if
       ob(icmd)%hd(1)%no3 = amin1(ob(icmd)%hd(1)%no3, (aqu_d(iaq)%no3_st * ob(icmd)%area_ha))
       aqu_d(iaq)%no3_lat = ob(icmd)%hd(1)%no3 / ob(icmd)%area_ha
       aqu_d(iaq)%no3_st = aqu_d(iaq)%no3_st - aqu_d(iaq)%no3_lat
@@ -151,7 +157,12 @@
       
       !! compute nitrate seepage out of aquifer
       !! kg/ha = (kg/ha / mm) * mm
-      aqu_d(iaq)%no3_seep = conc_no3 * aqu_d(iaq)%seep
+      !! Part 12: same denormal-underflow guard as the no3 return-flow calc above
+      if (abs(conc_no3) >= 1.e-15) then
+        aqu_d(iaq)%no3_seep = conc_no3 * aqu_d(iaq)%seep
+      else
+        aqu_d(iaq)%no3_seep = 0.
+      end if
       aqu_d(iaq)%no3_seep = amin1(aqu_d(iaq)%no3_seep, aqu_d(iaq)%no3_st)
       aqu_d(iaq)%no3_st = aqu_d(iaq)%no3_st - aqu_d(iaq)%no3_seep
       ob(icmd)%hd(2)%no3 = aqu_d(iaq)%no3_seep * ob(icmd)%area_ha

@@ -32,21 +32,28 @@
       real, intent (in) :: tk
       real, intent (in) :: c1
       real, intent (in) :: c2
-      real :: h1 = 0.
-      real :: h2 = 0.
-      real :: help = 0.
-      real :: tm = 0.
-      real :: h3 = 0.
+      real :: h1
+      real :: h2
+      real :: help
+      real :: tm
+      real :: h3
       real :: wq_k2m
       real :: wq_semianalyt
       
-      h1 = wq_semianalyt (t1, t2, 0., 0., c1, c2)
-      h2 = wq_semianalyt (t1, t2, 0., tk, c1, c2)
-      help = exp_w(-t2 / t1)
-         
-      tm = (h2 - c1 * help) / (t1 * (1. - help)) - c2 / t1
-      h3 = wq_semianalyt (t1, t2, tm, 0., c1, c2)
-      wq_k2m = tm
+    !! t1 (tres) too small (or zero) relative to t2 (tdel) -- the divisions
+    !! by t1 below would blow up. Same degenerate case wq_semianalyt guards
+    !! against; no meaningful reaction term for a near-zero residence time.
+      if (t1 <= t2) then
+        wq_k2m = 0.
+      else
+        h1 = wq_semianalyt (t1, t2, 0., 0., c1, c2)
+        h2 = wq_semianalyt (t1, t2, 0., tk, c1, c2)
+        help = exp_w(-t2 / t1)
+
+        tm = (h2 - c1 * help) / (t1 * (1. - help)) - c2 / t1
+        h3 = wq_semianalyt (t1, t2, tm, 0., c1, c2)
+        wq_k2m = tm
+      end if
 
       return
       end function wq_k2m
