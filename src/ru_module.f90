@@ -3,6 +3,8 @@
       implicit none 
 
       integer :: iru = 0                           !none            |counter
+      !! Stage 4: iru is the shared "current routing unit" index set before ru_control (Part 11)
+      !$omp threadprivate(iru)
       integer :: mru_db = 0                        !                |
       real, dimension (:), allocatable :: ru_tc    !                |    
       real, dimension (:), allocatable :: ru_n     !                |

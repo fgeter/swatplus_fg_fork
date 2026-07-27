@@ -598,17 +598,23 @@
         module procedure hydcsout_mult_const
       end interface
 
+      !! OpenMP: hcs1/hcs2/hcs3 are per-object constituent scratch (counterpart of ht1/ht2/ht3).
+      !! res_control (hcs2=hin_csz) and ru_control (hcs1=hin_csz) assign them UNCONDITIONALLY --
+      !! a derived-type assignment with allocatable components dealloc/reallocs the shared block,
+      !! so two reservoirs/ru's racing concurrently double-free it. threadprivate fixes it.
+      !$omp threadprivate(hcs1, hcs2, hcs3)
+
       contains
       
       function hydcsout_add (hydcs1, hydcs2) result (hydcs3)
         type (constituent_mass), intent (in) :: hydcs1
         type (constituent_mass), intent (in) :: hydcs2
         type (constituent_mass) :: hydcs3
-        integer :: ipest = 0
-        integer :: ipath = 0
-        integer :: ihmet = 0
-        integer :: isalt = 0
-        integer :: ics = 0
+        integer :: ipest
+        integer :: ipath
+        integer :: ihmet
+        integer :: isalt
+        integer :: ics
         allocate (hydcs3%pest(cs_db%num_pests), source = 0.)
         allocate (hydcs3%path(cs_db%num_paths), source = 0.)
         allocate (hydcs3%hmet(cs_db%num_metals), source = 0.)
@@ -637,11 +643,11 @@
         type (constituent_mass), intent (in) :: hydcs1
         type (constituent_mass) :: hydcs2
         real, intent (in) :: const
-        integer :: ipest = 0
-        integer :: ipath = 0
-        integer :: ihmet = 0
-        integer :: isalt = 0
-        integer :: ics = 0
+        integer :: ipest
+        integer :: ipath
+        integer :: ihmet
+        integer :: isalt
+        integer :: ics
         allocate (hydcs2%pest(cs_db%num_pests), source = 0.)
         allocate (hydcs2%path(cs_db%num_paths), source = 0.)
         allocate (hydcs2%hmet(cs_db%num_metals), source = 0.)
@@ -671,11 +677,11 @@
         real, intent (in) :: vol_m3
         type (constituent_mass), intent (in) :: hydcs1
         type (constituent_mass), intent (out) :: hydcs2
-        integer :: ipest = 0
-        integer :: ipath = 0
-        integer :: ihmet = 0
-        integer :: isalt = 0
-        integer :: ics = 0
+        integer :: ipest
+        integer :: ipath
+        integer :: ihmet
+        integer :: isalt
+        integer :: ics
         allocate (hydcs2%pest(cs_db%num_pests), source = 0.)
         allocate (hydcs2%path(cs_db%num_paths), source = 0.)
         allocate (hydcs2%hmet(cs_db%num_metals), source = 0.)
