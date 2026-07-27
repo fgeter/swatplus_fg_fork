@@ -12,29 +12,29 @@
       
       implicit none
 
-      integer :: ii = 0               !none          |counter
+      integer :: ii                   !none          |counter
       integer :: jres                 !none          |reservoir number
-      integer :: idat = 0             !              |
-      integer :: irel = 0             !              |
-      integer :: iob = 0              !none          |counter
-      integer :: ictbl = 0
-      integer :: icon = 0              !! nbs
-      real :: pvol_m3 = 0.
-      real :: evol_m3 = 0.
-      real :: dep = 0.
-      real :: weir_hgt = 0.
-      real :: alpha_up = 0.
-      real :: alpha_down = 0.
+      integer :: idat                 !              |
+      integer :: irel                 !              |
+      integer :: iob                  !none          |counter
+      integer :: ictbl
+      integer :: icon                  !! nbs
+      real :: pvol_m3
+      real :: evol_m3
+      real :: dep
+      real :: weir_hgt
+      real :: alpha_up
+      real :: alpha_down
 
       external :: gwflow_reservoir
-      integer :: dom            = 0                                           !           |Day of month
-      integer :: mon            = 0                                           !           |Month of year
-      integer :: end_of_mo      = 0                                           !           |End of month flag
-      integer :: n_days         = 0                                           !           |Number of days in current month
-      real    :: daily_inflow   = 0.                                          !m3         |Daily inflow from the past day
+      integer :: dom                                                          !           |Day of month
+      integer :: mon                                                          !           |Month of year
+      integer :: end_of_mo                                                    !           |End of month flag
+      integer :: n_days                                                       !           |Number of days in current month
+      real    :: daily_inflow                                                 !m3         |Daily inflow from the past day
       real, dimension(:), allocatable :: temp_array                           !           |Temporary to store new values
-      real :: daily_demand      = 0.                                          !m3         |Daily irrigation demand
-      integer :: irrig_track_b  = 0                                           !none       |Tracker to update daily irrigation demand
+      real :: daily_demand                                                    !m3         |Daily irrigation demand
+      integer :: irrig_track_b                                                !none       |Tracker to update daily irrigation demand
 
       ht1 = ob(icmd)%hin    !! set incoming flow
       ht2 = resz            !! zero outgoing flow, sediment and nutrients
@@ -48,7 +48,9 @@
         !! adjust precip and temperature for elevation using lapse rates
         w = wst(iwst)%weat
         if (bsn_cc%lapse == 1) call cli_lapse
-        wst(iwst)%weat = w
+        !! Part 11: do NOT write back to the SHARED wst(iwst)%weat -- two reservoirs sharing a
+        !! weather station race on its allocatable components -> double free. cli_lapse adjusted
+        !! our threadprivate w in place; downstream reads use w directly (see evap/precip below).
       
         !! set water body pointer to res
         wbody => res(jres)
@@ -144,6 +146,11 @@
           alpha_up = Exp(-res_ob(jres)%lag_up)
           alpha_down = Exp(-res_ob(jres)%lag_down)
           !! lag outflow when flows are receding
+          !! Part 12: flush denormal outflow AND the carried prev_flo to 0 before the lag
+          !! multiplies (both x*alpha terms underflow the FPE trap when a value has decayed
+          !! to ~1e-40); guard every operand of the multiply, behavior-neutral
+          if (abs(ht2%flo) < 1.e-15) ht2%flo = 0.
+          if (abs(res_ob(jres)%prev_flo) < 1.e-15) res_ob(jres)%prev_flo = 0.
           if (res_ob(jres)%prev_flo < ht2%flo) then
             ht2%flo = ht2%flo * alpha_up + res_ob(jres)%prev_flo * (1. - alpha_up)
           else
@@ -159,8 +166,8 @@
         endif 
         
         !! calculate water balance for day
-        res_wat_d(jres)%evap = 10. * res_hyd(jres)%evrsv * wst(iwst)%weat%pet * res_wat_d(jres)%area_ha
-        res_wat_d(jres)%precip = 10. * wst(iwst)%weat%precip * res_wat_d(jres)%area_ha
+        res_wat_d(jres)%evap = 10. * res_hyd(jres)%evrsv * w%pet * res_wat_d(jres)%area_ha
+        res_wat_d(jres)%precip = 10. * w%precip * res_wat_d(jres)%area_ha
         if(bsn_cc%gwflow == 0) then !if gwflow active, seepage calculated via gwflow_reservoir (rtb gwflow)
           res_wat_d(jres)%seep = 240. * res_hyd(jres)%k * res_wat_d(jres)%area_ha
         else

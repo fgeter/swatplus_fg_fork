@@ -133,6 +133,8 @@
       type (water_body_data_parameters), dimension(:), allocatable, target :: res_prm
       type (water_body_data_parameters), dimension(:), allocatable, target :: wet_prm
       type (water_body_data_parameters), pointer :: wbody_prm       !! used for reservoir and wetlands
+      !! Stage 3: shared "current water body" parameter pointer reassigned per-reservoir/per-HRU (Part 11)
+      !$omp threadprivate(wbody_prm)
       
       type reservoir_weir_outflow
         character(len=25) :: name = ""

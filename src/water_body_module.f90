@@ -39,6 +39,8 @@
       type (water_body) :: bres_wat_y
       type (water_body) :: bres_wat_a
       type (water_body), pointer :: wbody_wb       !! used for reservoir and wetlands
+      !! Stage 3: shared "current water body" pointer reassigned per-reservoir/per-HRU (Part 11)
+      !$omp threadprivate(wbody_wb)
 
        interface operator (+)
         module procedure watbod_add
