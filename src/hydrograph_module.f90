@@ -82,7 +82,18 @@
       type (hyd_output), dimension(:),allocatable :: hhr
       type (hyd_output) :: ht1, ht2, ht3, ht4, ht5, delrto
       type (hyd_output) :: fp_dep, ch_dep, bank_ero, bed_ero, ch_trans
-      
+      !$omp threadprivate(icmd, iwst, ht1, ht2, ht3, ht4, ht5, delrto)
+      !$omp threadprivate(hdsep1, hdsep2)
+      !! Stage 2: channel indices set by the caller before sd_channel_control3 (Part 11
+      !! shared current-channel state -- ich is used 119x inside sd_channel_control3)
+      !$omp threadprivate(isdch, isd_chsur, jrch, ich)
+      !! Stage 2: per-channel sediment/deposition carriers (floodplain/channel deposition,
+      !! bank/bed erosion, channel transport) written per-channel in sd_channel_sediment3
+      !$omp threadprivate(fp_dep, ch_dep, bank_ero, bed_ero, ch_trans)
+      !! Stage 3: wbody is a shared "current water body" pointer reassigned per-reservoir in
+      !! res_control (=> res(jres)) and per-HRU in wetland_control (=> wet(j)) -- Part 11
+      !$omp threadprivate(wbody)
+
       !rtb hydrograph separation
       type (hyd_sep) :: hdsep1,hdsep2
       type (hyd_sep), dimension(:),allocatable :: ch_stor_hdsep
@@ -1433,25 +1444,39 @@
         real, intent (in) :: const
         type (hyd_output) :: hyd2
         hyd2%temp = hyd1%temp
-        hyd2%flo = const * hyd1%flo 
-        hyd2%sed = const * hyd1%sed !/ 1000.
-        hyd2%orgn = const * hyd1%orgn       
-        hyd2%sedp = const * hyd1%sedp 
-        hyd2%no3 = const * hyd1%no3
-        hyd2%solp = const * hyd1%solp
-        hyd2%chla = const * hyd1%chla
-        hyd2%nh3 = const * hyd1%nh3
-        hyd2%no2 = const * hyd1%no2
-        hyd2%cbod = const * hyd1%cbod
-        hyd2%dox = const * hyd1%dox
-        hyd2%san = const * hyd1%san
-        hyd2%sil = const * hyd1%sil
-        hyd2%cla = const * hyd1%cla
-        hyd2%sag = const * hyd1%sag
-        hyd2%lag = const * hyd1%lag
-        hyd2%grv = const * hyd1%grv
+        !! flush-guarded multiply (Part 12): const*x can be subnormal even when both are
+        !! individually normal real*4 -> underflow FPE trap; fmul returns 0 in that case
+        hyd2%flo = fmul(const, hyd1%flo)
+        hyd2%sed = fmul(const, hyd1%sed) !/ 1000.
+        hyd2%orgn = fmul(const, hyd1%orgn)
+        hyd2%sedp = fmul(const, hyd1%sedp)
+        hyd2%no3 = fmul(const, hyd1%no3)
+        hyd2%solp = fmul(const, hyd1%solp)
+        hyd2%chla = fmul(const, hyd1%chla)
+        hyd2%nh3 = fmul(const, hyd1%nh3)
+        hyd2%no2 = fmul(const, hyd1%no2)
+        hyd2%cbod = fmul(const, hyd1%cbod)
+        hyd2%dox = fmul(const, hyd1%dox)
+        hyd2%san = fmul(const, hyd1%san)
+        hyd2%sil = fmul(const, hyd1%sil)
+        hyd2%cla = fmul(const, hyd1%cla)
+        hyd2%sag = fmul(const, hyd1%sag)
+        hyd2%lag = fmul(const, hyd1%lag)
+        hyd2%grv = fmul(const, hyd1%grv)
         hyd2%temp = hyd1%temp
       end function hydout_mult_const
+
+      !! Part 12 underflow guard: const and x can BOTH be normal real*4 yet multiply to a
+      !! subnormal product (< 1.18e-38) that trips the underflow FPE trap. Guard both operands
+      !! at 1e-18 (worst-case product 1e-36, safely above normal-min) and flush to 0 below it.
+      elemental real function fmul(const, x)
+        real, intent (in) :: const, x
+        if (abs(x) < 1.e-18 .or. abs(const) < 1.e-18) then
+          fmul = 0.
+        else
+          fmul = const * x
+        end if
+      end function fmul
       
       function hydout_div_const (hyd1,const) result (hyd2)
         type (hyd_output), intent (in) :: hyd1
