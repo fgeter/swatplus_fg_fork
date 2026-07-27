@@ -38,6 +38,33 @@ if(NOT TAG)
 endif()
 
 
+# --- Threading build options (multi-threading effort) ------------------------
+# All default OFF so normal builds are unaffected.
+#   -DSWAT_OPENMP=ON : compile/link with OpenMP
+#   -DSWAT_TSAN=ON   : ThreadSanitizer build (implies OpenMP, requires dynamic link)
+#   -DSWAT_ASAN=ON   : AddressSanitizer build (implies OpenMP, requires dynamic link)
+#   -DSWAT_PROF=ON   : gprof instrumentation (-pg); run with OMP_NUM_THREADS=1 to profile
+#   -DSWAT_LTO=ON    : Link-Time Optimization (-flto); don't combine with SWAT_PROF
+option(SWAT_OPENMP "Build with OpenMP threading" OFF)
+option(SWAT_TSAN   "Build with ThreadSanitizer (implies OpenMP + dynamic link)" OFF)
+option(SWAT_ASAN   "Build with AddressSanitizer (implies OpenMP + dynamic link)" OFF)
+option(SWAT_PROF   "Build with gprof instrumentation (-pg)" OFF)
+option(SWAT_LTO    "Build with Link-Time Optimization (-flto)" OFF)
+if(SWAT_TSAN)
+    set(SWAT_OPENMP ON)
+endif()
+if(SWAT_ASAN)
+    set(SWAT_OPENMP ON)
+endif()
+if(SWAT_LTO AND SWAT_PROF)
+    message(WARNING "SWAT_LTO+SWAT_PROF together measured no LTO benefit: -pg's per-function "
+                     "mcount() hooks appear to inhibit LTO's cross-module inlining (confirmed by "
+                     "profiling a combined build -- the hot derived-type operator functions showed "
+                     "no shrinkage vs a non-LTO -pg build). Use SWAT_LTO alone to measure its real "
+                     "effect, and SWAT_PROF alone to profile.")
+endif()
+# -----------------------------------------------------------------------------
+
 if (UNIX)
     if(CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
         set(fdialect        "-fpp -free -fpe0 -traceback -diag-disable=10448")
@@ -64,7 +91,9 @@ if (UNIX)
             if (NOT ("${os_id}" STREQUAL "Arch" OR 
                      "${os_like}" MATCHES ".*arch.*" OR
                      "${os_id}" STREQUAL "fedora" ))
-                link_libraries("-static")
+                if(NOT SWAT_TSAN AND NOT SWAT_ASAN)   # sanitizers are incompatible with static linking
+                    link_libraries("-static")
+                endif()
             endif()
         endif()
     endif()
@@ -125,6 +154,44 @@ set(CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} ${fdebug}")
 # set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} ${frelease}")
 set(CMAKE_Fortran_FLAGS_RELEASE "${frelease}")
 
+# --- OpenMP / ThreadSanitizer flags (multi-threading effort) ------------------
+if(SWAT_OPENMP)
+    find_package(OpenMP REQUIRED COMPONENTS Fortran)
+    string(APPEND CMAKE_Fortran_FLAGS " ${OpenMP_Fortran_FLAGS}")
+endif()
+if(SWAT_TSAN)
+    # -O1 with -g keeps TSan traces usable. The -ffpe-trap from fdialect stays on;
+    # revisit only if underflow traps fire spuriously under the TSan/OpenMP runtime.
+    string(APPEND CMAKE_Fortran_FLAGS " -fsanitize=thread -g -O1")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -fsanitize=thread")
+endif()
+if(SWAT_ASAN)
+    # Precisely locates heap corruption (buffer overflows, use-after-free) at the point
+    # of occurrence, unlike TSan which floods with false positives on this codebase's
+    # threadprivate/automatic access patterns (see tmp/threading_playbook.md Part 4).
+    string(APPEND CMAKE_Fortran_FLAGS " -fsanitize=address -g -O0")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -fsanitize=address")
+endif()
+if(SWAT_PROF)
+    # gprof's sampling profiler only reliably attributes time on the main thread (it
+    # doesn't automatically instrument pthread-created OpenMP worker threads) -- run
+    # profiling builds with OMP_NUM_THREADS=1 so the whole call graph lands on one thread
+    # and the resulting flat profile is actually interpretable.
+    string(APPEND CMAKE_Fortran_FLAGS " -pg -O2 -g")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -pg")
+endif()
+if(SWAT_LTO)
+    # Cross-module inlining for the codebase's pervasive small derived-type arithmetic
+    # operators (hyd_output/organic_mineral_mass +, *, called 100M-5B times per run) --
+    # measured ~2.6-2.7% wall-clock improvement, consistent at 1 and 8 threads, on the
+    # full 7951-HRU/cswat=1 dataset. Binary size also drops measurably (~13% smaller in
+    # testing), consistent with real cross-module optimization happening. See SWAT_PROF's
+    # warning above -- don't combine the two if you want to see LTO's actual effect.
+    string(APPEND CMAKE_Fortran_FLAGS " -flto")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -flto")
+endif()
+# -----------------------------------------------------------------------------
+
 #############################################################################
 # Build
 # list (SORT _variableNames)
@@ -153,6 +220,10 @@ endif()
 
 file(GLOB sources src/*.f90)
 add_executable(${SWATPLUS_EXE} ${sources})
+
+if(SWAT_OPENMP)
+    target_link_libraries(${SWATPLUS_EXE} OpenMP::OpenMP_Fortran)
+endif()
 
 #############################################################################
 # Install
