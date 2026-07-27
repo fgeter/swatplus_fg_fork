@@ -349,8 +349,14 @@
         
       interface operator (*)
         module procedure ch_mult
-      end interface 
-             
+      end interface
+
+      !! Stage 2: in-stream routing/water-quality scratch (ch_rtmusk/ch_watqual4) made
+      !! thread-private for concurrent channel processing (write-before-read each channel).
+      !$omp threadprivate(jhyd, jsed, jnut, rttime, ben_area, rchdep, rtevp, rttlc, pet_ch)
+      !$omp threadprivate(peakr, rcharea, sdti, bnkrte, degrte, sedrch, rch_san, rch_sil, rch_cla)
+      !$omp threadprivate(rch_sag, rtwtr_d, rt_delt, rch_lag, rch_gra, rtwtr, wtrin, sed_ch)
+
       contains
              
       function ch_add(cho1,cho2) result (cho3)

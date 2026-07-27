@@ -532,7 +532,15 @@
       interface operator (/)
         module procedure chsednut_div
       end interface
-              
+
+      !! Stage 2: per-channel routing scratch made thread-private for concurrent chandeg
+      !! processing. hyd_rad/trav_time/flo_dep/timeint are allocatable -- OpenMP does not
+      !! propagate the master's allocation to workers, so each worker allocates its own copy
+      !! in the command.f90 channel pre-pass (sized Max(10,time%step), as sd_hydsed_read does).
+      !$omp threadprivate(wtemp, peakrate, sed_reduc_t, no3_reduc_kg, tp_reduc_kg, tp_reduc, srp_reduc_kg)
+      !$omp threadprivate(hyd_rad, trav_time, flo_dep, timeint)
+      !$omp threadprivate(rcurv)
+
       contains
 !! routines for swatdeg_hru module
 
