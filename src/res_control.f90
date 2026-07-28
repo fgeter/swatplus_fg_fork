@@ -136,11 +136,17 @@
             dep = 0.
           end if
           weir_hgt = res_ob(jres)%weir_hgt
+          !! conditions() writes d_tbl%act_hit on the SHARED dtbl_res target and res_hydro reads it;
+          !! many reservoirs share one release table (e.g. "pond"), so serialize the write+read span
+          !! exactly as hru_control does -- otherwise parallel reservoirs clobber each other's act_hit
+          !! and produce nondeterministic releases (and hence nondeterministic downstream channels).
+          !$omp critical (dtbl_eval)
           call conditions (jres, irel)
 
                   !! Retrospective information -> Inflow and irrigation demand memory of the reservoir
 
           call res_hydro (jres, irel, pvol_m3, evol_m3)
+          !$omp end critical (dtbl_eval)
           
           !! new lag to smooth condition jumps (volume or month conditions)
           alpha_up = Exp(-res_ob(jres)%lag_up)

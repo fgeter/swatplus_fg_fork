@@ -59,6 +59,16 @@
       character(len=1) :: pl_chk
       
       d_tbl%act_hit = "y"
+
+      !! Make probabilistic decision-table draws reproducible and independent of parallel
+      !! object-processing order. rndseed_cond is threadprivate; seed it here as a pure
+      !! deterministic function of (object, table, day, year) so every prob/prob_unif draw
+      !! in this evaluation depends only on the object and date, not on thread timing. This
+      !! also makes the parallel run bit-for-bit with a 1-thread run of the same build.
+      rndseed_cond = int(mod( int(ob_cur,8)*2654435761_8 + int(idtbl,8)*40503_8      &
+                            + int(time%day,8)*104729_8   + int(time%yrc,8)*1299709_8, &
+                            2147483647_8)) + 1
+
       do ic = 1, d_tbl%conds
         select case (d_tbl%cond(ic)%var)
             

@@ -19,6 +19,8 @@
       real, dimension (:), allocatable :: rnd8                  !none          |random number between 0.0 and 1.0
       real, dimension (:), allocatable :: rnd9                  !none          |random number between 0.0 and 1.0
       integer :: rndseed_cond = 748932582   ! random number seed for dtbl conditional
+      !$omp threadprivate(rndseed_cond)     ! reseeded deterministically per evaluation in conditions() so
+                                            ! probabilistic decision-table draws are independent of parallel order
       real, dimension(:), allocatable :: co2y
 
       type weather_generator_db      

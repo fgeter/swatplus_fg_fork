@@ -130,7 +130,9 @@
       end type grazing_operation
       type (grazing_operation), dimension(:), allocatable :: grazeop_db
       type (grazing_operation) :: graze
-      
+      !$omp threadprivate(graze)   ! scratch: set from grazeop_db(grz_dbid(j)) immediately before each
+                                   ! pl_graze call, so concurrent HRUs cannot clobber each other's params
+
       type streetsweep_operation
         character (len=40) :: name = ""
         real :: eff = 0.               !!none             |removal efficiency of sweeping operation
