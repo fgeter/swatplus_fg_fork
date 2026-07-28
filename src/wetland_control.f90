@@ -186,8 +186,15 @@
         wbody_wb => wet_wat_d(j)
         pvol_m3 = wet_ob(j)%pvol
         evol_m3 = wet_ob(j)%evol
+        !! same shared-act_hit hazard as res_control: conditions() writes d_tbl%act_hit on the
+        !! shared dtbl_res target and res_hydro reads it, and wetlands can share a release table.
+        !! Serialize the write+read span with the same named critical the HRU/reservoir paths use.
+        !! (wetland_control runs in the HRU parallel region but OUTSIDE hru_control's own
+        !! dtbl_eval critical, so this is a fresh entry, not a deadlocking re-entry.)
+        !$omp critical (dtbl_eval)
         call conditions (j, irel)
         call res_hydro (j, irel, pvol_m3, evol_m3)
+        !$omp end critical (dtbl_eval)
         !! subtract outflow from wetland storage (similar to res_control)
         wet(j)%flo = max(0., wet(j)%flo - ht2%flo)
       end if
