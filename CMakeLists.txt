@@ -79,9 +79,16 @@ if (UNIX)
         set(FFC             "ifx")
         link_libraries("-static")
     elseif(CMAKE_Fortran_COMPILER_ID MATCHES GNU)
-        set(fdialect        "-cpp -fcheck=all -ffpe-trap=invalid,zero,overflow,underflow -fimplicit-none -ffree-line-length-none -fbacktrace -finit-local-zero -fno-unsafe-math-optimizations -frounding-math -fsignaling-nans")
-        set(fdebug          "-Wall")
-        set(frelease        "-O")
+        # fdialect = always-on flags (cheap; correctness/reproducibility). Runtime checking and
+        # FP-trapping moved to fdebug (Debug only); optimization set in frelease (Release only).
+        # See tmp/recommended_compiler_flags.md for the rationale and measured impact.
+        set(fdialect        "-cpp -fimplicit-none -ffree-line-length-none -fbacktrace -finit-local-zero -fno-unsafe-math-optimizations")
+        set(fdebug          "-O0 -g -Wall -fcheck=all -ffpe-trap=invalid,zero,overflow,underflow -fsignaling-nans -frounding-math")
+        # -O3 -march=native gives ~3x over the old -O (=-O1) on this codebase. -march=native builds
+        # for THIS machine's ISA (AVX2/FMA); for a portable/redistributable binary use a baseline
+        # (e.g. -march=x86-64-v2). -ffp-contract=off keeps results bit-reproducible with the Debug
+        # build; do NOT add -flto alongside -ffp-contract=off (miscompiles -> segfault).
+        set(frelease        "-O3 -march=native -ffp-contract=off")
         set(FFC             "gnu")
         
         if(NOT APPLE)
@@ -111,10 +118,13 @@ elseif(WIN32)
         set(frelease        "/O")
         set(FFC             "ifx")
     elseif(CMAKE_Fortran_COMPILER_ID MATCHES GNU)
-        set(fdialect        "-cpp -fcheck=all -ffpe-trap=invalid,zero,overflow,underflow -fimplicit-none -ffree-line-length-none -fbacktrace -finit-local-zero -fno-unsafe-math-optimizations -frounding-math -fsignaling-nans")
-        set(fdebug          "-Wall ")
+        # See tmp/recommended_compiler_flags.md: checking/FP-trapping -> Debug only; -O3 in Release.
+        set(fdialect        "-cpp -fimplicit-none -ffree-line-length-none -fbacktrace -finit-local-zero -fno-unsafe-math-optimizations")
+        set(fdebug          "-O0 -g -Wall -fcheck=all -ffpe-trap=invalid,zero,overflow,underflow -fsignaling-nans -frounding-math")
         set(FFC             "gnu")
-        set(frelease        "-O")
+        # -march=native = build for this machine's ISA; use a baseline for portable binaries.
+        # -ffp-contract=off keeps Release bit-reproducible with Debug (do NOT add -flto with it).
+        set(frelease        "-O3 -march=native -ffp-contract=off")
         link_libraries("-static")
     endif()
 endif()
@@ -132,6 +142,14 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(AR "mac_${ARCH}")
 else()
     set(AR "unknown")
+endif()
+
+# Default to an optimized Release build when no build type is given. The flag logic below matches
+# the full word "Release" (and "Debug") -- note that -DCMAKE_BUILD_TYPE=Rel does NOT match and
+# yields an unoptimized (-O0) build. Configure with -DCMAKE_BUILD_TYPE=Release (or =Debug).
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+    message(STATUS "No CMAKE_BUILD_TYPE set -- defaulting to Release")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
