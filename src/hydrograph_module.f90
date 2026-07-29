@@ -83,19 +83,16 @@
       type (hyd_output) :: ht1, ht2, ht3, ht4, ht5, delrto
       type (hyd_output) :: fp_dep, ch_dep, bank_ero, bed_ero, ch_trans
       !$omp threadprivate(icmd, iwst, ht1, ht2, ht3, ht4, ht5, delrto)
-      !$omp threadprivate(hdsep1, hdsep2)
       !! Stage 2: channel indices set by the caller before sd_channel_control3 (Part 11
       !! shared current-channel state -- ich is used 119x inside sd_channel_control3)
       !$omp threadprivate(isdch, isd_chsur, jrch, ich)
       !! Stage 2: per-channel sediment/deposition carriers (floodplain/channel deposition,
       !! bank/bed erosion, channel transport) written per-channel in sd_channel_sediment3
       !$omp threadprivate(fp_dep, ch_dep, bank_ero, bed_ero, ch_trans)
-      !! Stage 3: wbody is a shared "current water body" pointer reassigned per-reservoir in
-      !! res_control (=> res(jres)) and per-HRU in wetland_control (=> wet(j)) -- Part 11
-      !$omp threadprivate(wbody)
 
       !rtb hydrograph separation
       type (hyd_sep) :: hdsep1,hdsep2
+      !$omp threadprivate(hdsep1, hdsep2)   !! threadprivate must FOLLOW the declaration (required by ifx)
       type (hyd_sep), dimension(:),allocatable :: ch_stor_hdsep
       real, dimension(:,:),allocatable :: hyd_sep_array
       
@@ -109,6 +106,9 @@
       type (hyd_output), dimension(:),allocatable :: wet_seep_day !Jaehak 2022 wetland seepage volume
       type (hyd_output) :: resz
       type (hyd_output), pointer :: wbody       !! used for reservoir and wetlands
+      !! Stage 3: wbody is a shared "current water body" pointer reassigned per-reservoir in
+      !! res_control (=> res(jres)) and per-HRU in wetland_control (=> wet(j)) -- Part 11.
+      !$omp threadprivate(wbody)   !! threadprivate must FOLLOW the declaration (required by ifx)
       
       type (hyd_output), dimension(:),allocatable :: om_init_water
       type (hyd_output), dimension(:),allocatable :: ch_om_water_init

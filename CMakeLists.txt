@@ -73,9 +73,12 @@ if (UNIX)
         set(FFC             "ifo")
         link_libraries("-static")
     elseif(CMAKE_Fortran_COMPILER_ID STREQUAL IntelLLVM)
-        set(fdialect        "-fpp -free -fpe0 -traceback")
-        set(fdebug          "-warn all -O0 -check bounds")
-        set(frelease        "-O")
+        # Mirror the gfortran split (tmp/recommended_compiler_flags.md): checking/FP-trapping in
+        # fdebug only; optimization in frelease. -init=zero matches gfortran -finit-local-zero
+        # (this codebase relies on zeroed locals). -fp-model precise keeps Release reproducible.
+        set(fdialect        "-fpp -free -traceback -init=zero")
+        set(fdebug          "-O0 -g -warn all -check all -fpe0")
+        set(frelease        "-O3 -xHost -fp-model precise")
         set(FFC             "ifx")
         link_libraries("-static")
     elseif(CMAKE_Fortran_COMPILER_ID MATCHES GNU)
@@ -174,7 +177,18 @@ set(CMAKE_Fortran_FLAGS_RELEASE "${frelease}")
 
 # --- OpenMP / ThreadSanitizer flags (multi-threading effort) ------------------
 if(SWAT_OPENMP)
+    # Static link + Intel OpenMP: by default find_package(OpenMP) resolves the dynamic libiomp5.so,
+    # which the Intel branches' -static link cannot use ("attempted static link of dynamic object").
+    # Make the library search prefer the static libiomp5.a (shipped in oneAPI) BEFORE find_package
+    # runs so the resolved lib -- and hence the link line -- is static.
+    if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
+        set(_saved_suffixes "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    endif()
     find_package(OpenMP REQUIRED COMPONENTS Fortran)
+    if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
+        set(CMAKE_FIND_LIBRARY_SUFFIXES "${_saved_suffixes}")
+    endif()
     string(APPEND CMAKE_Fortran_FLAGS " ${OpenMP_Fortran_FLAGS}")
 endif()
 if(SWAT_TSAN)
