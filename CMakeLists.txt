@@ -177,16 +177,18 @@ set(CMAKE_Fortran_FLAGS_RELEASE "${frelease}")
 
 # --- OpenMP / ThreadSanitizer flags (multi-threading effort) ------------------
 if(SWAT_OPENMP)
-    # Static link + Intel OpenMP: by default find_package(OpenMP) resolves the dynamic libiomp5.so,
-    # which the Intel branches' -static link cannot use ("attempted static link of dynamic object").
-    # Make the library search prefer the static libiomp5.a (shipped in oneAPI) BEFORE find_package
-    # runs so the resolved lib -- and hence the link line -- is static.
-    if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
+    # Static link + OpenMP: by default find_package(OpenMP) resolves the DYNAMIC OpenMP runtime
+    # (gfortran libgomp.so, Intel libiomp5.so), which a -static link cannot use ("attempted static
+    # link of dynamic object"). Make the library search prefer the static .a (libgomp.a / libiomp5.a,
+    # shipped on glibc distros like Ubuntu and in oneAPI) BEFORE find_package runs, keeping .so as a
+    # fallback so dynamic-only systems (e.g. Arch, which ships no libgomp.a) still resolve. Applies
+    # to the compilers this project static-links: GNU (gfortran) and Intel (ifort/ifx).
+    if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU|Intel")
         set(_saved_suffixes "${CMAKE_FIND_LIBRARY_SUFFIXES}")
         set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ${CMAKE_FIND_LIBRARY_SUFFIXES})
     endif()
     find_package(OpenMP REQUIRED COMPONENTS Fortran)
-    if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
+    if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU|Intel")
         set(CMAKE_FIND_LIBRARY_SUFFIXES "${_saved_suffixes}")
     endif()
     string(APPEND CMAKE_Fortran_FLAGS " ${OpenMP_Fortran_FLAGS}")
