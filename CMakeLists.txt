@@ -202,7 +202,10 @@ set(CMAKE_VERBOSE_MAKEFILE FALSE)
 set(CMAKE_Fortran_FLAGS         "${CMAKE_Fortran_FLAGS} ${fdialect}")
 set(CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} ${fdebug}")
 # set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} ${frelease}")
-set(CMAKE_Fortran_FLAGS_RELEASE "${frelease}")
+# SWAT_EXTRA_FFLAGS is appended LAST to the Release flags so it can override anything in frelease
+# (e.g. -DSWAT_EXTRA_FFLAGS=-fno-tree-vectorize to disable auto-vectorization / libmvec calls).
+set(SWAT_EXTRA_FFLAGS "" CACHE STRING "Extra Fortran flags appended to the Release build")
+set(CMAKE_Fortran_FLAGS_RELEASE "${frelease} ${SWAT_EXTRA_FFLAGS}")
 
 # --- OpenMP / ThreadSanitizer flags (multi-threading effort) ------------------
 if(SWAT_OPENMP)

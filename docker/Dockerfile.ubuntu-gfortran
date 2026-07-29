@@ -2,13 +2,15 @@
 # because it ships no libgfortran.a/libgomp.a). Based on the .devcontainer/Dockerfile, minus the
 # Intel oneAPI parts (not needed for gfortran).
 #
+# 24.04 "Noble" ships gfortran 13 (vs 22.04's gfortran 11.4). gfortran 13 has the real
+# -static-libquadmath option, so mostly-static (SWAT_STATIC=libs) no longer needs the
+# --whole-archive libquadmath workaround; and its newer libgfortran/glibc are worth re-testing
+# against fully-static (SWAT_STATIC=full), which segfaulted under 22.04/gfortran 11.
+#
 # Build:  docker build -f docker/Dockerfile.ubuntu-gfortran -t swatplus-gf .
-# Use:    docker run --rm -it -v "$PWD":/src -w /src swatplus-gf bash
-#   then, inside the container:
-#     cmake -B build-ubuntu -DCMAKE_BUILD_TYPE=Release -DSWAT_OPENMP=ON
-#     cmake --build build-ubuntu -j"$(nproc)"
-#     file build-ubuntu/swatplus-*          # -> "statically linked" on Ubuntu
-FROM ubuntu:22.04
+# Use:    docker run --rm -it -v "$PWD":/src -w /src swatplus-gf bash docker/test_static_gfortran.sh
+#     (SWAT_STATIC=full docker run -e SWAT_STATIC=full ... to test the fully-static mode)
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 

@@ -49,8 +49,10 @@ ldd "$E" 2>&1 | sed 's/^/  /'
 # A portable binary must NOT dynamically depend on the GNU Fortran/OpenMP runtimes -- those must be
 # bundled. glibc (libc/libm/libpthread/libdl) staying dynamic is expected for mostly-static (libs)
 # and is fine (present on every Linux); fully static (full) shows "not a dynamic executable".
-lddall=$(ldd "$E" 2>&1)
-leaked=$(echo "$lddall" | grep -Eo 'libgfortran|libgomp|libquadmath' | sort -u | paste -sd, -)
+# ldd exits non-zero on a fully static binary ("not a dynamic executable"); || true so set -e
+# does not abort the assignment before we reach the run.
+lddall=$(ldd "$E" 2>&1 || true)
+leaked=$(echo "$lddall" | grep -Eo 'libgfortran|libgomp|libquadmath' | sort -u | paste -sd, - || true)
 if echo "$lddall" | grep -qi "not a dynamic executable"; then
     echo "LINK CHECK: fully static (no dynamic deps) -- SUCCESS"
 elif [ -z "$leaked" ]; then
