@@ -1,0 +1,39 @@
+# Ubuntu container for testing SWAT+ gfortran builds (esp. STATIC linking, which Arch can't do
+# because it ships no libgfortran.a/libgomp.a). Based on the .devcontainer/Dockerfile, minus the
+# Intel oneAPI parts (not needed for gfortran).
+#
+# Build:  docker build -f docker/Dockerfile.ubuntu-gfortran -t swatplus-gf .
+# Use:    docker run --rm -it -v "$PWD":/src -w /src swatplus-gf bash
+#   then, inside the container:
+#     cmake -B build-ubuntu -DCMAKE_BUILD_TYPE=Release -DSWAT_OPENMP=ON
+#     cmake --build build-ubuntu -j"$(nproc)"
+#     file build-ubuntu/swatplus-*          # -> "statically linked" on Ubuntu
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# build-essential -> gcc/make + libc6-dev (provides static libc.a and libgomp.a)
+# gfortran        -> gfortran + static libgfortran.a / libquadmath.a (Ubuntu ships these; Arch does not)
+# cmake, git      -> configure/build + version-tag detection
+# gdb             -> debugging (matches the devcontainer)
+# file            -> verify the resulting binary is statically linked
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        gfortran \
+        cmake \
+        git \
+        gdb \
+        file \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Sanity: fail the image build if the static Fortran/OpenMP runtimes are missing (the whole point).
+RUN set -e; \
+    for lib in libgfortran.a libgomp.a libc.a; do \
+        find /usr -name "$lib" -print -quit | grep -q . \
+            && echo "OK: found $lib" \
+            || { echo "ERROR: static lib $lib missing"; exit 1; }; \
+    done
+
+WORKDIR /src
+CMD ["bash"]
