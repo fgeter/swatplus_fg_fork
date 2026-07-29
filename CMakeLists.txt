@@ -45,11 +45,24 @@ endif()
 #   -DSWAT_ASAN=ON   : AddressSanitizer build (implies OpenMP, requires dynamic link)
 #   -DSWAT_PROF=ON   : gprof instrumentation (-pg); run with OMP_NUM_THREADS=1 to profile
 #   -DSWAT_LTO=ON    : Link-Time Optimization (-flto); don't combine with SWAT_PROF
+#   -DSWAT_STATIC=   : GNU/Linux runtime-linking mode (see below)
 option(SWAT_OPENMP "Build with OpenMP threading" OFF)
 option(SWAT_TSAN   "Build with ThreadSanitizer (implies OpenMP + dynamic link)" OFF)
 option(SWAT_ASAN   "Build with AddressSanitizer (implies OpenMP + dynamic link)" OFF)
 option(SWAT_PROF   "Build with gprof instrumentation (-pg)" OFF)
 option(SWAT_LTO    "Build with Link-Time Optimization (-flto)" OFF)
+# GNU/Linux runtime-linking mode (ignored on Arch/Fedora, which always build dynamic, and under
+# the sanitizers, which require dynamic linking):
+#   libs (default) = mostly-static: bundle libgfortran/libgomp/libquadmath/libgcc statically but
+#                    link glibc DYNAMICALLY. Portable to any Linux with a modern glibc and needs no
+#                    gfortran/OpenMP runtime on the target. This is the robust default -- fully
+#                    static glibc is fragile (dlopen for NSS/locale/pthread) and, with gfortran 11's
+#                    libgfortran, segfaults in unit CLOSE while running (validated in the Ubuntu
+#                    container); mostly-static runs clean there.
+#   full           = fully static (-static). Smallest external dep set, but may crash at runtime.
+#   off            = fully dynamic (no static runtime bundling).
+set(SWAT_STATIC "libs" CACHE STRING "GNU/Linux static link mode: libs | full | off")
+set_property(CACHE SWAT_STATIC PROPERTY STRINGS libs full off)
 if(SWAT_TSAN)
     set(SWAT_OPENMP ON)
 endif()
@@ -98,11 +111,27 @@ if (UNIX)
             # Check if the OS is not Arch Linux or is not based on Arch Linux and is not Fedpra based
             # For non-Arch and non-FedoraLinux based systems using gfortran (GNU), set the link_library static flag to build a static executable.")
             # For Arch Linux based and Fedora based systems using gfortran, omit the link_library static flagt to build a dynamic executable.")
-            if (NOT ("${os_id}" STREQUAL "Arch" OR 
+            if (NOT ("${os_id}" STREQUAL "Arch" OR
                      "${os_like}" MATCHES ".*arch.*" OR
                      "${os_id}" STREQUAL "fedora" ))
                 if(NOT SWAT_TSAN AND NOT SWAT_ASAN)   # sanitizers are incompatible with static linking
-                    link_libraries("-static")
+                    if(SWAT_STATIC STREQUAL "full")
+                        # Fully static incl. glibc. Fragile: gfortran-11 libgfortran segfaults in
+                        # unit CLOSE at runtime (fully-static dlopen path). See SWAT_STATIC docs.
+                        link_libraries("-static")
+                    elseif(SWAT_STATIC STREQUAL "libs")
+                        # Mostly static: bundle the GNU Fortran runtime, keep glibc dynamic. libgomp
+                        # is pulled in statically via the libgomp.a preferred by find_package(OpenMP)
+                        # in the SWAT_OPENMP block below.
+                        link_libraries("-static-libgfortran" "-static-libgcc")
+                        # libgfortran.a's I/O references a few libquadmath symbols, so libquadmath
+                        # would otherwise stay a dynamic dep. The gfortran driver only grew a
+                        # -static-libquadmath option in gcc 13; before that, force the static archive
+                        # in whole so all its symbols are defined up front. The driver's trailing
+                        # dynamic -lquadmath then resolves to nothing and (with the distro-default
+                        # --as-needed) drops out, leaving no libquadmath.so dependency.
+                        link_libraries("-Wl,--whole-archive" "-l:libquadmath.a" "-Wl,--no-whole-archive")
+                    endif()
                 endif()
             endif()
         endif()
