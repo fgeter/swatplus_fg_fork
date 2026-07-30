@@ -8,8 +8,13 @@
 # against fully-static (SWAT_STATIC=full), which segfaulted under 22.04/gfortran 11.
 #
 # Build:  docker build -f docker/Dockerfile.ubuntu-gfortran -t swatplus-gf .
-# Use:    docker run --rm -it -v "$PWD":/src -w /src swatplus-gf bash docker/test_static_gfortran.sh
-#     (SWAT_STATIC=full docker run -e SWAT_STATIC=full ... to test the fully-static mode)
+# Use:    docker run --rm -it --user $(id -u):$(id -g) -v "$PWD":/src -w /src swatplus-gf \
+#             bash docker/test_static_gfortran.sh
+#     (add -e SWAT_STATIC=full to test the fully-static mode)
+#   --user $(id -u):$(id -g) makes the container write host files (build-ubuntu/) as YOU, not root,
+#   so no `sudo rm` is needed to clean up afterward. The scripts set HOME=/tmp (writable by any UID),
+#   so running as a non-root/passwd-less user works. Drop --user only if a step needs to apt-install
+#   at runtime (this image installs everything at build time, so it isn't needed).
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
