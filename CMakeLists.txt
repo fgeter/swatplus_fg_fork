@@ -64,7 +64,8 @@ option(SWAT_LTO    "Build with Link-Time Optimization (-flto)" OFF)
 #   off            = fully dynamic (no static runtime bundling).
 set(SWAT_STATIC "libs" CACHE STRING "GNU/Linux static link mode: libs | full | off")
 set_property(CACHE SWAT_STATIC PROPERTY STRINGS libs full off)
-# ISA target for the Release build (gfortran/GNU only; Intel uses -xHost).
+# ISA target for the Release build. Honored by both GNU (gfortran) and IntelLLVM (ifx); the ifx
+# branch maps the value "native" to its own spelling, -xHost, and passes the rest through as -march=.
 #   native (default) = build for THIS machine's ISA. Fastest here, but the binary may fault with
 #                      SIGILL on an older/different CPU -- fine for local work, wrong for a
 #                      redistributable binary.
@@ -98,12 +99,43 @@ if (UNIX)
     elseif(CMAKE_Fortran_COMPILER_ID STREQUAL IntelLLVM)
         # Mirror the gfortran split (tmp/recommended_compiler_flags.md): checking/FP-trapping in
         # fdebug only; optimization in frelease. -init=zero matches gfortran -finit-local-zero
-        # (this codebase relies on zeroed locals). -fp-model precise keeps Release reproducible.
+        # (this codebase relies on zeroed locals).
         set(fdialect        "-fpp -free -traceback -init=zero")
         set(fdebug          "-O0 -g -warn all -check all -fpe0")
-        set(frelease        "-O3 -xHost -fp-model precise")
+        # ISA: SWAT_MARCH is spelled for gfortran's -march=. ifx is LLVM-based and accepts the same
+        # -march=x86-64-vN names (verified on ifx 2026.1), but spells "this machine" as -xHost, so
+        # map just that one value and pass everything else through unchanged.
+        if(SWAT_MARCH STREQUAL "native")
+            set(swat_isa "-xHost")
+        else()
+            set(swat_isa "-march=${SWAT_MARCH}")
+        endif()
+        # FP: -fp-model=precise is what actually suppresses FMA contraction here -- it is NOT
+        # interchangeable with gfortran's -ffp-contract=off. ifx ACCEPTS -ffp-contract=off but
+        # silently ignores it under its default -fp-model=fast: measured on ifx 2026.1, a d=a*b+c
+        # loop still emitted vfmadd with -ffp-contract=off alone, and emitted none under
+        # -fp-model=precise (matching the gfortran Release build's zero vfmadd). Keeping contraction
+        # off is what makes Release bit-reproducible with Debug and comparable across compilers.
+        set(frelease        "-O3 ${swat_isa} -fp-model=precise")
         set(FFC             "ifx")
-        link_libraries("-static")
+        # Runtime linking: honor SWAT_STATIC, like the GNU branch below. This replaces a previous
+        # unconditional link_libraries("-static"), which forced the fragile fully-static mode and
+        # ignored the option entirely. The Intel counterpart of -static-libgfortran is -static-intel;
+        # oneAPI ships its static runtimes on every distro, so the "libs" mode needs no Arch/Fedora
+        # exclusion (unlike GNU, where Arch/Fedora ship no libgfortran.a). "full" still pulls in
+        # glibc statically and so remains unavailable where libc.a is absent (e.g. Arch).
+        if(NOT SWAT_TSAN AND NOT SWAT_ASAN)   # sanitizers are incompatible with static linking
+            if(SWAT_STATIC STREQUAL "full")
+                link_libraries("-static")
+            elseif(SWAT_STATIC STREQUAL "libs")
+                link_libraries("-static-intel")
+                if(SWAT_OPENMP)
+                    # Bundle libiomp5 statically too; otherwise it stays a dynamic dep and the
+                    # binary needs oneAPI installed on the target machine.
+                    link_libraries("-qopenmp-link=static")
+                endif()
+            endif()
+        endif()
     elseif(CMAKE_Fortran_COMPILER_ID MATCHES GNU)
         # fdialect = always-on flags (cheap; correctness/reproducibility). Runtime checking and
         # FP-trapping moved to fdebug (Debug only); optimization set in frelease (Release only).
@@ -203,9 +235,23 @@ else()
     set(TY "")
 endif()
 
+# Threading marker in the executable name. Without it a threaded and a non-threaded build of the
+# same commit/compiler/arch produce byte-different binaries under the SAME filename, so staging
+# both into one directory silently loses one of them. "_MT" is appended to the arch component for
+# an OpenMP build; a sequential build carries no marker, keeping the historical name unchanged.
+#   threaded    swatplus-<tag>-gnu-lin_x86_64_MT-Rel
+#   sequential  swatplus-<tag>-gnu-lin_x86_64-Rel
+# Note SWAT_TSAN/SWAT_ASAN force SWAT_OPENMP ON above, so sanitizer builds are marked _MT too --
+# correct, since they are threaded.
+if(SWAT_OPENMP)
+    set(MT "_MT")
+else()
+    set(MT "")
+endif()
+
 # SWAT Version number
 set(SWAT_VERSION ${TAG})
-set(SWATPLUS_EXE "swatplus-${SWAT_VERSION}-${FFC}-${AR}${TY}")
+set(SWATPLUS_EXE "swatplus-${SWAT_VERSION}-${FFC}-${AR}${MT}${TY}")
 
 # Set this to 'TRUE' to see the fortran command on compile
 set(CMAKE_VERBOSE_MAKEFILE FALSE)
