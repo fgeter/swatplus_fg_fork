@@ -1,6 +1,7 @@
 # Ubuntu container for testing SWAT+ gfortran builds (esp. STATIC linking, which Arch can't do
-# because it ships no libgfortran.a/libgomp.a). Based on the .devcontainer/Dockerfile, minus the
-# Intel oneAPI parts (not needed for gfortran).
+# because it ships no libgfortran.a/libgomp.a). Based on the .devcontainer/Dockerfile, and like it
+# also carries the Intel oneAPI Fortran compiler (ifx) so the same image can serve gfortran-vs-ifx
+# comparisons.
 #
 # 24.04 "Noble" ships gfortran 13 (vs 22.04's gfortran 11.4). gfortran 13 has the real
 # -static-libquadmath option, so mostly-static (SWAT_STATIC=libs) no longer needs the
@@ -28,6 +29,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # cmake, git      -> configure/build + version-tag detection
 # gdb             -> debugging (matches the devcontainer)
 # file            -> verify the resulting binary is statically linked
+# wget, gpg       -> fetch/dearmor Intel's repo key below
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         gfortran \
@@ -36,6 +38,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gdb \
         file \
         ca-certificates \
+        wget \
+        gpg \
     && rm -rf /var/lib/apt/lists/*
 
 # Sanity: fail the image build if the static Fortran/OpenMP runtimes are missing (the whole point).
@@ -45,6 +49,32 @@ RUN set -e; \
             && echo "OK: found $lib" \
             || { echo "ERROR: static lib $lib missing"; exit 1; }; \
     done
+
+# --- Intel oneAPI Fortran compiler (ifx) ---------------------------------------------------------
+# Mirrors .devcontainer/Dockerfile steps 2-4. The repo line is "all main" (distro-agnostic), so the
+# same recipe that works on the devcontainer's 22.04 Jammy base works here on 24.04 Noble.
+RUN wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
+    | gpg --dearmor \
+    | tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+
+RUN echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" \
+    > /etc/apt/sources.list.d/oneAPI.list
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        intel-oneapi-compiler-fortran \
+    && rm -rf /var/lib/apt/lists/*
+
+# The devcontainer only appends setvars.sh to /etc/bash.bashrc, which bash reads for INTERACTIVE
+# non-login shells. Our test scripts run non-interactively (`bash docker/test_static_gfortran.sh`),
+# so that alone would leave ifx off PATH here. Keep the bashrc line for `docker run -it` use, but
+# also set the env directly so non-interactive runs find ifx and its runtime libs. The "latest"
+# symlink avoids hardcoding a version (e.g. 2025.0), which would silently break on image rebuild.
+RUN echo "source /opt/intel/oneapi/setvars.sh" >> /etc/bash.bashrc
+ENV PATH=/opt/intel/oneapi/compiler/latest/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/intel/oneapi/compiler/latest/lib:/opt/intel/oneapi/compiler/latest/lib/clang/latest/lib/x86_64-unknown-linux-gnu:$LD_LIBRARY_PATH
+
+# Sanity: ifx must be on PATH and runnable in a NON-interactive shell (the mode our scripts use).
+RUN bash -c 'ifx --version' && echo "OK: ifx reachable non-interactively"
 
 WORKDIR /src
 CMD ["bash"]
