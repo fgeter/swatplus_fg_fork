@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs INSIDE the Ubuntu container (docker/Dockerfile.ubuntu-gfortran).
+# Runs INSIDE the Ubuntu container (docker/Dockerfile.ubuntu).
 # 1. Builds SWAT+ (Release + OpenMP) and verifies the Fortran/OpenMP runtimes are bundled into the
 #    binary (SWAT_STATIC=libs, the default: static libgfortran/libgomp/libquadmath for GNU, or
 #    -static-intel/-qopenmp-link=static for ifx; glibc stays dynamic) so it is portable to other
