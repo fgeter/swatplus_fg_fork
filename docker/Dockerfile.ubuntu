@@ -8,9 +8,9 @@
 # --whole-archive libquadmath workaround; and its newer libgfortran/glibc are worth re-testing
 # against fully-static (SWAT_STATIC=full), which segfaulted under 22.04/gfortran 11.
 #
-# Build:  docker build -f docker/Dockerfile.ubuntu -t swatplus-gf .
-# Use:    docker run --rm -it --user $(id -u):$(id -g) -v "$PWD":/src -w /src swatplus-gf \
-#             bash docker/test_static_gfortran.sh
+# Build:  docker build -f docker/Dockerfile.ubuntu -t swatplus-ubuntu .
+# Use:    docker run --rm -it --user $(id -u):$(id -g) -v "$PWD":/src -w /src swatplus-ubuntu \
+#             bash docker/test_static_build.sh
 #     (add -e SWAT_STATIC=full to test the fully-static mode)
 #     The script builds Release -O3 -march=x86-64-v3 -- a portable AVX2/FMA baseline (Intel
 #     Haswell+ 2013, AMD Excavator+ / all Zen 2015+) rather than the -march=native default, since
@@ -65,7 +65,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # The devcontainer only appends setvars.sh to /etc/bash.bashrc, which bash reads for INTERACTIVE
-# non-login shells. Our test scripts run non-interactively (`bash docker/test_static_gfortran.sh`),
+# non-login shells. Our test scripts run non-interactively (`bash docker/test_static_build.sh`),
 # so that alone would leave ifx off PATH here. Keep the bashrc line for `docker run -it` use, but
 # also set the env directly so non-interactive runs find ifx and its runtime libs. The "latest"
 # symlink avoids hardcoding a version (e.g. 2025.0), which would silently break on image rebuild.

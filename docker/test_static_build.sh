@@ -11,7 +11,7 @@
 # the executable persists on the host after the container exits. The racoon run happens on an
 # ephemeral copy under /tmp so the host dataset stays clean.
 #
-# Usage (inside container):  bash docker/test_static_gfortran.sh [dataset_name]
+# Usage (inside container):  bash docker/test_static_build.sh [dataset_name]
 #   dataset_name defaults to racoon_creek_120hru (smallest/fastest); other options live in
 #   /src/workdata (racoon_creek_10pct, racoon_creek_mult-hru).
 #   SWAT_FC     env selects the compiler: gnu (default, gfortran) | ifx (Intel oneAPI). The two use
@@ -25,8 +25,8 @@
 #               CMakeLists maps native -> -xHost for ifx; other values pass through as -march=.
 #
 # Comparing compilers (same ISA + same FP policy -> a fair wall-clock comparison):
-#   SWAT_FC=gnu bash docker/test_static_gfortran.sh racoon_creek_10pct
-#   SWAT_FC=ifx bash docker/test_static_gfortran.sh racoon_creek_10pct
+#   SWAT_FC=gnu bash docker/test_static_build.sh racoon_creek_10pct
+#   SWAT_FC=ifx bash docker/test_static_build.sh racoon_creek_10pct
 # Compare the reported wall times. Do NOT expect bitwise-identical model output between the two:
 # they use different vectorizers and different math libraries (glibc libm vs Intel libimf), so
 # transcendentals differ in the last bits. Validate results within tolerance, not bitwise.
