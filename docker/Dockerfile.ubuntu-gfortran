@@ -11,6 +11,10 @@
 # Use:    docker run --rm -it --user $(id -u):$(id -g) -v "$PWD":/src -w /src swatplus-gf \
 #             bash docker/test_static_gfortran.sh
 #     (add -e SWAT_STATIC=full to test the fully-static mode)
+#     The script builds Release -O3 -march=x86-64-v3 -- a portable AVX2/FMA baseline (Intel
+#     Haswell+ 2013, AMD Excavator+ / all Zen 2015+) rather than the -march=native default, since
+#     this binary is meant to run on hosts other than the build machine. Override with
+#     -e SWAT_MARCH=x86-64-v2 (older CPUs) or -e SWAT_MARCH=native (local benchmarking only).
 #   --user $(id -u):$(id -g) makes the container write host files (build-ubuntu/) as YOU, not root,
 #   so no `sudo rm` is needed to clean up afterward. The scripts set HOME=/tmp (writable by any UID),
 #   so running as a non-root/passwd-less user works. Drop --user only if a step needs to apt-install

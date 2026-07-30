@@ -14,12 +14,17 @@
 #   dataset_name defaults to racoon_creek_120hru (smallest/fastest); other options live in
 #   /src/workdata (racoon_creek_10pct, racoon_creek_mult-hru).
 #   SWAT_STATIC env overrides the link mode (libs | full | off); default libs.
+#   SWAT_MARCH  env overrides the ISA target; default x86-64-v3 (portable AVX2/FMA baseline:
+#               Intel Haswell+ 2013, AMD Excavator+ / all Zen 2015+). NOT native -- the whole point
+#               of this build is a binary that runs on hosts other than the build machine. Use
+#               x86-64-v2 for pre-2013 Intel / pre-2015 AMD targets, or native to benchmark locally.
 set -e
 export HOME=/tmp
 SRC=/src
 BLD=/src/build-ubuntu                       # mounted host tree -> binary persists on the host
 DATASET="${1:-racoon_creek_120hru}"
 STATIC_MODE="${SWAT_STATIC:-libs}"
+MARCH="${SWAT_MARCH:-x86-64-v3}"
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}"
 git config --global --add safe.directory "$SRC" 2>/dev/null || true
 
@@ -35,8 +40,9 @@ for l in libgfortran.a libgomp.a libc.a libquadmath.a; do
     echo "  $l: ${p:-MISSING}"
 done
 
-echo "=== configure + build (Release, OpenMP, SWAT_STATIC=$STATIC_MODE) -> $BLD (persists on host) ==="
-cmake -S "$SRC" -B "$BLD" -DCMAKE_BUILD_TYPE=Release -DSWAT_OPENMP=ON -DSWAT_STATIC="$STATIC_MODE"
+echo "=== configure + build (Release -O3, OpenMP, SWAT_STATIC=$STATIC_MODE, -march=$MARCH) -> $BLD (persists on host) ==="
+cmake -S "$SRC" -B "$BLD" -DCMAKE_BUILD_TYPE=Release -DSWAT_OPENMP=ON -DSWAT_STATIC="$STATIC_MODE" \
+      -DSWAT_MARCH="$MARCH"
 cmake --build "$BLD" -j"$(nproc)"
 
 E=$(ls "$BLD"/swatplus-* 2>/dev/null | grep -v '\.o$' | head -1)

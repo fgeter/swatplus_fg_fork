@@ -46,6 +46,7 @@ endif()
 #   -DSWAT_PROF=ON   : gprof instrumentation (-pg); run with OMP_NUM_THREADS=1 to profile
 #   -DSWAT_LTO=ON    : Link-Time Optimization (-flto); don't combine with SWAT_PROF
 #   -DSWAT_STATIC=   : GNU/Linux runtime-linking mode (see below)
+#   -DSWAT_MARCH=    : -march= value for the Release build (see below)
 option(SWAT_OPENMP "Build with OpenMP threading" OFF)
 option(SWAT_TSAN   "Build with ThreadSanitizer (implies OpenMP + dynamic link)" OFF)
 option(SWAT_ASAN   "Build with AddressSanitizer (implies OpenMP + dynamic link)" OFF)
@@ -63,6 +64,15 @@ option(SWAT_LTO    "Build with Link-Time Optimization (-flto)" OFF)
 #   off            = fully dynamic (no static runtime bundling).
 set(SWAT_STATIC "libs" CACHE STRING "GNU/Linux static link mode: libs | full | off")
 set_property(CACHE SWAT_STATIC PROPERTY STRINGS libs full off)
+# ISA target for the Release build (gfortran/GNU only; Intel uses -xHost).
+#   native (default) = build for THIS machine's ISA. Fastest here, but the binary may fault with
+#                      SIGILL on an older/different CPU -- fine for local work, wrong for a
+#                      redistributable binary.
+#   x86-64-v3        = portable baseline with AVX2/FMA/BMI2. Runs on Intel Haswell+ (2013) and AMD
+#                      Excavator+ / all Zen (2015+). This is what the portable container build uses.
+#   x86-64-v2        = older baseline (SSE4.2 only, no AVX) for pre-2013 Intel / pre-2015 AMD.
+# The x86-64-vN names need gcc/gfortran 11+; on older compilers use e.g. -march=x86-64 -mavx2 -mfma.
+set(SWAT_MARCH "native" CACHE STRING "-march= value for the Release build (native | x86-64-v3 | x86-64-v2 | ...)")
 if(SWAT_TSAN)
     set(SWAT_OPENMP ON)
 endif()
@@ -100,11 +110,12 @@ if (UNIX)
         # See tmp/recommended_compiler_flags.md for the rationale and measured impact.
         set(fdialect        "-cpp -fimplicit-none -ffree-line-length-none -fbacktrace -finit-local-zero -fno-unsafe-math-optimizations")
         set(fdebug          "-O0 -g -Wall -fcheck=all -ffpe-trap=invalid,zero,overflow,underflow -fsignaling-nans -frounding-math")
-        # -O3 -march=native gives ~3x over the old -O (=-O1) on this codebase. -march=native builds
-        # for THIS machine's ISA (AVX2/FMA); for a portable/redistributable binary use a baseline
-        # (e.g. -march=x86-64-v2). -ffp-contract=off keeps results bit-reproducible with the Debug
-        # build; do NOT add -flto alongside -ffp-contract=off (miscompiles -> segfault).
-        set(frelease        "-O3 -march=native -ffp-contract=off")
+        # -O3 -march=<SWAT_MARCH> gives ~3x over the old -O (=-O1) on this codebase. The default
+        # (native) builds for THIS machine's ISA; for a portable/redistributable binary configure
+        # with -DSWAT_MARCH=x86-64-v3 (see the SWAT_MARCH docs above). -ffp-contract=off keeps
+        # results bit-reproducible with the Debug build; do NOT add -flto alongside
+        # -ffp-contract=off (miscompiles -> segfault).
+        set(frelease        "-O3 -march=${SWAT_MARCH} -ffp-contract=off")
         set(FFC             "gnu")
         
         if(NOT APPLE)
@@ -154,9 +165,9 @@ elseif(WIN32)
         set(fdialect        "-cpp -fimplicit-none -ffree-line-length-none -fbacktrace -finit-local-zero -fno-unsafe-math-optimizations")
         set(fdebug          "-O0 -g -Wall -fcheck=all -ffpe-trap=invalid,zero,overflow,underflow -fsignaling-nans -frounding-math")
         set(FFC             "gnu")
-        # -march=native = build for this machine's ISA; use a baseline for portable binaries.
-        # -ffp-contract=off keeps Release bit-reproducible with Debug (do NOT add -flto with it).
-        set(frelease        "-O3 -march=native -ffp-contract=off")
+        # -march defaults to native (this machine's ISA); -DSWAT_MARCH=x86-64-v3 for a portable
+        # binary. -ffp-contract=off keeps Release bit-reproducible with Debug (do NOT add -flto).
+        set(frelease        "-O3 -march=${SWAT_MARCH} -ffp-contract=off")
         link_libraries("-static")
     endif()
 endif()
