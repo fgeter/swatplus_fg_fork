@@ -119,11 +119,18 @@
             write (4557,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_a(j)   !! soil transformations
 
           end if
-          hsc_a(j) = hscz
-          hrc_a(j) = hrcz 
-          hpc_a(j) = hpcz
-          hscf_a(j) = hscfz
         end if
+
+        !! Reset unconditionally - see hru_output.f90 for the full rationale.
+        !! time_control zeroes the yearly accumulators between soft-calibration
+        !! runs but not the average-annual ones, and it is re-entered once per
+        !! calibration iteration, so an accumulator reset only under its own print
+        !! flag compounds across iterations. Nothing outside this routine reads
+        !! these four today, so this is prophylactic rather than a live defect.
+        hsc_a(j) = hscz
+        hrc_a(j) = hrcz
+        hpc_a(j) = hpcz
+        hscf_a(j) = hscfz
       end if     ! if end_sim
 
       return
