@@ -44,7 +44,7 @@
       integer :: k          !none          |counter (soil layer)
       real :: decr          !              |
       integer :: ipl          !              |plant number in plant community
-      real :: idp           !              |plant number in plant data module
+      integer :: idp        !none          |plant number in plant data module
       real :: nactfr        !none          |nitrogen active pool fraction. The fraction
                             !              |of organic nitrogen in the active pool.
       real :: clg           !none          |lignin fraction of the residue

@@ -53,8 +53,8 @@
       real :: cprf          !              |carbon phosphorus ratio factor
       real :: ca            !              |
       real :: decr          !              |
-      real :: ipl           !              |plant number in plant community
-      real :: idp           !              |plant number in plant data module
+      integer :: ipl        !none          |plant number in plant community
+      integer :: idp        !none          |plant number in plant data module
       real :: cdg           !none          |soil temperature factor
       real :: sut           !none          |soil water factor
       real :: nactfr        !none          |nitrogen active pool fraction. The fraction
