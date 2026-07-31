@@ -284,6 +284,18 @@
              hls_a(j) = hlsz
          end if
         
+         !! hru(j)%strsa is MODEL state, not output: calsoft_plant branches on it
+         !! (hru(iihru)%strsa > 50.) during soft calibration, and this is its only
+         !! writer anywhere in the code. It used to be assigned inside the average-annual
+         !! plant/weather print block below, which made soft calibration silently depend
+         !! on the hru_pw avann print flag being "y". Set it unconditionally here.
+         !! hpw_a(j) is still undivided at this point, so divide explicitly - the "//"
+         !! (hruout_plantweather_ave) leaves strsa untouched, so the value below is
+         !! identical to what the print block used to assign after its "/" and "//".
+         if (time%end_sim == 1) then
+           hru(j)%strsa = hpw_a(j)%strsa / time%yrs_prt
+         end if
+
          if (time%end_sim == 1 .and. pco%pw_hru%a == "y") then     
            hpw_a(j) = hpw_a(j) / time%yrs_prt
            hpw_a(j) = hpw_a(j) // time%days_prt
@@ -296,7 +308,6 @@
                write (2047,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,    &
                                                               hpw_a(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
              end if
-             hru(j)%strsa = hpw_a(j)%strsa
              hpw_a(j) = hpwz
          end if
          
