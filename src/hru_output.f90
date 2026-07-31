@@ -67,9 +67,7 @@
                                                                     hwb_d(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
              end if
           end if
-          hwb_d(j)%sw_init = hwb_d(j)%sw_final
-          hwb_d(j)%sno_init = hwb_d(j)%sno_final
-          
+
           if (pco%nb_hru%d == "y") then
             write (2020,104) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hnb_d(j),         &
                                                                           lum(ilu)%plant_cov, lum(ilu)%mgt_ops      !! nutrient bal day
@@ -93,10 +91,47 @@
               if (pco%csvout == "y") then 
                 write (2044,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,           &
                                                                 hpw_d(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
-              end if 
+              end if
           end if
         end if
-         
+
+        !! Advance the daily soil-water / snow carry-forward EVERY day.
+        !! These are the only per-day writers of sw_init/sno_init anywhere
+        !! (basin_sw_init runs once, gated by pco%sw_init), and hwb_d(j)%sw and
+        !! %snopack above are the two-point averages (init + final) / 2 built from them.
+        !!
+        !! They used to sit inside the "daily print" guard, i.e. they advanced only on
+        !! days that were both inside the pco%day_print window AND on an int_day
+        !! interval boundary. That had two distinct consequences:
+        !!
+        !!  1. DEFECT. While outside the print window (yrc_start later than the sim
+        !!     start), sw_init never advanced at all, so the FIRST printed day averaged
+        !!     today's soil water against the value from simulation start. Measured on
+        !!     racoon_creek_120hru with yrc_start one year in: HRU 36 reported
+        !!     sw_ave = 155.9 when soil water was 238.9 - a 35% error. Self-corrected
+        !!     from the second printed day, so it cost exactly one row per HRU.
+        !!
+        !!  2. CONVENTION. With int_day > 1, sw_init was the start of the reporting
+        !!     interval, so sw_ave was an interval endpoint average - consistent with
+        !!     how the monthly accumulator carries sw_init (see the end-of-month block
+        !!     below), but inconsistent with this file being a DAILY file.
+        !!
+        !! Deliberate decision: advance unconditionally. sw_ave / snopack in
+        !! hru_wb_day now always mean a true daily average, (yesterday + today) / 2,
+        !! whatever int_day is set to. This intentionally CHANGES hru_wb_day output for
+        !! runs with interval > 1 - a column named sw_ave in a file named hru_wb_day
+        !! should not silently mean "n-day endpoint average".
+        !!
+        !! Scope: daily output only. hru_control.f90 sets hwb_d(j)%sw = soil(j)%sw and
+        !! the monthly accumulation at the top of this routine banks THAT value before
+        !! the line above overwrites %sw for the daily record - so monthly, yearly and
+        !! average-annual output are untouched (verified bit-identical).
+        !!
+        !! Placed AFTER the print block so the printed record still carries the same
+        !! sw_init it always did: bit-identical for interval = 1 inside the window.
+        hwb_d(j)%sw_init = hwb_d(j)%sw_final
+        hwb_d(j)%sno_init = hwb_d(j)%sno_final
+
         !! check end of month
         if (time%end_mo == 1) then
           bm_max_m = hpw_m(j)%bm_max
@@ -296,7 +331,7 @@
            hru(j)%strsa = hpw_a(j)%strsa / time%yrs_prt
          end if
 
-         if (time%end_sim == 1 .and. pco%pw_hru%a == "y") then     
+         if (time%end_sim == 1 .and. pco%pw_hru%a == "y") then
            hpw_a(j) = hpw_a(j) / time%yrs_prt
            hpw_a(j) = hpw_a(j) // time%days_prt
            hpw_a(j)%nplnt = pl_mass(j)%tot_com%n
