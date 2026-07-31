@@ -304,7 +304,6 @@
                write (2027,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                         hnb_a(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops
                end if
-             hnb_a(j) = hnbz
          end if
         
          if (time%end_sim == 1 .and. pco%ls_hru%a == "y") then
@@ -316,7 +315,6 @@
                write (2037,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, &
                                                                         hls_a(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops, percn_aa 
              end if
-             hls_a(j) = hlsz
          end if
         
          !! hru(j)%strsa is MODEL state, not output: calsoft_plant branches on it
@@ -343,9 +341,25 @@
                write (2047,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name,    &
                                                               hpw_a(j), lum(ilu)%plant_cov, lum(ilu)%mgt_ops  
              end if
-             hpw_a(j) = hpwz
          end if
-         
+
+         !! Reset the AVERAGE-ANNUAL accumulators unconditionally.
+         !! time_control zeroes the YEARLY accumulators (hwb_y/hnb_y/hpw_y/hls_y)
+         !! between soft-calibration runs, but not these, and time_control is
+         !! re-entered once per calibration iteration (calsoft_hyd, calsoft_plant,
+         !! calsoft_sed, caltsoft_hyd, calhard_control - 44 call sites). An avann
+         !! accumulator left unreset therefore compounds across iterations.
+         !! hwb_a already reset outside its print guard; hnb_a/hls_a/hpw_a reset
+         !! only when their own avann print flag was "y". That matters most for
+         !! hpw_a, which the strsa assignment above reads on EVERY run regardless
+         !! of the print flag - without this, hru(j)%strsa would grow every
+         !! calibration iteration whenever hru_pw avann output is off.
+         if (time%end_sim == 1) then
+           hnb_a(j) = hnbz
+           hls_a(j) = hlsz
+           hpw_a(j) = hpwz
+         end if
+
           if (time%end_sim == 1) then
             if (pco%cb_hru%d /= "n" .or. pco%cb_hru%m /= "n" .or. pco%cb_hru%y /= "n" .or. pco%cb_hru%a /= "n") then
               call soil_nutcarb_write(" e")    
