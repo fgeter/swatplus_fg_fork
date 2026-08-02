@@ -24,7 +24,6 @@
 	  integer :: ilu
       real :: bm_max_m
       real :: bm_max_y
-      real :: bm_max_a
       real :: const
       real :: sw_init
       real :: sno_init
@@ -38,23 +37,10 @@
       iob = sp_ob1%hru + j - 1   !!!!!! added for new output write
       ilu = hru(j)%land_use_mgt
           
-        hwb_m(j) = hwb_m(j) + hwb_d(j)
-        hnb_m(j) = hnb_m(j) + hnb_d(j)
-        hls_m(j) = hls_m(j) + hls_d(j) 
-        bm_max_m = hpw_m(j)%bm_max     ! save off monthly bm_max value
-        bm_max_y = hpw_y(j)%bm_max     ! save off yearly bm_max value
-        bm_max_a = hpw_a(j)%bm_max     ! save off annual bm_max value
-        hpw_m(j) = hpw_m(j) + hpw_d(j)
-        hpw_m(j)%bm_max = bm_max_m     ! restore monthly bm_max value
-        hpw_d(j)%bm_max = hpw_d(j)%bioms
-        hpw_m(j)%bm_max = Max(hpw_d(j)%bioms, hpw_m(j)%bm_max)
-        hpw_y(j)%bm_max = Max(hpw_d(j)%bioms, hpw_y(j)%bm_max)
-        hpw_a(j)%bm_max = Max(hpw_d(j)%bioms, hpw_a(j)%bm_max)
-        
-        hwb_d(j)%sw_final = soil(j)%sw
-        hwb_d(j)%sw = (hwb_d(j)%sw_init + hwb_d(j)%sw_final) / 2.
-        hwb_d(j)%sno_final = hru(j)%sno_mm
-        hwb_d(j)%snopack = (hwb_d(j)%sno_init + hwb_d(j)%sno_final) / 2.
+        !! The daily accumulation and the daily two-point averages that used to sit
+        !! here now live in hru_output_accum, which is called just before this routine
+        !! and does no file I/O. What remains below is the WRITE half plus the month /
+        !! year / simulation rollups.
              
       !! daily print
          if (pco%day_print == "y" .and. pco%int_day_cur == pco%int_day) then
@@ -214,7 +200,7 @@
           hpw_y(j) = hpw_y(j) // const
           
           hpw_y(j)%bm_max = bm_max_y   ! Restore bm_max_y
-          hpw_a(j)%bm_max = bm_max_a   ! Restore bm_max_a
+          hpw_a(j)%bm_max = bm_max_a_sv(j)   ! Restore bm_max_a (saved in hru_output_accum)
 
           !! yearly print
           hwb_y(j)%sw_final = hwb_d(j)%sw_final
@@ -334,7 +320,7 @@
            hpw_a(j) = hpw_a(j) // time%days_prt
            hpw_a(j)%nplnt = pl_mass(j)%tot_com%n
            hpw_a(j)%pplnt = pl_mass(j)%tot_com%p
-           hpw_a(j)%bm_max = bm_max_a   ! Restore bm_max_a
+           hpw_a(j)%bm_max = bm_max_a_sv(j)   ! Restore bm_max_a (saved in hru_output_accum)
            write (2043,102) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpw_a(j),           &
                                                                         lum(ilu)%plant_cov, lum(ilu)%mgt_ops  !! plant weather ann
              if (pco%csvout == "y") then 

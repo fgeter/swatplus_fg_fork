@@ -32,7 +32,7 @@
       
       external :: aqu_1d_control, aqu_cs_output, aqu_pesticide_output, aqu_salt_output, aquifer_output, &
                   ch_cs_output, ch_salt_output, cha_pesticide_output, channel_output, constit_hyd_mult, &
-                  cs_str_output, flow_dur_curve, gwflow_simulate, hru_carbon_output, hru_control, &
+                  cs_str_output, flow_dur_curve, gwflow_simulate, hru_carbon_output, hru_control, hru_output_accum, &
                   hru_cs_output, hru_lte_control, hru_lte_output, hru_output, hru_pathogen_output, &
                   hru_pesticide_output, hru_salt_output, hydin_output, hydout_output, manure_demand_output, &
                   manure_source_output, obj_output, recall_nut, recall_output, res_control, res_cs_output, &
@@ -1248,6 +1248,8 @@
         end do
         
         do ihru = 1, sp_ob%hru
+          !! accumulation half - no file I/O, per-HRU only, safe to parallelize
+          call hru_output_accum (ihru)
           call hru_output (ihru)
           call hru_carbon_output (ihru)
           if (hru(ihru)%dbs%surf_stor > 0) then

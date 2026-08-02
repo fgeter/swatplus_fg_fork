@@ -262,6 +262,12 @@
       type (output_plantweather), dimension (:), allocatable :: hpw_m
       type (output_plantweather), dimension (:), allocatable :: hpw_y
       type (output_plantweather), dimension (:), allocatable :: hpw_a
+      !! hpw_a(j)%bm_max as it stood BEFORE the current day's accumulation.
+      !! Saved by hru_output_accum, consumed by hru_output at end of year and end
+      !! of simulation. Held per-HRU rather than as a local scalar because the two
+      !! now run in different phases - and because a shared scalar would be a race
+      !! once the accumulation phase runs inside the parallel HRU loop.
+      real, dimension (:), allocatable :: bm_max_a_sv
       type (output_plantweather) :: hpwz
       
       type(output_plantweather), dimension (:), allocatable :: hltpw_d

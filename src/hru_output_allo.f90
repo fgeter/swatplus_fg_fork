@@ -65,6 +65,7 @@
       allocate (hpw_m(mhru))
       allocate (hpw_y(mhru))
       allocate (hpw_a(mhru))
+      allocate (bm_max_a_sv(mhru), source = 0.)
       if (cs_db%num_pests > 0) then
         allocate (hpestb_d(mhru))
         allocate (hpestb_m(mhru))
