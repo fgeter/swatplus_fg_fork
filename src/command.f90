@@ -76,6 +76,9 @@
       integer, save :: n_par_hru = -1            !! size of par_hru (-1 = not yet built)
       logical :: use_par                         !! run the parallel HRU pre-pass this day?
       integer :: k                               !! pre-pass loop counter
+      integer :: k_acc                           !! HRU counter for the parallel output-accumulation loop
+                                                 !! (a fresh local, NOT ihru - ihru is threadprivate and
+                                                 !!  so cannot be an omp do iteration variable)
 
       !! === OpenMP Stage 2: per-wavefront-level pre-pass over chandeg (SD channel) chains ===
       integer, allocatable, save :: par_cha(:)           !! icmd indices of eligible chandeg objs, grouped by cmd_order
@@ -1247,9 +1250,43 @@
           call hru_lte_output (isd)
         end do
         
+        !! === OpenMP Stage 5: parallel daily HRU output accumulation ===
+        !! hru_output_accum is the accumulation half split out of hru_output: no file I/O,
+        !! and it touches only element (k_acc) of the per-HRU output arrays plus soil(k_acc)
+        !! and hru(k_acc). It runs once per HRU per DAY and is dominated by derived-type
+        !! operator overloads on the output structs.
+        !!
+        !! Measured cost, racoon_creek_mult-hru (7949 HRU, 2 yr), 12 threads: removing the
+        !! call outright takes the run from 28.8 s to 26.9 s, so the accumulation is ~1.9 s,
+        !! about 6% of the day. Parallelising it here recovers ~0.35 s of that - a real but
+        !! small win (~1%), consistently reproduced across reps. The loop is memory-bound
+        !! (it streams four large per-HRU derived-type arrays), so it does not scale with
+        !! thread count the way the hru_control pre-pass does. Do not expect more from it.
+        !!
+        !! It is hoisted into its own loop here rather than folded into the Stage 1
+        !! pre-pass for two reasons:
+        !!   1. Stage 1 covers only independent headwater HRUs (cmd_order==1, rcv_tot==0)
+        !!      and is gated on use_par, so it would leave most HRUs behind.
+        !!   2. Running the accumulation at exactly the point in the day where it ran
+        !!      before keeps results bit-for-bit. Moving it earlier would bank hwb_d /
+        !!      soil%sw before the rest of the day's routing had finished touching them.
+        !!
+        !! Hoisting all the accumulation ahead of all the writes is safe because
+        !! hru_output writes nothing outside element (j) - so no HRU's write can affect a
+        !! later HRU's accumulation - and hru_output itself stays sequential, in ihru
+        !! order, which preserves output-file row order (see tmp/threading_playbook.md
+        !! Part 13: no file I/O in a parallel region).
+        !!
+        !! Not gated on use_par: unlike hru_control, this routine touches no water
+        !! allocation or constituent state, so the conditions that disqualify the Stage 1
+        !! pre-pass do not apply.
+        !$omp parallel do schedule(static)
+        do k_acc = 1, sp_ob%hru
+          call hru_output_accum (k_acc)
+        end do
+        !$omp end parallel do
+
         do ihru = 1, sp_ob%hru
-          !! accumulation half - no file I/O, per-HRU only, safe to parallelize
-          call hru_output_accum (ihru)
           call hru_output (ihru)
           call hru_carbon_output (ihru)
           if (hru(ihru)%dbs%surf_stor > 0) then
