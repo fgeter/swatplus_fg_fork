@@ -23,11 +23,11 @@
       
       iob = sp_ob1%hru + j - 1   !!!!!! added for new output write
           
-      hsc_m(j) = hsc_m(j) + hsc_d(j)
-      hrc_m(j) = hrc_m(j) + hrc_d(j)
-      hpc_m(j) = hpc_m(j) + hpc_d(j) 
-      hscf_m(j) = hscf_m(j) + hscf_d(j)
-             
+        !! The daily accumulation that used to sit here now lives in
+        !! hru_carbon_output_accum, which is called just before this routine and does no
+        !! file I/O. What remains below is the WRITE half plus the month / year /
+        !! simulation rollups.
+
       !! daily print
       if (pco%nb_hru%d == "y") then
         write (4520,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_d(j)    !! soil carbon gain/loss

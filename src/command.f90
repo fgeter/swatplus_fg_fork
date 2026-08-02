@@ -32,7 +32,8 @@
       
       external :: aqu_1d_control, aqu_cs_output, aqu_pesticide_output, aqu_salt_output, aquifer_output, &
                   ch_cs_output, ch_salt_output, cha_pesticide_output, channel_output, constit_hyd_mult, &
-                  cs_str_output, flow_dur_curve, gwflow_simulate, hru_carbon_output, hru_control, hru_output_accum, &
+                  cs_str_output, flow_dur_curve, gwflow_simulate, hru_carbon_output, hru_carbon_output_accum, &
+                  hru_control, hru_output_accum, &
                   hru_cs_output, hru_lte_control, hru_lte_output, hru_output, hru_pathogen_output, &
                   hru_pesticide_output, hru_salt_output, hydin_output, hydout_output, manure_demand_output, &
                   manure_source_output, obj_output, recall_nut, recall_output, res_control, res_cs_output, &
@@ -1280,9 +1281,16 @@
         !! Not gated on use_par: unlike hru_control, this routine touches no water
         !! allocation or constituent state, so the conditions that disqualify the Stage 1
         !! pre-pass do not apply.
+        !!
+        !! hru_carbon_output_accum is the same split applied to the carbon output structs.
+        !! Both are driven from this one parallel region so the day pays a single fork/join
+        !! rather than two. Together they take ~0.5 s off a 27.8 s run on the fixture above
+        !! (~1.8%); see hru_carbon_output_accum for where the rest of the output time
+        !! actually goes (the formatted month/year writes, which cannot move here).
         !$omp parallel do schedule(static)
         do k_acc = 1, sp_ob%hru
           call hru_output_accum (k_acc)
+          call hru_carbon_output_accum (k_acc)
         end do
         !$omp end parallel do
 
