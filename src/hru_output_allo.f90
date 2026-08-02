@@ -17,7 +17,16 @@
       integer :: ics            !               |constituent counter
       
       mhru = sp_ob%hru
-     
+
+      !! Buffers for the pre-formatted monthly carbon output records (see carbon_module).
+      !! Only allocated when that output is actually switched on - at 600 bytes x 8 files
+      !! per HRU this is ~4.7 KB/HRU, which is worth avoiding on runs that never print it.
+      !! pco is safe to test here: basin_print_codes_read runs in proc_bsn, which main
+      !! calls before proc_hru.
+      if (pco%nb_hru%m == "y") then
+        allocate (cb_mon_buf(cb_mon_nbuf, mhru))
+      end if
+
       !!Section 3
       !!this section sets parameters related to soil and other processes
 

@@ -15,6 +15,7 @@
       integer, intent (in) :: ihru             !            |
       integer :: j
       integer :: iob
+      character (len=800) :: probe             !            |scratch for the one-time record-width measurement
                          
 !!    ~ ~ ~ PURPOSE ~ ~ ~
 !!    this subroutine outputs HRU variables on daily, monthly and annual time steps
@@ -51,18 +52,37 @@
         hpc_y(j) = hpc_y(j) + hpc_m(j)
         hscf_y(j) = hscf_y(j) + hscf_m(j)
           
-        !! monthly print
+        !! monthly print - the records were formatted in parallel by
+        !! hru_carbon_output_accum; all that is left here is to emit them in HRU order
         if (pco%nb_hru%m == "y") then
-          write (4521,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_m(j)    !! soil carbon gain/loss
-          write (4531,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_m(j)    !! residue carbon gain/loss
-          write (4541,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_m(j)    !! plant carbon gain/loss
-          write (4551,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_m(j)   !! soil transformations
+          !! One-time measurement of the list-directed record widths (see carbon_module).
+          !! Writing the same item list with a sentinel appended puts the sentinel just
+          !! past the end of the record the original external write would have produced,
+          !! so the width falls out of where the sentinel landed - measured with whatever
+          !! compiler built this binary, rather than assumed. The item list must stay in
+          !! step with the one in hru_carbon_output_accum. Searched from the back, so a
+          !! sentinel character occurring inside an HRU name cannot fool it.
+          if (cb_mon_len(1) == 0) then
+            write (probe,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_m(j), "~"
+            cb_mon_len(1) = index(probe, "~", back = .true.) - 2
+            write (probe,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_m(j), "~"
+            cb_mon_len(2) = index(probe, "~", back = .true.) - 2
+            write (probe,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_m(j), "~"
+            cb_mon_len(3) = index(probe, "~", back = .true.) - 2
+            write (probe,*) time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_m(j), "~"
+            cb_mon_len(4) = index(probe, "~", back = .true.) - 2
+          end if
+
+          write (4521,'(a)') cb_mon_buf(1,j)(1:cb_mon_len(1))    !! soil carbon gain/loss
+          write (4531,'(a)') cb_mon_buf(2,j)(1:cb_mon_len(2))    !! residue carbon gain/loss
+          write (4541,'(a)') cb_mon_buf(3,j)(1:cb_mon_len(3))    !! plant carbon gain/loss
+          write (4551,'(a)') cb_mon_buf(4,j)(1:cb_mon_len(4))    !! soil transformations
 
           if (pco%csvout == "y") then
-            write (4525,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hsc_m(j)    !! soil carbon gain/loss
-            write (4535,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hrc_m(j)    !! residue carbon gain/loss
-            write (4545,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hpc_m(j)    !! plant carbon gain/loss
-            write (4555,'(*(G0.6,:","))') time%day, time%mo, time%day_mo, time%yrc, j, ob(iob)%gis_id, ob(iob)%name, hscf_m(j)   !! soil transformations
+            write (4525,'(a)') trim(cb_mon_buf(5,j))  !! soil carbon gain/loss
+            write (4535,'(a)') trim(cb_mon_buf(6,j))  !! residue carbon gain/loss
+            write (4545,'(a)') trim(cb_mon_buf(7,j))  !! plant carbon gain/loss
+            write (4555,'(a)') trim(cb_mon_buf(8,j))  !! soil transformations
 
           end if
         end if

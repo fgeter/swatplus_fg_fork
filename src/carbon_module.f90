@@ -251,6 +251,41 @@
       end type carbon_soil_gain_losses
       type (carbon_soil_gain_losses) :: hscz 
       
+      !! Pre-formatted monthly HRU carbon output records, one row of text per HRU per
+      !! output file. Built in hru_carbon_output_accum (parallel, no I/O) and consumed by
+      !! hru_carbon_output, which then only has to emit an already-formatted string.
+      !!
+      !! Why: profiling showed that on racoon_creek_mult-hru at 12 threads, ~83% of the
+      !! cost of the HRU output writes is the number-to-text formatting, not the write
+      !! statement or the I/O. Formatting is pure CPU work with no shared state, so it can
+      !! move into the parallel HRU loop; the write itself cannot (threading playbook
+      !! Part 13). See hru_carbon_output_accum.
+      !!
+      !! First index selects the destination file:
+      !!   1-4 = txt  soilcarb (4521) / rescarb (4531) / plcarb (4541) / scf (4551)
+      !!   5-8 = csv  soilcarb (4525) / rescarb (4535) / plcarb (4545) / scf (4555)
+      !! Length 600 is comfortably above the widest record (soilcarb: 6 integers + a
+      !! len-16 name + 15 list-directed reals is ~350 characters). If a record ever
+      !! overflows, gfortran raises an end-of-record error rather than truncating
+      !! silently.
+      integer, parameter :: cb_mon_nbuf = 8
+      character (len=600), dimension (:,:), allocatable :: cb_mon_buf
+
+      !! Exact record width of each of the four list-directed (txt) monthly files.
+      !!
+      !! These records CANNOT be emitted with trim(). List-directed output writes every
+      !! item into a fixed-width field and left-justifies within it, so a record ends with
+      !! however many blanks the last value did not use - 4 for "0.00000000" in a 17-wide
+      !! real field, 0 for "1.00000000E-30". The width of the whole record is therefore
+      !! constant for a given file but the trailing blank count is not, and trim() would
+      !! strip a variable number of characters that the original external write emitted.
+      !!
+      !! The widths are MEASURED at run time rather than hardcoded, because they depend on
+      !! the compiler's list-directed field widths (gfortran and ifx do not agree) and on
+      !! the declared length of ob%name. See the calibration block in hru_carbon_output.
+      !! Zero means "not yet calibrated".
+      integer, dimension (4) :: cb_mon_len = 0
+
       !! hru soil carbon gains and losses
       type (carbon_soil_gain_losses), dimension (:), allocatable :: hsc_d
       type (carbon_soil_gain_losses), dimension (:), allocatable :: hsc_m
