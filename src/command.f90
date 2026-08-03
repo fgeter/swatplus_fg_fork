@@ -28,6 +28,7 @@
       use soil_module
       use recall_module
       use water_allocation_module
+!$    use omp_lib
       implicit none
       
       external :: aqu_1d_control, aqu_cs_output, aqu_pesticide_output, aqu_salt_output, aquifer_output, &
@@ -77,6 +78,8 @@
       integer, save :: n_par_hru = -1            !! size of par_hru (-1 = not yet built)
       logical :: use_par                         !! run the parallel HRU pre-pass this day?
       integer :: k                               !! pre-pass loop counter
+      integer :: par_min_lvl                     !! fewest objects a wavefront level must hold to be
+                                                 !! worth its own parallel region (see below)
       integer :: k_acc                           !! HRU counter for the parallel output-accumulation loop
                                                  !! (a fresh local, NOT ihru - ihru is threadprivate and
                                                  !!  so cannot be an omp do iteration variable)
@@ -127,6 +130,32 @@
       !! below skips their recompute but still runs their routing/output (kept sequential).
       use_par = (db_mx%wallo_db == 0 .and. cs_db%num_pests == 0 .and.  &
                  cs_db%num_salts == 0 .and. cs_db%num_cs == 0)
+
+      !! === Minimum level size for the wavefront pre-passes (Stages 2-5) ===
+      !! A wavefront level gets its own !$omp parallel do, so a level holding a handful of
+      !! objects pays a full fork/join to do almost nothing. Measured on
+      !! racoon_creek_mult-hru (7949 HRU, 2 yr, 12 threads) BEFORE this gate:
+      !!
+      !!   phase      objects  levels  regions/run  objects per region  time
+      !!   chandeg        360      54       36 500                 6.7  1.09 s
+      !!   reservoir       16      34        5 110                 0.47 0.48 s
+      !!   routing unit    33       1          730                33.0  0.33 s
+      !!
+      !! The reservoir pre-pass was spawning 12 threads for less than one object. Fork/join
+      !! costs 30-90 us per region against 1.6-2.0 us of work per channel or reservoir, so
+      !! both phases were a NET LOSS: 1.52 s of parallel-region time for work that takes
+      !! 0.39 s sequentially. Forcing them sequential cut 0.75 s off a 14.2 s day loop.
+      !!
+      !! Routing units are the counter-example and the reason this is a threshold rather
+      !! than a deletion - at ~50 us of work per object they are 25x heavier than a channel,
+      !! and that phase runs 3.66x faster threaded. So gate on level size, not object type.
+      !!
+      !! Two threads' worth of objects is the break-even point for the cheap object types
+      !! at the measured per-object costs. In a non-OpenMP build the pre-passes are ordinary
+      !! sequential loops and the gate must not change which path runs, so it stays at 1 -
+      !! the `!$` sentinel lines below compile only under OpenMP.
+      par_min_lvl = 1
+!$    par_min_lvl = 2 * omp_get_max_threads()
       if (n_par_hru < 0) then
         n_par_hru = 0
         iob = sp_ob1%objs
@@ -370,7 +399,7 @@
           if (use_par2 .and. ob(icmd)%cmd_order <= max_cha_level) then
             lvl_lo = par_cha_lvl_start(ob(icmd)%cmd_order)
             lvl_hi = par_cha_lvl_start(ob(icmd)%cmd_order + 1) - 1
-            if (lvl_hi >= lvl_lo) then
+            if (cha_level_par(ob(icmd)%cmd_order)) then
               icmd_save = icmd   !! icmd is threadprivate; every worker reassigns its own copy,
                                  !! so save/restore the sequential walk's position around the region
               !$omp parallel do schedule(dynamic)
@@ -489,7 +518,7 @@
           if (use_par3 .and. ob(icmd)%cmd_order <= max_res_level) then
             lvl_lo_r = par_res_lvl_start(ob(icmd)%cmd_order)
             lvl_hi_r = par_res_lvl_start(ob(icmd)%cmd_order + 1) - 1
-            if (lvl_hi_r >= lvl_lo_r) then
+            if (res_level_par(ob(icmd)%cmd_order)) then
               icmd_save_r = icmd
               !$omp parallel do schedule(dynamic)
               do k = lvl_lo_r, lvl_hi_r
@@ -591,7 +620,7 @@
           if (use_par4 .and. ob(icmd)%cmd_order <= max_aqu_level) then
             lvl_lo_a = par_aqu_lvl_start(ob(icmd)%cmd_order)
             lvl_hi_a = par_aqu_lvl_start(ob(icmd)%cmd_order + 1) - 1
-            if (lvl_hi_a >= lvl_lo_a) then
+            if (aqu_level_par(ob(icmd)%cmd_order)) then
               icmd_save_a = icmd
               !$omp parallel do schedule(dynamic)
               do k = lvl_lo_a, lvl_hi_a
@@ -692,7 +721,7 @@
           if (use_par5 .and. ob(icmd)%cmd_order <= max_ru_level) then
             lvl_lo_u = par_ru_lvl_start(ob(icmd)%cmd_order)
             lvl_hi_u = par_ru_lvl_start(ob(icmd)%cmd_order + 1) - 1
-            if (lvl_hi_u >= lvl_lo_u) then
+            if (ru_level_par(ob(icmd)%cmd_order)) then
               icmd_save_u = icmd
               !$omp parallel do schedule(dynamic)
               do k = lvl_lo_u, lvl_hi_u
@@ -808,24 +837,28 @@
         icmd_is_precomputed_cha = .false.
         if (use_par2 .and. ob(icmd)%typ == "chandeg") then
           if (sd_ch(ob(icmd)%num)%chl > 1.e-3) then
-            if (cha_producers_all_earlier(icmd)) icmd_is_precomputed_cha = .true.
+            if (cha_producers_all_earlier(icmd) .and. cha_level_par(ob(icmd)%cmd_order))  &
+              icmd_is_precomputed_cha = .true.
           end if
         end if
         icmd_is_precomputed_res = .false.
         if (use_par3 .and. ob(icmd)%typ == "res") then
           if (ob(icmd)%rcv_tot > 0) then
-            if (res_producers_all_earlier(icmd)) icmd_is_precomputed_res = .true.
+            if (res_producers_all_earlier(icmd) .and. res_level_par(ob(icmd)%cmd_order))  &
+              icmd_is_precomputed_res = .true.
           end if
         end if
         icmd_is_precomputed_aqu = .false.
         if (use_par4 .and. ob(icmd)%typ == "aqu") then
           if (ob(icmd)%dfn_tot == 0) then
-            if (aqu_producers_all_earlier(icmd)) icmd_is_precomputed_aqu = .true.
+            if (aqu_producers_all_earlier(icmd) .and. aqu_level_par(ob(icmd)%cmd_order))  &
+              icmd_is_precomputed_aqu = .true.
           end if
         end if
         icmd_is_precomputed_ru = .false.
         if (use_par5 .and. ob(icmd)%typ == "ru") then
-          if (ru_producers_all_earlier(icmd)) icmd_is_precomputed_ru = .true.
+          if (ru_producers_all_earlier(icmd) .and. ru_level_par(ob(icmd)%cmd_order))  &
+            icmd_is_precomputed_ru = .true.
         end if
         !! Part 13: hyddep_output (file I/O + required hdep_* state accumulation) was NOT run
         !! inside the ru pre-pass; run it here for rcv_tot>0 ru's, restoring the ht1 the worker
@@ -1478,6 +1511,39 @@
       return
 
       contains
+
+      !! A wavefront level is pre-passed only if it holds at least par_min_lvl objects (see
+      !! the comment where par_min_lvl is set). These four functions are the SINGLE source of
+      !! that decision: the pre-pass gate and the sequential walk's skip-check both call them,
+      !! so an object can never be computed by both paths or by neither.
+      logical function cha_level_par (lvl)
+        integer, intent (in) :: lvl
+        cha_level_par = .false.
+        if (lvl >= 1 .and. lvl <= max_cha_level)  &
+          cha_level_par = (par_cha_lvl_start(lvl+1) - par_cha_lvl_start(lvl)) >= par_min_lvl
+      end function cha_level_par
+
+      logical function res_level_par (lvl)
+        integer, intent (in) :: lvl
+        res_level_par = .false.
+        if (lvl >= 1 .and. lvl <= max_res_level)  &
+          res_level_par = (par_res_lvl_start(lvl+1) - par_res_lvl_start(lvl)) >= par_min_lvl
+      end function res_level_par
+
+      logical function aqu_level_par (lvl)
+        integer, intent (in) :: lvl
+        aqu_level_par = .false.
+        if (lvl >= 1 .and. lvl <= max_aqu_level)  &
+          aqu_level_par = (par_aqu_lvl_start(lvl+1) - par_aqu_lvl_start(lvl)) >= par_min_lvl
+      end function aqu_level_par
+
+      logical function ru_level_par (lvl)
+        integer, intent (in) :: lvl
+        ru_level_par = .false.
+        if (lvl >= 1 .and. lvl <= max_ru_level)  &
+          ru_level_par = (par_ru_lvl_start(lvl+1) - par_ru_lvl_start(lvl)) >= par_min_lvl
+      end function ru_level_par
+
 
       !! true only if EVERY producer of icmd_chk has a strictly lower cmd_order than icmd_chk
       !! itself. cmd_order is only an approximate depth diagnostic (hyd_connect pins "ru" objects
