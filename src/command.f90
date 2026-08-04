@@ -119,6 +119,40 @@
       logical :: icmd_is_precomputed_ru
       type (hyd_output), allocatable, save :: ru_ht1_save(:)   !! per-object ht1 for deferred hyddep_output
 
+      !! === Pre-pass classification cache ===
+      !! THIS IS A CORRECTNESS FIX. It is worth about 1% of wall time; do not expect more.
+      !!
+      !! The hazard it removes: the four eligibility lists (par_cha/par_res/par_aqu/par_ru)
+      !! are built ONCE, but the sequential walk's skip-check used to RE-DERIVE the same
+      !! verdict every day from live state -- including sd_ch%chl. cal_parm_select can change
+      !! chl between calibration runs, so a channel crossing the chl > 1e-3 threshold could
+      !! make the list and the check disagree, leaving an object computed by BOTH paths or by
+      !! NEITHER. Deriving both from one cache makes that impossible.
+      !!
+      !! Safe because the verdict is fixed for a run: it depends only on topology
+      !! (typ/cmd_order/rcv_tot/dfn_tot/obj_in), on channel length, and on par_min_lvl. None
+      !! change inside the daily loop -- sd_ch%chl is written only by sd_hydsed_init (setup)
+      !! and cal_parm_select (between runs). par_min_lvl is 2*omp_get_max_threads(), so a run
+      !! that changed thread count mid-flight would need this cache invalidated; nothing does
+      !! that today.
+      !!
+      !! Verified on racoon_creek_mult-hru (7949 HRU, 2 yr, 12 threads): the cached class was
+      !! compared against a freshly-derived one for all 6 959 090 object-days -- 0 mismatches.
+      !! That run also showed the walk SKIPS 5 953 880 of those object-days (85.6%) because a
+      !! pre-pass already did them.
+      !!
+      !! Performance note, recorded so nobody re-litigates it: this was expected to be worth
+      !! ~12%, from differencing two instrumented runs that appeared to attribute 2.05 s to
+      !! re-deriving the verdict. That attribution was WRONG -- the timed region also contained
+      !! the Stage 2-4 parallel pre-pass regions, which fire on the first object of each new
+      !! wavefront level and so were charged to the skipped objects. Actual measured gain is
+      !! -1.2% at 20 threads and 0% at 12 (medians of 5 interleaved reps, full dataset).
+      integer(1), allocatable, save :: par_class(:)   !! 0 = compute in the walk
+      integer, save :: n_par_class = -1               !! 1 hru  2 cha  3 res  4 aqu  5 ru
+      integer, parameter :: PC_RUN = 0, PC_HRU = 1, PC_CHA = 2, PC_RES = 3,   &
+                            PC_AQU = 4, PC_RU = 5
+      integer :: icls                                 !! cached class of the current icmd
+
       icmd = sp_ob1%objs
       wallo(:)%trn_cur = 1
       if (allocated(res_ob)) res_ob(:)%wallo_call = 0
@@ -350,6 +384,42 @@
             par_ru_lvl_start(k+1) = par_ru_lvl_start(k) + ru_lvl_cnt(k)
           end do
         end block
+      end if
+
+      !! === Build the pre-pass classification cache (once) ===
+      !! Runs after every eligibility list exists, and mirrors those lists' expressions
+      !! exactly, so an object can never be claimed by both a pre-pass and the walk, nor by
+      !! neither. Order matters only in that the types are mutually exclusive by ob%typ.
+      if (n_par_class < 0) then
+        allocate (par_class(sp_ob%objs))
+        par_class = PC_RUN
+        iob = sp_ob1%objs
+        do while (iob /= 0)
+          if (use_par .and. ob(iob)%cmd_order == 1 .and. ob(iob)%typ == "hru"  &
+              .and. ob(iob)%rcv_tot == 0) then
+            par_class(iob) = PC_HRU
+          else if (use_par2 .and. ob(iob)%typ == "chandeg") then
+            if (sd_ch(ob(iob)%num)%chl > 1.e-3) then
+              if (cha_producers_all_earlier(iob) .and. cha_level_par(ob(iob)%cmd_order))  &
+                par_class(iob) = PC_CHA
+            end if
+          else if (use_par3 .and. ob(iob)%typ == "res") then
+            if (ob(iob)%rcv_tot > 0) then
+              if (res_producers_all_earlier(iob) .and. res_level_par(ob(iob)%cmd_order))  &
+                par_class(iob) = PC_RES
+            end if
+          else if (use_par4 .and. ob(iob)%typ == "aqu") then
+            if (ob(iob)%dfn_tot == 0) then
+              if (aqu_producers_all_earlier(iob) .and. aqu_level_par(ob(iob)%cmd_order))  &
+                par_class(iob) = PC_AQU
+            end if
+          else if (use_par5 .and. ob(iob)%typ == "ru") then
+            if (ru_producers_all_earlier(iob) .and. ru_level_par(ob(iob)%cmd_order))  &
+              par_class(iob) = PC_RU
+          end if
+          iob = ob(iob)%cmd_next
+        end do
+        n_par_class = 1
       end if
 
       if (use_par .and. n_par_hru > 0) then
@@ -842,32 +912,13 @@
         !! 1 thread the pre-pass did them in command order, so this stays bit-for-bit. The
         !! chandeg skip-check must match par_cha's build-time eligibility EXACTLY (incl.
         !! cha_producers_all_earlier) so an object isn't computed by neither path or both.
-        icmd_is_precomputed_cha = .false.
-        if (use_par2 .and. ob(icmd)%typ == "chandeg") then
-          if (sd_ch(ob(icmd)%num)%chl > 1.e-3) then
-            if (cha_producers_all_earlier(icmd) .and. cha_level_par(ob(icmd)%cmd_order))  &
-              icmd_is_precomputed_cha = .true.
-          end if
-        end if
-        icmd_is_precomputed_res = .false.
-        if (use_par3 .and. ob(icmd)%typ == "res") then
-          if (ob(icmd)%rcv_tot > 0) then
-            if (res_producers_all_earlier(icmd) .and. res_level_par(ob(icmd)%cmd_order))  &
-              icmd_is_precomputed_res = .true.
-          end if
-        end if
-        icmd_is_precomputed_aqu = .false.
-        if (use_par4 .and. ob(icmd)%typ == "aqu") then
-          if (ob(icmd)%dfn_tot == 0) then
-            if (aqu_producers_all_earlier(icmd) .and. aqu_level_par(ob(icmd)%cmd_order))  &
-              icmd_is_precomputed_aqu = .true.
-          end if
-        end if
-        icmd_is_precomputed_ru = .false.
-        if (use_par5 .and. ob(icmd)%typ == "ru") then
-          if (ru_producers_all_earlier(icmd) .and. ru_level_par(ob(icmd)%cmd_order))  &
-            icmd_is_precomputed_ru = .true.
-        end if
+        !! One lookup replaces re-deriving the verdict from the topology every day; see the
+        !! par_class comment at the declarations for why that is safe and what it cost.
+        icls = par_class(icmd)
+        icmd_is_precomputed_cha = (icls == PC_CHA)
+        icmd_is_precomputed_res = (icls == PC_RES)
+        icmd_is_precomputed_aqu = (icls == PC_AQU)
+        icmd_is_precomputed_ru  = (icls == PC_RU)
         !! Part 13: hyddep_output (file I/O + required hdep_* state accumulation) was NOT run
         !! inside the ru pre-pass; run it here for rcv_tot>0 ru's, restoring the ht1 the worker
         !! computed (this main thread's threadprivate ht1 is unrelated).
@@ -875,10 +926,7 @@
           ht1 = ru_ht1_save(icmd)
           call hyddep_output
         end if
-        if (.not. ((use_par .and. ob(icmd)%cmd_order == 1 .and.  &
-                   ob(icmd)%typ == "hru" .and. ob(icmd)%rcv_tot == 0) .or.  &
-                   icmd_is_precomputed_cha .or. icmd_is_precomputed_res .or.  &
-                   icmd_is_precomputed_aqu .or. icmd_is_precomputed_ru)) then
+        if (icls == PC_RUN) then
 
         !! allocate water for transfers that don't include a channel as a source
         !! check here in case channel is last object
