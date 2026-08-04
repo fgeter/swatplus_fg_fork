@@ -353,7 +353,15 @@
       end if
 
       if (use_par .and. n_par_hru > 0) then
-        !$omp parallel do schedule(dynamic)
+        !! chunk 64, not the schedule(dynamic) default of 1. A chunk of 1 takes one atomic
+        !! fetch-add on a single shared loop counter per HRU (5.8M per run on the full
+        !! dataset) and hands ADJACENT j indices to different threads, so every 4-byte
+        !! per-HRU array x(mhru) false-shares a cache line. Measured on racoon_creek_mult-hru
+        !! (median of 5 interleaved reps): p1 -15.2% at 12 threads / -14.0% at 20, per-HRU
+        !! cost -22 to -25%. Larger chunks cut contention further but lose tail balance;
+        !! 64 is the flat part of the curve at both thread counts. Do NOT copy this chunk to
+        !! the chandeg/res/aqu/ru pre-passes - those levels hold 0.5-6.7 objects.
+        !$omp parallel do schedule(dynamic,64)
         do k = 1, n_par_hru
           icmd = par_hru(k)                       !! threadprivate icmd
           !! per-object setup mirroring the loop body for an independent (rcv_tot==0) HRU
