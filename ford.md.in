@@ -2,12 +2,23 @@
 project: SWAT+
 output_dir: @CMAKE_CURRENT_BINARY_DIR@/doc
 src_dir: src
-version: @SWAT_VERSION@ 
-revision: @SWAT_VERSION@ 
+version: @SWAT_VERSION@
+revision: @SWAT_VERSION@
 print_creation_date: true
 creation_date: %Y-%m-%d
 graph: true
 coloured_edges: true
+docmark: <
+predocmark: >
+docmark_alt: ~
+predocmark_alt: ^
+proc_internals: true
 ---
 
-SWAT+ Model Sources (@SWAT_VERSION@) 
+SWAT+ Model Sources (@SWAT_VERSION@)
+
+Documentation comments use `!<` (documents the preceding entity) and `!>`
+(documents the following entity). The legacy `!` and `!!` comments that appear
+throughout the sources are deliberately *not* documentation markers, so files
+can be converted to FORD comments one at a time without the unconverted files
+producing garbage output. See `doc/ford_comment_playbook.md`.
