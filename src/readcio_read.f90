@@ -120,9 +120,13 @@
       endif
 
        close (107)
-       
-       !! Initialize output path (will use current dir if null/empty)
-       call init_output_path(out_path_value)
+
+       !! Apply file.cio out_path only when the command line did not already
+       !! set the output path (-o, or -i without -o).
+       if (.not. cmdline_outpath_set) then
+         call init_output_path(out_path_value)
+       end if
             
        return
-      end subroutine readcio_read  
+      end subroutine readcio_read
+ 

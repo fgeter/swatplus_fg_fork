@@ -1,9 +1,25 @@
+!!     output_path_module centralises output file path handling for SWAT+.
+!!
+!!     When -i changes the process CWD to the input data folder, every output
+!!     open must go through open_output_file() so files are not written into
+!!     the input folder.  cmdline_outpath_set stops readcio_read from later
+!!     overriding a path already set from the command line.
+!!
+!!     Precedence (highest to lowest):
+!!       -o command-line argument
+!!       -i without -o  (outputs stay in the launch directory)
+!!       file.cio out_path setting
+!!       current working directory (out_path = "")
+
       module output_path_module
       
       implicit none
       
       !! Output path for all output files
       character(len=256) :: out_path = ""
+
+      !! .true. when the output path was set from -o or -i before readcio_read
+      logical :: cmdline_outpath_set = .false.
       
       contains
       
@@ -164,5 +180,27 @@
       
       return
       end subroutine open_output_file
+
+      !! Return .true. if filepath is absolute.  Used in main before chdir so
+      !! relative -i / -o arguments are resolved against the launch directory.
+      !!   '/'  first character  -> Unix/macOS absolute
+      !!   '\'  first character  -> Windows UNC
+      !!   ':'  at index 2       -> Windows drive letter (C:\)
+      logical function is_absolute(filepath)
+
+      implicit none
+
+      character(len=*), intent(in) :: filepath
+      character(len=1) :: first_char
+
+      first_char = filepath(1:1)
+      if (first_char == '/' .or. first_char == '\' .or. &
+          index(filepath, ':') == 2) then
+        is_absolute = .true.
+      else
+        is_absolute = .false.
+      end if
+
+      end function is_absolute
       
       end module output_path_module

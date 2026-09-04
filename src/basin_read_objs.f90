@@ -3,7 +3,11 @@
 !!     ~ ~ ~ PURPOSE ~ ~ ~
 !!     reads in the routing information from the watershed configuration
 !!     input file (.fig) and calculates the number of subbasins, reaches, 
-!!     and reservoirs
+!!     and reservoirs.
+!!
+!!     object.cnt is opened by filename alone.  If -i was given, main has
+!!     already chdir()'d to the input directory.  getcwd() is reported on
+!!     a missing file so a wrong -i path is diagnosable.
 
       use hydrograph_module
       use input_file_module
@@ -11,6 +15,7 @@
       use constituent_mass_module
       use basin_module
       use gwflow_module, only : out_gw
+      use output_path_module
       
       implicit none
       
@@ -20,14 +25,16 @@
       integer :: nriv = 0             !            |number of gwflow river cells
       integer :: riv_id = 0           !            |id of gwflow river cell
       logical :: i_exist              !            |check to determine if file exists
+      character(len=512) :: input_cwd = ""
       
       eof = 0
       
       !! read number of spatial objects from obj_connect.dat
       inquire (file=in_sim%object_cnt, exist=i_exist)
       if (.not. i_exist .or. in_sim%object_cnt == "null") then
-          write (*,*) 'Cannot find object.cnt input file'
-          stop
+          call getcwd(input_cwd)
+          write (*,*) "No input data found in: ", trim(input_cwd)
+          stop 1
       else
       do
         open (107,file=in_sim%object_cnt)
@@ -82,7 +89,7 @@
           bsn_cc%gwflow = 0 !set to inactive    
         endif
         !open record file
-        open(out_gw,file='gwflow_record')
+        call open_output_file(out_gw,'gwflow_record')
         write(out_gw,*) 'Record file for gwflow subroutine'
         write(out_gw,*) 
       endif
