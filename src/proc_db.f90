@@ -2,7 +2,7 @@
       
       implicit none
       
-      external :: cntbl_read, cons_prac_read, fert_parm_read, landuse_read, manure_parm_read, &
+      external :: cn_cover_init, cntbl_read, cons_prac_read, fert_parm_read, landuse_read, manure_parm_read, &
                   mgt_read_chemapp, mgt_read_fireops, mgt_read_grazeops, mgt_read_harvops, mgt_read_irrops, &
                   mgt_read_mgtops, mgt_read_puddle, mgt_read_sweepops, overland_n_read, path_parm_read, &
                   pest_parm_read, plant_parm_read, plant_transplant_read, plantparm_init, readpcom, &
@@ -47,6 +47,11 @@
       call cons_prac_read
       call overland_n_read
       call landuse_read
+      
+      !! cover-driven curve number setup - parses cntable.lum into
+      !! family/treatment/condition and reads plants.cov.  returns immediately
+      !! unless codes.bsn cn is 1 or 2
+      call cn_cover_init
      
       return
       end subroutine proc_db

@@ -30,7 +30,8 @@
       
       implicit none
       
-      external :: ero_cfactor, ero_eiusle, ero_ovrsed, ero_pkq, ero_ysed, sq_dailycn, sq_volq, sq_crackflow
+      external :: cn_cover_update, ero_cfactor, ero_eiusle, ero_ovrsed, ero_pkq, ero_ysed, sq_dailycn, &
+                  sq_volq, sq_crackflow
 
       integer :: j = 0            !none          |HRU number 
       real :: ulu = 0.            !              |
@@ -41,6 +42,14 @@
       ulu = hru(j)%luse%urb_lu
       hruirrday = 0.
       irmmdt = 0.
+
+      !! re-seat cn2 from surface cover (residue + near-surface living biomass)
+      !! before the soil-water curve number is computed from it.  cn_cover_update
+      !! ends in curno, so smx and wrt are rebuilt for today's cn2
+      select case (bsn_cc%cn)
+      case (1, 2)
+        call cn_cover_update (j)
+      end select
 
       !!calculate subdaily curve number value
       call sq_dailycn

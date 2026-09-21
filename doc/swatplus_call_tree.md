@@ -99,7 +99,8 @@ proc_db
 ├── <a href="#scen_read_grwway">scen_read_grwway</a> / <a href="#scen_read_filtstrip">scen_read_filtstrip</a> / <a href="#scen_read_bmpuser">scen_read_bmpuser</a> / <a href="#sat_buff_read">sat_buff_read</a>
 ├── <a href="#readpcom">readpcom</a>
 ├── <a href="#cntbl_read">cntbl_read</a> / <a href="#cons_prac_read">cons_prac_read</a> / <a href="#overland_n_read">overland_n_read</a>
-└── <a href="#landuse_read">landuse_read</a>
+├── <a href="#landuse_read">landuse_read</a>
+└── <a href="#cn_cover_init">cn_cover_init</a>          [if bsn_cc%cn &gt; 0] cover-driven curve number setup
 </pre>
 
 ---
@@ -2258,6 +2259,7 @@ surface
 ├── <a href="#ero_ovrsed">ero_ovrsed</a>                          this subroutine computes splash erosion by raindrop impact and flow erosion by overland flow
 ├── <a href="#ero_pkq">ero_pkq</a>                             this subroutine computes the peak runoff rate for each HRU
 ├── <a href="#ero_ysed">ero_ysed</a>                            this subroutine predicts daily soil loss caused by water erosion
+├── [if bsn_cc%cn is 1 or 2]  <a href="#cn_cover_update">cn_cover_update</a>   re-seat cn2 from residue and near-surface biomass
 ├── <a href="#sq_dailycn">sq_dailycn</a>                          Calculates curve number for the day in the HRU
 ├── [if surfq > 0 and bsn_cc%crk == 1]  <a href="#sq_crackflow">sq_crackflow</a>   route <a href="#surface">surface</a> runoff into soil cracks
 └── <a href="#sq_volq">sq_volq</a>                             Call subroutines to calculate the current day"s CN for the HRU and
@@ -2449,7 +2451,8 @@ Source: `cn2_init.f90`
 
 <pre>
 cn2_init
-└── <a href="#curno">curno</a>                               this subroutine determines the curve numbers for moisture <a href="#conditions">conditions</a>
+├── <a href="#curno">curno</a>                               this subroutine determines the curve numbers for moisture <a href="#conditions">conditions</a>
+└── <a href="#cn_cover_hru_init">cn_cover_hru_init</a>                   cache the hru's cover-method row set (no-op if bsn_cc%cn == 0)
 </pre>
 
 ---
@@ -2489,6 +2492,87 @@ plant_init
 ├── <a href="#pl_rootfr">pl_rootfr</a>                           This subroutine distributes dead root mass through the soil profile
 ├── <a href="#pl_seed_gro">pl_seed_gro</a>                         calculate plant ET values when heat units exceed 0.5
 └── <a href="#xmon">xmon</a>                                this subroutine determines the month, given the julian date and leap
+</pre>
+
+---
+
+## cn_cover_init
+
+parse cntable.lum into (family, treatment, hydrologic condition) and read plants.cov
+
+**Called from:** [`proc_db`](#proc_db)
+
+Returns immediately unless `codes.bsn` column `cn` is 1 or 2; a value other than 0, 1 or 2 is an error stop.
+
+Source: `cn_cover_init.f90`
+
+<pre>
+cn_cover_init
+├── cn_name_split                       (cn_cover_module) rc_strow_p -> (rc, strow, poor)
+├── <a href="#cn_cover_read">cn_cover_read</a>                        read plants.cov into pl_cov, indexed like pldb
+└── open_output_file                    [if cn == 2] cn_cover.out
+</pre>
+
+---
+
+## cn_cover_read
+
+read plants.cov and resolve each plant to a cntable.lum family
+
+**Called from:** [`cn_cover_init`](#cn_cover_init)
+
+Error stops when plants.cov is absent or names a family no cntable.lum row begins with.
+Reports both directions of name mismatch to `diagnostics.out`.
+
+Source: `cn_cover_read.f90`
+
+<pre>
+cn_cover_read
+└── cn_fam_index                        (cn_cover_module) family token -> family index
+</pre>
+
+---
+
+## cn_cover_hru_init
+
+cache one hru's family, treatment, hydrologic soil group and offset ledger
+
+**Called from:** [`cn2_init`](#cn2_init)
+
+Runs once per hru at startup and again on every `lu_change` d-table action, because
+both paths go through [`cn2_init`](#cn2_init). The hru takes part only if its own
+cntable.lum row has both a poor and a good variant - that is what holds urban,
+farmstead, meadow, the roads and bare fallow static.
+
+Source: `cn_cover_hru_init.f90`
+
+<pre>
+cn_cover_hru_init
+└── fam_is_static                       (cn_cover_module) woods families follow graze/burn, not cover
+</pre>
+
+---
+
+## cn_cover_update
+
+re-select cn2 from surface cover for one hru, once per day
+
+**Called from:** [`surface`](#surface)
+
+Runs immediately before [`sq_dailycn`](#sq_dailycn) and ends in [`curno`](#curno), so
+`smx` and `wrt` are rebuilt from today's cn2 before the soil-water curve number is
+taken off them. The four stages are residue cover, near-surface living biomass,
+combined cover, and interpolation between the family's hydrologic-condition rows.
+Whatever else moved cn2 since yesterday - `calibration.cal`, the `cnup` operation,
+the `cn_update` d-table action, `pl_burnop` - is carried forward as an accumulated
+offset rather than overwritten.
+
+Source: `cn_cover_update.f90`
+
+<pre>
+cn_cover_update
+├── cn_from_cover                       (cn_cover_module) interpolate between poor/fair/good rows
+└── <a href="#curno">curno</a>                               rebuild smx and wrt from the new cn2
 </pre>
 
 ---

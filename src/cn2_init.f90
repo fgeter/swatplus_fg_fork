@@ -7,7 +7,7 @@
       
       implicit none
       
-      external :: curno
+      external :: cn_cover_hru_init, curno
   
       integer, intent (in)  :: j
       integer :: icn = 0             !none       |counter 
@@ -30,6 +30,10 @@
           cn2(j) = cn(icn)%cn(4)
         end select
         call curno(cn2(j), j)
+        
+        !! cache the cover method's row set for this hru and restart its
+        !! offset ledger from the value just assigned (no-op if bsn_cc%cn == 0)
+        call cn_cover_hru_init (j)
       
       return
       end subroutine cn2_init

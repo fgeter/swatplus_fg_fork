@@ -39,7 +39,13 @@
                                  !!   0 = all stresses applied
                                  !!   1 = turn off all plant stress
                                  !!   2 = turn off nutrient plant stress only
-        integer :: cn = 0        !! not used
+        integer :: cn = 0        !! cover-driven daily curve number
+                                 !!   0 = off - cn2 is the static cntable.lum value
+                                 !!   1 = re-select cn2 daily from residue and
+                                 !!       near-surface living biomass, within the
+                                 !!       hydrologic-condition rows of the hru's own
+                                 !!       cover family (requires plants.cov)
+                                 !!   2 = as 1, plus the daily audit file cn_cover.out
         integer :: cfac = 0      !! not used     
         integer :: cswat = 0     !! carbon code: 0 = off (static soil carbon, old mineralization
                                  !! routines), 1 = dynamic CENTURY/SWAT-C model.
