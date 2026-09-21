@@ -21,7 +21,8 @@
 !!    cn_cover_init actually found in cntable.lum, so a typo stops the run on
 !!    day one instead of silently leaving a plant static.
 !!
-!!    text from "#" to end of line is a comment.
+!!    trailing text after the third field is ignored, as in every other SWAT+
+!!    input file: the list-directed read stops once its io-list is satisfied.
 !!
 !!    called from cn_cover_init, which has already rejected bsn_cc%cn values
 !!    other than 0, 1 and 2 and returned on 0.
@@ -46,7 +47,6 @@
       integer :: irow = 0                   !none  |data row counter
       integer :: ifam = 0                   !none  |resolved family index
       integer :: ipl = 0                    !none  |resolved pldb index
-      integer :: ihash = 0                  !none  |position of the comment delimiter
       integer :: nmiss = 0                  !none  |plants.plt entries with no plants.cov row
       real :: kk = 0.                       !ha/kg |residue cover coefficient from the file
       logical :: i_exist = .false.          !none  |does plants.cov exist
@@ -84,8 +84,8 @@
         read (107,'(a)',iostat=eof) line
         if (eof /= 0) exit
 
-        ihash = index (line, "#")
-        if (ihash > 0) line(ihash:) = " "
+        !! skip the blank or all-blank records that editors leave at the end
+        !! of a table - cntable.lum ships with one
         if (len_trim(line) == 0) cycle
         irow = irow + 1
 

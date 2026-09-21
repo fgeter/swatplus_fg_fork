@@ -54,7 +54,9 @@ satisfy the missing item and silently swallow the following plant.
   otherwise. Those two reproduce the NRCS thresholds — 20 % cover at 750 lb/ac for
   row crops and at 300 lb/ac for small grains. Write `0.`, not `0`, per the SWAT+
   convention for a real field.
-* Text from `#` to end of line is a comment.
+* Trailing text after the third field is ignored, exactly as in every other SWAT+
+  input file — the list-directed read stops once its io-list is satisfied — so a
+  per-row evidence note needs no delimiter. There is no whole-line comment syntax.
 * Both directions of name mismatch are reported to `diagnostics.out`: plants in
   `plants.plt` with no row, and rows matching no plant.
 
