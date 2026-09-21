@@ -86,7 +86,8 @@
 !!    ~ ~ ~ PLANT -> FAMILY MAP (plants.cov) ~ ~ ~
       type plant_cover
         integer :: fam = 0                     !none  |index into cn_fam, 0 = plant not listed
-        real :: k_rsd = 0.                     !ha/kg |residue cover coefficient, 0 = use the family default
+        real :: k_rsd = 0.                     !ha/kg |residue cover coefficient from plants.cov;
+                                               !      |0. means use the family default
       end type plant_cover
       type (plant_cover), dimension(:), allocatable :: pl_cov  !indexed like pldb
 

@@ -30,12 +30,18 @@ It may be a subset of `plants.plt`, in any order.
 
 ```
 plants.cov: <provenance line>
-name        cn_family   k_rsd     # k_rsd is optional
-corn        rc
-soyb        rc
+name        cn_family   k_rsd
+corn        rc          0.
+soyb        rc          0.
 wwht        sg          6.64e-4
-brom        pastg
+brom        pastg       0.
 ```
+
+**Every column carries a value on every row.** There are no optional columns and no
+short rows — a row with fewer than three fields is an error stop naming the row and
+its text. Reading each record into a buffer first is what makes that an error: a
+list-directed read straight off the unit would run on into the *next* record to
+satisfy the missing item and silently swallow the following plant.
 
 * `cn_family` is the **`cntable.lum` row-name prefix**, validated at startup against
   the families actually present in that project's `cntable.lum`. A typo stops the run
@@ -43,9 +49,11 @@ brom        pastg
   standardised across dataset generators — the SWAT+ editor writes `rc_strow_g`,
   `pastg_g`, `wood_g`, while the HUC8 constructor writes `rc_sr_cr_g`, `past_g`,
   `frst_g` — so the valid tokens are whatever that project's table uses.
-* `k_rsd` (ha/kg) overrides the residue mass → cover coefficient for that plant.
-  Omitted, row crops get 2.657e-4 and the `sg` family gets 6.64e-4, which reproduce
-  the two NRCS thresholds (20 % cover at 750 lb/ac and at 300 lb/ac respectively).
+* `k_rsd` (ha/kg) is the residue mass → cover coefficient for that plant.
+  **`0.` means use the family default**: 6.64e-4 for the `sg` family, 2.657e-4
+  otherwise. Those two reproduce the NRCS thresholds — 20 % cover at 750 lb/ac for
+  row crops and at 300 lb/ac for small grains. Write `0.`, not `0`, per the SWAT+
+  convention for a real field.
 * Text from `#` to end of line is a comment.
 * Both directions of name mismatch are reported to `diagnostics.out`: plants in
   `plants.plt` with no row, and rows matching no plant.

@@ -8,9 +8,13 @@
 !!    subset of plants.plt is fine):
 !!
 !!      plants.cov: <provenance line>
-!!      name        cn_family   k_rsd      # k_rsd optional
-!!      corn        rc
+!!      name        cn_family   k_rsd
+!!      corn        rc          0.
 !!      wwht        sg          6.64e-4
+!!
+!!    every column carries a value on every row - there are no optional columns
+!!    and no short rows.  k_rsd = 0. means "use the family default", which is
+!!    k_rsd_grain for the sg family and k_rsd_row otherwise.
 !!
 !!    cn_family is the cntable.lum row-name prefix - fal, rc, sg, legr, pastg,
 !!    pasth, brush, woodgr, wood.  it is validated against the families that
@@ -85,18 +89,15 @@
         if (len_trim(line) == 0) cycle
         irow = irow + 1
 
-        !! the k_rsd column is optional - try three items, fall back to two.
-        !! an internal read cannot run on into the next record the way a
-        !! list-directed read from the unit would, so a short row is caught here
+        !! all three fields are required.  reading from the line rather than
+        !! from the unit is what makes a short row an error: a list-directed
+        !! read straight off the unit would run on into the next record to
+        !! satisfy the missing item and silently consume the following plant
         kk = 0.
         read (line,*,iostat=ios) nm, fam, kk
         if (ios /= 0) then
-          kk = 0.
-          read (line,*,iostat=ios) nm, fam
-        end if
-        if (ios /= 0) then
-          write (*,*)    "ERROR: ", cov_file, " row ", irow, " is not <name> <cn_family> [k_rsd]: ", trim(line)
-          write (9001,*) "ERROR: ", cov_file, " row ", irow, " is not <name> <cn_family> [k_rsd]: ", trim(line)
+          write (*,*)    "ERROR: ", cov_file, " row ", irow, " is not <name> <cn_family> <k_rsd>: ", trim(line)
+          write (9001,*) "ERROR: ", cov_file, " row ", irow, " is not <name> <cn_family> <k_rsd>: ", trim(line)
           error stop
         end if
 
