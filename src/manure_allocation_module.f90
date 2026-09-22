@@ -32,6 +32,9 @@
         real :: stor_max = 0.                   !maximum storage - tons
         real, dimension (12) :: prod_mon = 0.   !average monthly manure produced - tons/month
         integer :: fertdb = 0                   !fertilizer database number (fertilizer.frt)
+        integer :: iorg_min = 0                 !manure organic matter database number (manure_om.frt).
+                                                !  when > 0 the application is routed through pl_manure,
+                                                !  the same path the "manu" operation and grazing use.
         type (source_manure_output) :: bal_d    !daily amount - storage, produced, withdrawn from the source - tons
         type (source_manure_output) :: bal_m    !monthly amount - storage, produced, withdrawn from the source - tons
         type (source_manure_output) :: bal_y    !yearly amount - storage, produced, withdrawn from the source - tons
