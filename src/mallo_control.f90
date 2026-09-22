@@ -32,10 +32,16 @@
       mallo(imallo)%tot = malloz
       
       !!add manure produced on the first day of the month
+      !! this used src(isrc) with isrc still 0 - out of bounds on the first call,
+      !! and it credited only that one source instead of every source in the
+      !! object.  it also indexed prod_mon by time%day_mo, which the enclosing
+      !! test pins to 1, so every month added January's production.
       if (time%day_mo == 1) then
-        mallo(imallo)%src(isrc)%bal_d%stor = mallo(imallo)%src(isrc)%bal_d%stor +   &
-                                      mallo(imallo)%src(isrc)%prod_mon(time%day_mo)
-        mallo(imallo)%src(isrc)%bal_d%prod = mallo(imallo)%src(isrc)%prod_mon(time%day_mo)
+        do isrc = 1, mallo(imallo)%src_obs
+          mallo(imallo)%src(isrc)%bal_d%stor = mallo(imallo)%src(isrc)%bal_d%stor +   &
+                                        mallo(imallo)%src(isrc)%prod_mon(time%mo)
+          mallo(imallo)%src(isrc)%bal_d%prod = mallo(imallo)%src(isrc)%prod_mon(time%mo)
+        end do
       end if
       
       !!loop through each demand object for manure demand
@@ -52,13 +58,33 @@
  
       !!loop through each demand object again and subtract from source if available
       do itrn = 1, mallo(imallo)%trn_obs
-        if (mallo(imallo)%trn(itrn)%manure_amt%app_t_ha > 0. .and.      &
-                    frt_kg > mallo(imallo)%src(isrc)%bal_d%stor) then
+        !! resolve the source and the amount BEFORE testing availability.  the
+        !! old condition read src(isrc) and frt_kg in the test itself, while both
+        !! still held their initial 0 on the first pass - so the very first
+        !! manure transfer died with
+        !!   "Index '0' of dimension 1 of array 'mallo...%src' below lower bound of 1"
+        !! and on later passes it tested the PREVIOUS demand's amount against the
+        !! PREVIOUS source's storage.  that is why no dataset has ever carried a
+        !! manure_allo.mnu: the feature could not run.
+        if (mallo(imallo)%trn(itrn)%manure_amt%app_t_ha > 0.) then
           isrc = mallo(imallo)%trn(itrn)%manure_amt%src_obj         !source object
+          if (isrc < 1 .or. isrc > mallo(imallo)%src_obs) cycle
+          
+          frt_kg = mallo(imallo)%trn(itrn)%manure_amt%app_t_ha      !amount demanded in kg/ha
+          
+          !! take what the source can supply, up to the demand - the same rule
+          !! wallo_withdraw uses for water.  note there is no "unmet" field in
+          !! source_manure_output, so a short withdrawal is currently invisible.
+          frt_kg = Min (frt_kg, mallo(imallo)%src(isrc)%bal_d%stor)
+          if (frt_kg <= 0.) then
+            mallo(imallo)%trn(itrn)%manure_amt = manure_amtz
+            cycle
+          end if
+          
           ifrt = mallo(imallo)%src(isrc)%fertdb                     !fertilizer type from fert data base
-          frt_kg = mallo(imallo)%trn(itrn)%manure_amt%app_t_ha      !amount applied in kg/ha
           ifertop = mallo(imallo)%trn(itrn)%manure_amt%app_method   !surface application fraction from chem app data base
-          ihru = mallo(imallo)%trn(itrn)%ob_num                        !hru number
+          j = mallo(imallo)%trn(itrn)%ob_num                        !hru number for this demand
+          ihru = j
           imanure = mallo(imallo)%src(isrc)%iorg_min   !manure_om.frt number, 0 if unresolved
 
           !! manure goes through pl_manure, never pl_fert: it is partitioned from
@@ -77,16 +103,18 @@
           call pl_manure (imanure, frt_kg, surf_fr)
           mallo(imallo)%trn(itrn)%manure_amt = manure_amtz
           
-          !! subtract manure from source
+          !! subtract manure from source.  withdr accumulates: several demand
+          !! objects can draw on one source in the same day, and "=" recorded
+          !! only the last of them.
           mallo(imallo)%src(isrc)%bal_d%stor = mallo(imallo)%src(isrc)%bal_d%stor - frt_kg
-          mallo(imallo)%src(isrc)%bal_d%withdr = frt_kg
+          mallo(imallo)%src(isrc)%bal_d%withdr = mallo(imallo)%src(isrc)%bal_d%withdr + frt_kg
           
           !! set daily withdrawal and source
           mallo(imallo)%trn(itrn)%withdr(isrc) = frt_kg
 
           if (pco%mgtout == "y") then
-            !! name the source, which is correct on both the pl_manure and the
-            !! pl_fert path (fertdb(ifrt) is meaningless when ifrt never resolved)
+            !! name the source rather than fertdb(ifrt), which named a
+            !! fertilizer.frt entry for what is a manure application
             write (2612, *) j, time%yrc, time%mo, time%day_mo,                        &
                   mallo(imallo)%src(isrc)%manure_typ, "    MANU",       &
                   phubase(j),pcom(j)%plcur(ipl)%phuacc, soil(j)%sw, pl_mass(j)%tot(ipl)%m,            &
