@@ -28,23 +28,18 @@
       integer, intent (in) :: fertop      !              |fertilizer operation type
       real, intent (in) :: frt_kg         !kg/ha         |total mass of fertilizer applied
       real :: fr_ly = 0.                  !fraction      |fraction of fertilizer applied to layer
-      real :: c_n_rto                     !              |carbon nitrogen ratio
-      real :: meta_fr                     !              |fraction of metabolic applied to layer
-      real :: pool_fr                     !              |fraction of structural or lignin applied to layer
       logical :: organic_flag
 
       organic_flag = .false.
       org_frt%m = 0.
-      org_frt%c = 0.
       org_frt%n = 0.
       org_frt%p = 0.
-      c_n_rto = 0.
-      meta_fr = 0.
 
       j = ihru
       
       rtof = man_coef%rtof
-      !! calculate c:n ratio for manure applications for SWAT-C
+      !! flag an entry that carries organic N or P.  no c:n ratio is calculated
+      !! any more - see the note below on why fertilizer.frt cannot supply one.
       if (bsn_cc%cswat == 1 ) then
         if (fertdb(ifrt)%forgn > 0. .or. fertdb(ifrt)%forgp > 0. ) then
           organic_flag = .true.
@@ -52,22 +47,22 @@
       endif
         
       if (organic_flag) then
+        !! NO CARBON IS CALCULATED HERE, deliberately.  fertilizer.frt carries
+        !! fminn, fminp, forgn, forgp and fnh3n and nothing else - there is no
+        !! carbon fraction in the file, so any carbon derived from it is invented.
+        !! the previous form was
+        !!    org_frt%c = forgn * frt_kg * 10.0    ! assume 10:1 C:N
+        !! which is a fair central estimate for real manure (manure_om.frt has a
+        !! median C:orgN of 11.5:1) but is a category error for the synthetic
+        !! entries, where forgn is the slow-release share of a pure-N product and
+        !! not organic matter at all: ceap_h_n is fminn 0.41 + forgn 0.59 = 1.00,
+        !! and 10:1 hands it 5.9 kg C per kg applied - several times the mass
+        !! actually spread on the field.  fert_parm_read names the suspect
+        !! entries at startup.
         org_frt%m = frt_kg
-        org_frt%c = fertdb(ifrt)%forgn * frt_kg * 10.0  ! assume a 10:1 carbon to nitrogen ratio.
         org_frt%n = fertdb(ifrt)%forgn * frt_kg
         org_frt%p = fertdb(ifrt)%forgp * frt_kg
-        c_n_rto = .175 * org_frt%c / (fertdb(ifrt)%fminn + fertdb(ifrt)%forgn + 1.e-5)
-        !! meta_fr is the fraction of fertilizer that is allocated to metabolic litter pool
-        meta_fr = .85 - .018 * c_n_rto
       endif
-
-      if (meta_fr < 0.01) then
-        meta_fr = 0.01
-      else
-        if (meta_fr > .7) then
-          meta_fr = .7
-        end if
-      end if
       
       !! add fertilizer to first and/or second layer
       do l = 1, 2
@@ -107,31 +102,25 @@
                        fertdb(ifrt)%forgp
         end if
         
-        !! for SWAT-C add to slow humus pool and fresh residue pools
+        !! for SWAT-C put the organic N and P in the slow humus pool
         if ((bsn_cc%cswat == 1 ) .and. organic_flag) then
           
-          !! add 1-rtof to slow humus pool
-          pool_fr = (1. - rtof) * fr_ly
-          soil1(j)%tot(l) = soil1(j)%tot(l) + pool_fr * org_frt
-          soil1(j)%hs(l) = soil1(j)%hs(l) + pool_fr * org_frt
-        
-          !! add rtof to fresh residue pools
-          !! add metabolic manure pool
-          pool_fr = (1. - rtof) * meta_fr * fr_ly
-          soil1(j)%meta(l) = soil1(j)%meta(l) + pool_fr * org_frt
-           
-          !! add structural manure pool
-          pool_fr = (1. - rtof) * (1. - meta_fr) * fr_ly
-          soil1(j)%str(l) = soil1(j)%str(l) + pool_fr * org_frt
-          
-          !! add lignin manure pool
-          soil1(j)%lig(l) = soil1(j)%lig(l) + 0.175 * pool_fr * org_frt
-          !! add nonlignin structural C (str%c = nonlig%c + lig%c is reconstituted
-          !! in cbn_zhang2; without this ~82.5% of the fertilizer structural C is lost)
-          soil1(j)%nonlig(l)%c = soil1(j)%nonlig(l)%c + (1. - 0.175) * pool_fr * org_frt%c
-          
-          !! total residue pool is metabolic + structural
-          ! soil1(j)%rsd(l) = soil1(j)%meta(l) + soil1(j)%str(l)
+          !! all of it, not an rtof split: the metabolic and structural litter
+          !! pools cannot be filled without a carbon amount to partition, and
+          !! meta_fr was itself derived from the invented carbon.  slow humus is
+          !! also the least distorting home for nitrogen that arrives with no
+          !! carbon - on the IA-Ames fixture hs%n is ~4118 kg/ha, so a 60 kg/ha
+          !! application moves it 1.5%, where the same amount into metabolic
+          !! (0.57 kg/ha) would be four orders of magnitude.
+          !!
+          !! the residual cost is real and deliberate: humus C:N drifts down a
+          !! little with each organic fertilizer application, because the N is
+          !! represented and its carbon is not.  that is an honest omission
+          !! rather than a fabricated number.  the fix for a dataset that means
+          !! manure is to move those entries into manure_om.frt (which does
+          !! carry fcbn) and apply them with a "manu" operation.
+          soil1(j)%hs(l)%n = soil1(j)%hs(l)%n + fr_ly * org_frt%n
+          soil1(j)%hs(l)%p = soil1(j)%hs(l)%p + fr_ly * org_frt%p
           
         end if
         
