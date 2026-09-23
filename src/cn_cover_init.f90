@@ -1,17 +1,26 @@
       subroutine cn_cover_init
 
 !!    ~ ~ ~ PURPOSE ~ ~ ~
-!!    decompose every cntable.lum row into (family, treatment, hydrologic
-!!    condition) and build the lookup the daily cover method walks, then read
-!!    plants.cov.  called from proc_db immediately after cntbl_read, so cn(:)
-!!    is populated and pldb(:) has already been read by plant_parm_read.
+!!    decompose every cntable.lum row into into a three dimensional array
+!!    (family, treatment, hydrologic condition) and build the lookup that 
+!!    daily cover method walks, then read plants.cov.  This subroutine is
+!!    is called from proc_db immediately after cntbl_read, so cntable.lum
+!!    has already been read in by cntbl_read and the the cn(:) array already
+!!    populated and pldb(:) has also already been read by plant_parm_read.
 !!
-!!    does nothing at all when bsn_cc%cn == 0 - no array in cn_cover_module is
-!!    allocated, and cn_cover_hru_init/cn_cover_update return immediately.
+!!    This subroutine is not called at all when bsn_cc%cn == 0 and  no array 
+!!    in cn_cover_module is allocated, and cn_cover_hru_init/cn_cover_update 
+!!    returns immediately.
 !!
 !!    ~ ~ ~ WHAT THIS SUBROUTINE PRODUCES ~ ~ ~
+!!    A more lengthy explanation is needed in this subroutine than normal
+!!    because it is important to understand what the arrays this
+!!    subroutine creates for later use when determinine a curver number
+!!    on a particular day. 
 !!
-!!    cn_row (family, treatment, condition) -> a row number in cn(:)
+!!    This subroutine produces a three dimensional array called 
+!!    cn_row (family, treatment, condition) 
+!!    where each element in the array is a row number in the cn(:) array.
 !!
 !!    Three index spaces, none of them interchangeable:
 !!
@@ -26,9 +35,11 @@
 !!    dereferences cn(row)%cn(ihyd).
 !!
 !!    Family and treatment need runtime dictionaries because their vocabularies
-!!    are OPEN - the SWAT+ editor writes rc / pastg / wood / strow, the HUC8
+!!    are OPEN, meaning they can change, - the SWAT+ editor writes
+!!    rc / pastg / wood / strow, the HUC8
 !!    constructor writes rc / past / frst / sr_cr, and neither is known until the
-!!    file is read.  Condition is CLOSED: NRCS defines exactly poor, fair and
+!!    file is read.  Condition is CLOSED, meaning they are fixed
+!!    values that do not change: NRCS defines exactly poor, fair and
 !!    good, so it is a named constant and there is deliberately no cn_cond(:)
 !!    dictionary.  cn_cond_none = 0 sits OUTSIDE the array bounds, which is what
 !!    makes a row carrying no condition simply never get filed - see pass 2.
@@ -38,13 +49,13 @@
 !!    Take the 6th DATA row of workdata/IA-Ames_sp40_Clarion/cntable.lum, which
 !!    is physical line 8 of that file:
 !!
-!!      rc_strowres_p   71.0   80.0   87.0   90.0   Row_crops  Straight_row_w_residue  Poor
 !!                       (A)    (B)    (C)    (D)
+!!      rc_strowres_p   71.0   80.0   87.0   90.0   Row_crops  Straight_row_w_residue  Poor
 !!
 !!    cntbl_read has already stored it as cn(6):  cn(6)%name = "rc_strowres_p",
 !!    cn(6)%cn = (71, 80, 87, 90).  This subroutine never touches those numbers.
 !!    All it does is work out WHERE that row belongs, so the daily routine can
-!!    find it again without parsing a string.
+!!    find it again without parsing a string when it needs a curve number.
 !!
 !!    PASS 1 takes the name apart:
 !!
