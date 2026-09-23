@@ -1,25 +1,26 @@
       subroutine cn_cover_init
 
 !!    ~ ~ ~ PURPOSE ~ ~ ~
-!!    decompose every cntable.lum row into into a three dimensional array
-!!    (family, treatment, hydrologic condition) and build the lookup that 
+!!    decompose every cntable.lum row into a three dimensional array
+!!    (family, treatment, hydrologic condition) and build the lookup that
 !!    daily cover method walks, then read plants.cov.  This subroutine is
-!!    is called from proc_db immediately after cntbl_read, so cntable.lum
-!!    has already been read in by cntbl_read and the the cn(:) array already
+!!    called from proc_db immediately after cntbl_read, so cntable.lum
+!!    has already been read in by cntbl_read and the cn(:) array already
 !!    populated and pldb(:) has also already been read by plant_parm_read.
 !!
-!!    This subroutine is not called at all when bsn_cc%cn == 0 and  no array 
-!!    in cn_cover_module is allocated, and cn_cover_hru_init/cn_cover_update 
-!!    returns immediately.
+!!    This subroutine is always called, but does nothing at all when
+!!    bsn_cc%cn == 0 - it returns before allocating anything, so no array in
+!!    cn_cover_module exists and cn_cover_hru_init/cn_cover_update return
+!!    immediately too.
 !!
 !!    ~ ~ ~ WHAT THIS SUBROUTINE PRODUCES ~ ~ ~
 !!    A more lengthy explanation is needed in this subroutine than normal
 !!    because it is important to understand what the arrays this
-!!    subroutine creates for later use when determinine a curver number
-!!    on a particular day. 
+!!    subroutine creates for later use when determining a curve number
+!!    on a particular day.
 !!
-!!    This subroutine produces a three dimensional array called 
-!!    cn_row (family, treatment, condition) 
+!!    This subroutine produces a three dimensional array called
+!!    cn_row (family, treatment, condition)
 !!    where each element in the array is a row number in the cn(:) array.
 !!
 !!    Three index spaces, none of them interchangeable:
@@ -35,7 +36,7 @@
 !!    dereferences cn(row)%cn(ihyd).
 !!
 !!    Family and treatment need runtime dictionaries because their vocabularies
-!!    are OPEN, meaning they can change, - the SWAT+ editor writes
+!!    are OPEN, meaning they can change - the SWAT+ editor writes
 !!    rc / pastg / wood / strow, the HUC8
 !!    constructor writes rc / past / frst / sr_cr, and neither is known until the
 !!    file is read.  Condition is CLOSED, meaning they are fixed
