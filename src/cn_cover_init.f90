@@ -8,6 +8,78 @@
 !!
 !!    does nothing at all when bsn_cc%cn == 0 - no array in cn_cover_module is
 !!    allocated, and cn_cover_hru_init/cn_cover_update return immediately.
+!!
+!!    ~ ~ ~ WHAT THIS SUBROUTINE PRODUCES ~ ~ ~
+!!
+!!    cn_row (family, treatment, condition) -> a row number in cn(:)
+!!
+!!    Three index spaces, none of them interchangeable:
+!!
+!!      family     1..n_fam   subscript of cn_fam(:)     "rc", "pastg", ...
+!!      treatment  1..n_trt   subscript of cn_trt(:)     "strow", "", ...
+!!      condition  1..3       cn_cond_poor/fair/good     compile-time constants
+!!
+!!    The VALUE stored is a subscript of cn(:), i.e. the Nth DATA row of
+!!    cntable.lum - physical line N+2, after the title and header line.  0 means
+!!    "no such row".  The curve numbers themselves are never copied here; the
+!!    hydrologic soil group is applied only when cn_from_cover finally
+!!    dereferences cn(row)%cn(ihyd).
+!!
+!!    Family and treatment need runtime dictionaries because their vocabularies
+!!    are OPEN - the SWAT+ editor writes rc / pastg / wood / strow, the HUC8
+!!    constructor writes rc / past / frst / sr_cr, and neither is known until the
+!!    file is read.  Condition is CLOSED: NRCS defines exactly poor, fair and
+!!    good, so it is a named constant and there is deliberately no cn_cond(:)
+!!    dictionary.  cn_cond_none = 0 sits OUTSIDE the array bounds, which is what
+!!    makes a row carrying no condition simply never get filed - see pass 2.
+!!
+!!    ~ ~ ~ WORKED EXAMPLE ~ ~ ~
+!!
+!!    The 49-row cntable.lum in workdata/IA-Ames_sp40_Clarion gives n_fam = 16,
+!!    n_trt = 9.  Treatment dictionary cn_trt(1..9):
+!!
+!!      1 bare      2 res       3 strow     4 strowres  5 cont
+!!      6 contres   7 contter   8 conterres 9 ""  (families with no treatment)
+!!
+!!    cn_row then holds ("-" is 0, i.e. no such row):
+!!
+!!      fam             trt=   1   2   3   4   5   6   7   8   9
+!!       1 fal        P        -   2   -   -   -   -   -   -   -
+!!                    F        -   -   -   -   -   -   -   -   -
+!!                    G        -   3   -   -   -   -   -   -   -
+!!       2 rc         P        -   -   4   6   8  10  12  14   -
+!!                    F        -   -   -   -   -   -   -   -   -
+!!                    G        -   -   5   7   9  11  13  15   -
+!!       3 sg         P        -   -  16  18  20  22  24  26   -
+!!                    G        -   -  17  19  21  23  25  27   -
+!!       4 legr       P        -   -  28   -  30   -  32   -   -
+!!                    G        -   -  29   -  31   -  33   -   -
+!!       5 pastg      P/F/G    -   -   -   -   -   -   -   -  34/35/36
+!!       7 brush      P/F/G    -   -   -   -   -   -   -   -  38/39/40
+!!       8 woodgr     P/F/G    -   -   -   -   -   -   -   -  41/42/43
+!!       9 wood       P/F/G    -   -   -   -   -   -   -   -  44/45/46
+!!      11 open       P        -   -   -   -   -   -   -   -  48
+!!
+!!    Families 6 pasth, 10 farm, 12 urban, 13 paveroad, 14 gravroad,
+!!    15 dirtroad and 16 "" have nothing filed at all - every one of their rows
+!!    carries no hydrologic condition.  Everything else in the 16 x 9 x 3 array
+!!    is 0.
+!!
+!!    Two rows of that table repay a second look:
+!!
+!!      fal has treatment "bare" registered in the dictionary but NOTHING filed
+!!      under it, because fal_bare carries no condition.  The family is
+!!      interpolatable (via "res") while that one treatment is not.  This is the
+!!      case the trt_fallback = .false. guard in cn_cover_update protects: an HRU
+!!      whose land use names fal_bare must not be walked onto fal_res.
+!!
+!!      open has exactly one row filed, open_p.  Interpolation needs BOTH
+!!      endpoints, so one is no better than none and the family stays static.
+!!
+!!    wood and woodgr ARE fully populated.  What keeps them out of the daily
+!!    calculation is fam_is_static short-circuiting inside cn_from_cover, not
+!!    anything missing from this table - so turning woods back on really is the
+!!    one-line change the design note claims.
 
       use basin_module, only : bsn_cc
       use maximum_data_module, only : db_mx
@@ -130,11 +202,31 @@
         end select
       end do
 
-      !! default treatment of a family - walk its treatments in file order and
-      !! take the first that is actually interpolatable, i.e. has both a poor and
-      !! a good row.  used only when a plant pulls the HRU into a family that
-      !! does not carry the land use's own treatment.  a family with no such
-      !! treatment keeps cn_trt_def = 0 and can never be selected.
+      !! cn_trt_def is a SEPARATE 1-D array, not a fourth dimension of cn_row.
+      !! It is derived from cn_row and can only be built now, once pass 2 has
+      !! filled it: for each family, walk that family's treatments in file order
+      !! and take the first that is actually interpolatable - meaning it has BOTH
+      !! a poor and a good row.  A family with no such treatment keeps
+      !! cn_trt_def = 0 and can never be selected.
+      !!
+      !! The value is a TREATMENT index, i.e. a subscript of cn_trt(:), which is
+      !! fed back into cn_row's middle dimension.  On the example above:
+      !!
+      !!    cn_trt_def(1)  = 2   fal    -> cn_trt(2) = "res"
+      !!    cn_trt_def(2)  = 3   rc     -> cn_trt(3) = "strow"
+      !!    cn_trt_def(3)  = 3   sg     -> cn_trt(3) = "strow"
+      !!    cn_trt_def(4)  = 3   legr   -> cn_trt(3) = "strow"
+      !!    cn_trt_def(5)  = 9   pastg  -> cn_trt(9) = ""
+      !!    cn_trt_def(7)  = 9   brush  -> cn_trt(9) = ""
+      !!    cn_trt_def(11) = 0   open      none - only one endpoint exists
+      !!    cn_trt_def(6)  = 0   pasth     none - nothing filed
+      !!
+      !! It answers one question, asked in cn_from_cover: "this family has to be
+      !! used, but it does not carry the treatment the land use named - which of
+      !! its own treatments should stand in?"  That substitution is permitted
+      !! only when a PLANT has pulled the HRU into a different family; within the
+      !! land use's own family the caller passes trt_fallback = .false. and no
+      !! substitution happens.
       do ifam = 1, n_fam
         do itrt = 1, n_trt
           if (cn_row(ifam,itrt,cn_cond_poor) > 0 .and. cn_row(ifam,itrt,cn_cond_good) > 0) then
