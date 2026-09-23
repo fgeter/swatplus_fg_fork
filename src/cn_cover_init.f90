@@ -29,6 +29,25 @@
 !!      treatment  1..n_trt   subscript of cn_trt(:)     "strow", "", ...
 !!      condition  1..3       cn_cond_poor/fair/good     compile-time constants
 !!
+!!    ~ ~ ~ WHICH ARRAYS OUTLIVE THIS SUBROUTINE ~ ~ ~
+!!
+!!    Anything still allocated when this returns is, by convention here, read
+!!    later.  Scaffolding is deallocated at the bottom so that an allocated
+!!    array is never a false signal:
+!!
+!!      cn_row      LIVE  cn_from_cover, cn_cover_hru_init
+!!      cn_trt_def  LIVE  cn_from_cover
+!!      cn_fam      LIVE  cn_fam_index, and fam_is_static needs a family NAME
+!!                        back from an index; cn_cover_update tests it for "sg"
+!!      cn_key      LIVE  cn_cover_hru_init reads %fam and %trt
+!!      cn_trt      SCAFFOLDING - deallocated below
+!!
+!!    cn_key%cond is dead after pass 2 as well, but a component cannot be freed
+!!    on its own and the other two are needed, so cn_key stays whole.
+!!
+!!    To use cn_trt later - printing a treatment name in a diagnostic, say -
+!!    comment out the deallocate at the end of this subroutine.
+!!
 !!    The VALUE stored is a subscript of cn(:), i.e. the Nth DATA row of
 !!    cntable.lum - physical line N+2, after the title and header line.  0 means
 !!    "no such row".  The curve numbers themselves are never copied here; the
@@ -318,6 +337,12 @@
               6x,"c_tot",5x,"cn2_cov",6x,"cn2_off",7x,"cn2")
 1001  format (6x," ",5x," ",6x," ",5x,"kg/ha",6x,"kg/ha",5x,"frac",7x,"frac",          &
               7x,"frac",8x,"none",9x,"none",8x,"none")
+
+      !! free the scaffolding.  cn_trt was needed only to give each distinct
+      !! treatment token a stable index during pass 1; from here on the model
+      !! works in those indices and never needs the names back.  Deallocating
+      !! says so - see the array lifetime list in the header.
+      if (allocated (cn_trt)) deallocate (cn_trt)
 
       return
       end subroutine cn_cover_init
