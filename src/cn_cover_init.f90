@@ -33,15 +33,60 @@
 !!    dictionary.  cn_cond_none = 0 sits OUTSIDE the array bounds, which is what
 !!    makes a row carrying no condition simply never get filed - see pass 2.
 !!
-!!    ~ ~ ~ WORKED EXAMPLE ~ ~ ~
+!!    ~ ~ ~ WORKED EXAMPLE - FOLLOW ONE ROW THROUGH ~ ~ ~
 !!
-!!    The 49-row cntable.lum in workdata/IA-Ames_sp40_Clarion gives n_fam = 16,
-!!    n_trt = 9.  Treatment dictionary cn_trt(1..9):
+!!    Take the 6th DATA row of workdata/IA-Ames_sp40_Clarion/cntable.lum, which
+!!    is physical line 8 of that file:
+!!
+!!      rc_strowres_p   71.0   80.0   87.0   90.0   Row_crops  Straight_row_w_residue  Poor
+!!                       (A)    (B)    (C)    (D)
+!!
+!!    cntbl_read has already stored it as cn(6):  cn(6)%name = "rc_strowres_p",
+!!    cn(6)%cn = (71, 80, 87, 90).  This subroutine never touches those numbers.
+!!    All it does is work out WHERE that row belongs, so the daily routine can
+!!    find it again without parsing a string.
+!!
+!!    PASS 1 takes the name apart:
+!!
+!!      cn_name_split("rc_strowres_p")  ->  fam = "rc"   trt = "strowres"   cond = poor
+!!
+!!    "rc" is already in the family dictionary - it was registered two rows
+!!    earlier by rc_strow_p - and sits at cn_fam(2).  "strowres" has not been
+!!    seen before, so it is appended as cn_trt(4).  "poor" needs no dictionary;
+!!    it is the constant cn_cond_poor = 1.  The decoded key is recorded:
+!!
+!!      cn_key(6) = (fam 2, trt 4, cond 1)
+!!
+!!    PASS 2 inverts that into the lookup the model actually uses:
+!!
+!!      cn_row(2, 4, 1) = 6
+!!            |  |  |    +-- the answer: data row 6 of cntable.lum
+!!            |  |  +------- cond  1 = poor        (a constant)
+!!            |  +---------- trt   4 = "strowres"  (subscript of cn_trt)
+!!            +------------- fam   2 = "rc"        (subscript of cn_fam)
+!!
+!!    Read that back as a sentence: "row crops, straight row with residue, poor
+!!    condition, is data row 6."  Its good-condition partner rc_strowres_g is
+!!    data row 7, so cn_row(2,4,3) = 7, and those two are the endpoints the
+!!    interpolation runs between.  On this fixture's Clarion soil (hydrologic
+!!    group B) cn_from_cover will eventually evaluate
+!!
+!!      cn(6)%cn(2) = 80.0   at zero cover        (poor)
+!!      cn(7)%cn(2) = 75.0   at the cover plateau (good)
+!!
+!!    - a 5-point span.  The soil group enters only there, at the very last
+!!    dereference, which is why one cn_row serves every HRU in the basin.
+!!
+!!    ~ ~ ~ THE WHOLE TABLE ~ ~ ~
+!!
+!!    Repeat that for all 49 rows and n_fam = 16, n_trt = 9.  Treatment
+!!    dictionary cn_trt(1..9):
 !!
 !!      1 bare      2 res       3 strow     4 strowres  5 cont
 !!      6 contres   7 contter   8 conterres 9 ""  (families with no treatment)
 !!
-!!    cn_row then holds ("-" is 0, i.e. no such row):
+!!    cn_row then holds ("-" is 0, meaning no such row).  The 6 traced above is
+!!    the fam 2 / trt 4 / P cell:
 !!
 !!      fam             trt=   1   2   3   4   5   6   7   8   9
 !!       1 fal        P        -   2   -   -   -   -   -   -   -
@@ -65,7 +110,13 @@
 !!    carries no hydrologic condition.  Everything else in the 16 x 9 x 3 array
 !!    is 0.
 !!
-!!    Two rows of that table repay a second look:
+!!    Note the fam 2 row has no F entries: rc, sg, legr and fal are two-point
+!!    families, poor and good only.  pastg and brush carry all three.  That
+!!    difference is what cn_from_cover branches on - two-point families scale
+!!    cover by c_sat, three-point families interpolate through the NRCS
+!!    ground-cover breakpoints instead.
+!!
+!!    Two cells repay a second look:
 !!
 !!      fal has treatment "bare" registered in the dictionary but NOTHING filed
 !!      under it, because fal_bare carries no condition.  The family is
