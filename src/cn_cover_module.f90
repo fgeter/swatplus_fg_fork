@@ -116,7 +116,7 @@
 !!    the condition is the trailing _p / _f / _g; everything between the first
 !!    underscore and that suffix is the treatment.
 
-      use utils, only : to_lower
+      use utils, only : to_lower, split_line
 
       implicit none
 
@@ -125,60 +125,40 @@
       character(len=16), intent (out) :: trt   !none  |treatment token ("" if none)
       integer, intent (out) :: cond            !none  |cn_cond_*
 
-      character(len=40) :: work = ""           !none  |working copy of the name
-      character(len=40) :: rest = ""           !none  |name with the family stripped
-      integer :: iu = 0                        !none  |position of the first underscore
-      integer :: nc = 0                        !none  |length of the remainder
+      character(len=16) :: fld(8) = ""         !none  |name split on "_"
+      integer :: nf = 0                        !none  |number of pieces
+      integer :: last = 0                      !none  |last piece that is treatment
+      integer :: i = 0                         !none  |piece counter
 
       fam = ""
       trt = ""
       cond = cn_cond_none
 
-      work = to_lower (adjustl (nm))
-      if (len_trim (work) == 0) return
+      call split_line (to_lower (adjustl (nm)), fld, nf, delim="_")
+      nf = min (nf, size (fld))
+      if (nf == 0) return
 
-      iu = index (trim(work), "_")
-      if (iu == 0) then
-        fam = work(1:len_trim(work))
-        return
-      end if
+      fam = fld(1)
+      if (nf == 1) return
 
-      fam = work(1:iu-1)
-      rest = work(iu+1:)
-      nc = len_trim (rest)
-      if (nc == 0) return
-
-      !! a bare p/f/g remainder is the condition with no treatment
-      select case (trim(rest))
+      !! a trailing p / f / g piece is the condition
+      select case (trim(fld(nf)))
       case ("p")
         cond = cn_cond_poor
-        return
       case ("f")
         cond = cn_cond_fair
-        return
       case ("g")
         cond = cn_cond_good
-        return
       end select
 
-      !! otherwise look for a _p / _f / _g suffix
-      if (nc > 2) then
-        select case (rest(nc-1:nc))
-        case ("_p")
-          cond = cn_cond_poor
-        case ("_f")
-          cond = cn_cond_fair
-        case ("_g")
-          cond = cn_cond_good
-        end select
-      end if
-
-      select case (cond)
-      case (cn_cond_none)
-        trt = rest(1:nc)
-      case default
-        trt = rest(1:nc-2)
-      end select
+      !! the treatment is every piece between the family and the condition,
+      !! rejoined with "_" (Raccoon's cs_c_t_g has treatment c_t)
+      last = nf
+      if (cond /= cn_cond_none) last = nf - 1
+      do i = 2, last
+        if (i > 2) trt = trim(trt) // "_"
+        trt = trim(trt) // fld(i)
+      end do
 
       return
       end subroutine cn_name_split
