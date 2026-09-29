@@ -316,6 +316,8 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
     !         - Ignores leading and trailing whitespace (no empty fields created).
     !     * If an optional maxsplit is provided:
     !         - Performs at most maxsplit splits.
+    !         - maxsplit = 0 returns the whole line as one field; a negative
+    !           maxsplit means no limit (both as in python).
     !         - The remainder of the line becomes the last field.
     !
     ! PARAMETERS:
@@ -374,6 +376,7 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
     integer,          intent(in), optional       :: maxsplit
 
     integer :: pos1, pos2, len_line, splits_done
+    integer :: max_splits          ! maxsplit, or effectively unlimited when absent or negative (as in python)
     character(len=1) :: current_delim
     logical :: use_custom_delim
 
@@ -385,32 +388,53 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
         current_delim = delim
     end if
 
+    max_splits = huge(max_splits)
+    if (present(maxsplit)) then
+        if (maxsplit >= 0) max_splits = maxsplit
+    end if
+
     splits_done = 0
     len_line = len(trim(line2))
     if (len_line == 0) return
+
+    ! maxsplit = 0: no splits, the whole line is the one field
+    if (max_splits == 0) then
+        if (size(fields2) < 1) return
+        nfields = 1
+        fields2(1) = adjustl(line2(1:len_line))
+        return
+    end if
 
     pos1 = 1
 
     if (use_custom_delim) then
 
         ! Leading empty fields
-        do while (pos1 <= len_line .and. line2(pos1:pos1) == current_delim)
-            nfields = nfields + 1
-            if (nfields > size(fields2)) then
+        do while (pos1 <= len_line)
+            ! bound tested first: Fortran .and. does not short-circuit
+            if (line2(pos1:pos1) /= current_delim) exit
+            if (nfields >= size(fields2)) then
                 print *, 'Error: too many fields'
                 return
             end if
+            nfields = nfields + 1
             fields2(nfields) = ''
             pos1 = pos1 + 1
             splits_done = splits_done + 1
-            if (present(maxsplit)) then
-                if (splits_done >= maxsplit) then
-                if (pos1 <= len_line) then
-                    nfields = nfields + 1
-                    if (nfields > size(fields2)) return
-                    fields2(nfields) = adjustl(trim(line2(pos1:)))
+            ! delimiter was the last character: it ends in one more empty field
+            if (pos1 > len_line) then
+                if (nfields >= size(fields2)) then
+                    print *, 'Error: too many fields'
+                    return
                 end if
-                end if
+                nfields = nfields + 1
+                fields2(nfields) = ''
+                return
+            end if
+            if (splits_done >= max_splits) then
+                if (nfields >= size(fields2)) return
+                nfields = nfields + 1
+                fields2(nfields) = adjustl(trim(line2(pos1:)))
                 return
             end if
         end do
@@ -418,80 +442,85 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
         do while (pos1 <= len_line)
             pos2 = pos1
 
-            do while (pos2 <= len_line .and. line2(pos2:pos2) /= current_delim)
+            do while (pos2 <= len_line)
+                ! bound tested first: Fortran .and. does not short-circuit
+                if (line2(pos2:pos2) == current_delim) exit
                 pos2 = pos2 + 1
             end do
 
-            nfields = nfields + 1
-            if (nfields > size(fields2)) then
+            if (nfields >= size(fields2)) then
                 print *, 'Error: too many fields'
                 return
             end if
+            nfields = nfields + 1
 
-            fields2(nfields) = adjustl(trim(line2(pos1:min(pos2-1, pos1 + len(fields2) - 1))))
+            ! adjustl before the assignment truncates, so leading blanks do not use up the field length
+            fields2(nfields) = adjustl(line2(pos1:pos2-1))
 
             pos1 = pos2
 
-            if (pos1 <= len_line .and. line2(pos1:pos1) == current_delim) then
+            ! bound tested first: Fortran .and. does not short-circuit
+            if (pos1 > len_line) exit
+            if (line2(pos1:pos1) == current_delim) then
                 splits_done = splits_done + 1
                 if (pos1 == len_line) then
-                    nfields = nfields + 1
-                    if (nfields > size(fields2)) then
+                    if (nfields >= size(fields2)) then
                         print *, 'Error: too many fields'
                         return
                     end if
+                    nfields = nfields + 1
                     fields2(nfields) = ''
                     return
                 end if
                 pos1 = pos1 + 1
-                if (present(maxsplit)) then
-                    if (splits_done >= maxsplit) then
-                        if (pos1 <= len_line) then
-                            nfields = nfields + 1
-                            if (nfields > size(fields2)) return
-                            fields2(nfields) = trim(adjustl(line2(pos1:)))
-                        end if
+                if (splits_done >= max_splits) then
+                    if (nfields >= size(fields2)) return
+                    nfields = nfields + 1
+                    fields2(nfields) = trim(adjustl(line2(pos1:)))
                     return
-                    end if
                 end if
             end if
         end do
     else
         ! Whitespace mode
-        do while (pos1 <= len_line .and. (line2(pos1:pos1) == ' ' .or. line2(pos1:pos1) == char(9)))
+        do while (pos1 <= len_line)
+            ! bound tested first: Fortran .and. does not short-circuit
+            if (.not. (line2(pos1:pos1) == ' ' .or. line2(pos1:pos1) == char(9))) exit
             pos1 = pos1 + 1
         end do
 
         do while (pos1 <= len_line)
             pos2 = pos1
 
-            do while (pos2 <= len_line .and. .not. (line2(pos2:pos2) == ' ' .or. line2(pos2:pos2) == char(9)))
+            do while (pos2 <= len_line)
+                ! bound tested first: Fortran .and. does not short-circuit
+                if (line2(pos2:pos2) == ' ' .or. line2(pos2:pos2) == char(9)) exit
                 pos2 = pos2 + 1
             end do
 
-            nfields = nfields + 1
-            if (nfields > size(fields2)) then
+            if (nfields >= size(fields2)) then
                 print *, 'Error: too many fields'
                 return
             end if
+            nfields = nfields + 1
 
             fields2(nfields) = line2(pos1:min(pos2-1, pos1 + len(fields2) - 1))
 
             pos1 = pos2
 
-            do while (pos1 <= len_line .and. (line2(pos1:pos1) == ' ' .or. line2(pos1:pos1) == char(9)))
+            do while (pos1 <= len_line)
+                ! bound tested first: Fortran .and. does not short-circuit
+                if (.not. (line2(pos1:pos1) == ' ' .or. line2(pos1:pos1) == char(9))) exit
                 pos1 = pos1 + 1
             end do
 
             splits_done = splits_done + 1
-            if (present(maxsplit) ) then
-                if (splits_done >= maxsplit) then
+            if (splits_done >= max_splits) then
                 if (pos1 <= len_line) then
+                    if (nfields >= size(fields2)) return
                     nfields = nfields + 1
-                    if (nfields > size(fields2)) return
                     fields2(nfields) = trim(adjustl(line2(pos1:)))
                 end if
-                endif
                 return
             end if
         end do
