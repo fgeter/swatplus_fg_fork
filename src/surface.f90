@@ -64,7 +64,6 @@
 
       !! add irrigation runoff and surface runon runoff
       surfq(j) = surfq(j) + irrig(j)%runoff
-      irrig(j)%runoff = 0.
 
       !! calculate amount of surface runoff reaching main channel during day
       !! (qday) and store the remainder
