@@ -164,7 +164,7 @@
       end subroutine cn_name_split
 
 !!    ---------------------------------------------------------------------
-      integer function tok_register (list, n, tok) result (idx)
+      function tok_register (list, n, tok) result (idx)
 !!    index of tok in list(1:n); appended, and n bumped, if not already there.
 !!    builds the cn_fam and cn_trt dictionaries in cn_cover_init.  no trim is
 !!    needed: == pads the shorter operand with blanks before comparing.
@@ -174,6 +174,7 @@
       character(len=*), intent (inout) :: list(:) !none  |token dictionary
       integer, intent (inout) :: n             !none  |tokens registered so far
       character(len=*), intent (in) :: tok     !none  |token to look up
+      integer :: idx                           !none  |index of tok in list
 
       do idx = 1, n
         if (list(idx) == tok) return
@@ -187,7 +188,7 @@
       end function tok_register
 
 !!    ---------------------------------------------------------------------
-      integer function cn_fam_index (nm) result (ifam)
+      function cn_fam_index (nm) result (ifam)
 !!    index of a family token in cn_fam, 0 if the token is not in cntable.lum
 
       use utils, only : to_lower
@@ -195,6 +196,7 @@
       implicit none
 
       character(len=*), intent (in) :: nm      !none  |family token
+      integer :: ifam                          !none  |index into cn_fam, 0 if absent
       integer :: i = 0                         !none  |counter
       character(len=16) :: key = ""            !none  |folded, trimmed token
 
@@ -212,7 +214,7 @@
       end function cn_fam_index
 
 !!    ---------------------------------------------------------------------
-      logical function fam_is_static (nm) result (is_static)
+      function fam_is_static (nm) result (is_static)
 !!    families whose NRCS condition is defined by grazing and burning history
 !!    rather than by a ground-cover percentage (NEH 650-2.15 footnote 6).
 !!    driving these from a cover fraction is an extension the handbook does not
@@ -230,6 +232,7 @@
       implicit none
 
       character(len=*), intent (in) :: nm      !none  |family token
+      logical :: is_static                     !none  |.true. if the family stays at its cntable.lum cn2
 
       select case (trim(to_lower(adjustl(nm))))
       case ("wood", "woodgr")                  !! cntable.lum from the SWAT+ editor
@@ -244,7 +247,7 @@
       end function fam_is_static
 
 !!    ---------------------------------------------------------------------
-      real function cn_from_cover (ifam, itrt, ihyd, cov, trt_fallback) result (cnv)
+      function cn_from_cover (ifam, itrt, ihyd, cov, trt_fallback) result (cnv)
 !!    interpolate cn2 between the hydrologic-condition rows of one family.
 !!    returns 0. when the family has no condition rows to interpolate between,
 !!    which the caller reads as "leave this HRU's cn2 alone".
@@ -256,6 +259,7 @@
       integer, intent (in) :: ihyd             !none  |hydrologic soil group, 1-4
       real, intent (in) :: cov                 !frac  |combined ground cover
       logical, intent (in) :: trt_fallback     !none  |.true. permits dropping to the family default treatment
+      real :: cnv                              !none  |interpolated cn2, 0. if nothing to interpolate
 
       integer :: it = 0                        !none  |treatment actually used
       integer :: ip = 0                        !none  |cn(:) row for "Poor"
