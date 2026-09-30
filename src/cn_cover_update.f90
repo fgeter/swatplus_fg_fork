@@ -19,6 +19,24 @@
 !!    ~ ~ ~ OUTGOING ~ ~ ~
 !!    cn2(j), and through curno: smx(j), wrt(1:2,j)
 !!
+!!    ~ ~ ~ MODULE VARIABLES (cn_cover_module) ~ ~ ~
+!!    cn_cov_hru(j)       per-HRU state.
+!!                        hyd, fam_lum, trt_lum, active - set by cn_cover_hru_init,
+!!                          only read here.
+!!                        cn_last, off - READ AND WRITTEN here, and carried from
+!!                          one day to the next: cn_last is the cn2 this routine
+!!                          wrote yesterday, off the running total of what other
+!!                          code has done to cn2 since.  both restart in
+!!                          cn_cover_hru_init (startup and land use change).
+!!                        c_rsd, c_bio, c_tot, cn_sel - today's values, written
+!!                          here for the audit file only.
+!!    pl_cov              plant -> family and k_rsd - filled by cn_cover_read
+!!    cn_fam              family names - cn_cover_init pass 1
+!!    k_rsd_row, k_rsd_grain, k_ns, cn_floor, cn_ceil
+!!                        tunable; set where declared at the top of
+!!                        cn_cover_module, never written at run time
+!!    cn_cov_unit         cn_cover.out - opened by cn_cover_init, only at cn = 2
+!!
 !!    ~ ~ ~ SUBROUTINES/FUNCTIONS CALLED ~ ~ ~
 !!    SWAT: curno
 !!    utils: exp_w

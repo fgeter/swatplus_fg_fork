@@ -12,6 +12,17 @@
 !!    decides whether this HRU's curve number is condition-dependent at all.
 !!    within a participating HRU the growing plants may still pull the family
 !!    sideways (a corn/soybean/wheat rotation moves rc -> rc -> sg).
+!!
+!!    ~ ~ ~ MODULE VARIABLES (cn_cover_module) ~ ~ ~
+!!    read:
+!!      cn_key            each cntable.lum row's (fam,trt,cond) - cn_cover_init pass 1
+!!      cn_row            (fam,trt,cond) -> cntable.lum row - cn_cover_init pass 2
+!!      cn_fam            family names - cn_cover_init pass 1
+!!    written:
+!!      cn_cov_hru(j)     allocated on the first call.  hyd, fam_lum, trt_lum and
+!!                        active are set here and only read by cn_cover_update.
+!!                        cn_last and off are started here; cn_cover_update then
+!!                        carries them from one day to the next.
 
       use basin_module, only : bsn_cc
       use hru_module, only : hru, cn2

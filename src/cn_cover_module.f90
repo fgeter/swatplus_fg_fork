@@ -203,6 +203,9 @@
       ifam = 0
       if (.not. allocated (cn_fam)) return
       key = to_lower (adjustl (nm))
+      !! cn_fam and n_fam are module variables, not arguments.  both are filled
+      !! by cn_cover_init pass 1 (tok_register bumps n_fam once per new family)
+      !! and are fixed from then on.
       do i = 1, n_fam
         if (trim(cn_fam(i)) == trim(key)) then
           ifam = i
@@ -251,6 +254,15 @@
 !!    interpolate cn2 between the hydrologic-condition rows of one family.
 !!    returns 0. when the family has no condition rows to interpolate between,
 !!    which the caller reads as "leave this HRU's cn2 alone".
+!!
+!!    module variables read here, not passed in:
+!!      n_fam, cn_fam     family count and names - cn_cover_init pass 1
+!!      cn_row            (fam,trt,cond) -> cntable.lum row - cn_cover_init pass 2
+!!      cn_trt_def        default treatment per family - cn_cover_init, after pass 2
+!!      c_sat, cov_poor, cov_fair, cov_good, cn_floor
+!!                        tunable; set where declared at the top of this module,
+!!                        never written at run time
+!!      cn(:)             cntable.lum itself (landuse_data_module, cntbl_read)
 
       implicit none
 

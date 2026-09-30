@@ -175,7 +175,10 @@
           cycle
         end if
 
-        !! the entire product of this subroutine, two fields per plant
+        !! the entire product of this subroutine, two fields per plant.  pl_cov
+        !! is a module variable (cn_cover_module): cn_cover_update reads it for
+        !! every plant of every active HRU every day, and nothing changes it
+        !! after this.
         pl_cov(ipl)%fam = ifam
         pl_cov(ipl)%k_rsd = kk
       end do
