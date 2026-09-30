@@ -174,14 +174,12 @@
       external :: cn_cover_read
 
       integer :: icno = 0                   !none  |cntable.lum row counter
-      integer :: i = 0                      !none  |counter
       integer :: ifam = 0                   !none  |family index of the current row
       integer :: itrt = 0                   !none  |treatment index of the current row
       integer :: icond = 0                  !none  |hydrologic condition of the current row
       integer :: imax = 0                   !none  |number of cntable.lum rows
       character(len=16) :: fam = ""         !none  |family token parsed from the row name
       character(len=16) :: trt = ""         !none  |treatment token parsed from the row name
-      logical :: found = .false.            !none  |token already registered
 
       !! the cover method is opt-in through codes.bsn column "cn"
       select case (bsn_cc%cn)
@@ -221,38 +219,12 @@
         !! a nameless row cannot be keyed - skip rather than register a blank
         if (len_trim(fam) == 0) cycle
 
-        !! look the family token up in the dictionary; register it if new.
-        !! ifam ends up holding this row's family index either way.
-        found = .false.
-        do i = 1, n_fam
-          if (trim(cn_fam(i)) == trim(fam)) then
-            ifam = i
-            found = .true.
-            exit
-          end if
-        end do
-        if (.not. found) then
-          n_fam = n_fam + 1
-          cn_fam(n_fam) = fam
-          ifam = n_fam
-        end if
-
-        !! same for the treatment token.  the empty string is a legitimate
-        !! treatment - pastg_p and brush_g have no treatment segment - so it is
-        !! registered like any other and gets its own index.
-        found = .false.
-        do i = 1, n_trt
-          if (trim(cn_trt(i)) == trim(trt)) then
-            itrt = i
-            found = .true.
-            exit
-          end if
-        end do
-        if (.not. found) then
-          n_trt = n_trt + 1
-          cn_trt(n_trt) = trt
-          itrt = n_trt
-        end if
+        !! look each token up in its dictionary, registering it if new.  the
+        !! empty string is a legitimate treatment - pastg_p and brush_g have no
+        !! treatment segment - so it is registered like any other and gets its
+        !! own index.
+        ifam = tok_register (cn_fam, n_fam, fam)
+        itrt = tok_register (cn_trt, n_trt, trt)
 
         !! record the decoded key for this row
         cn_key(icno)%fam = ifam

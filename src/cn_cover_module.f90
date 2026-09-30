@@ -164,6 +164,29 @@
       end subroutine cn_name_split
 
 !!    ---------------------------------------------------------------------
+      integer function tok_register (list, n, tok) result (idx)
+!!    index of tok in list(1:n); appended, and n bumped, if not already there.
+!!    builds the cn_fam and cn_trt dictionaries in cn_cover_init.  no trim is
+!!    needed: == pads the shorter operand with blanks before comparing.
+
+      implicit none
+
+      character(len=*), intent (inout) :: list(:) !none  |token dictionary
+      integer, intent (inout) :: n             !none  |tokens registered so far
+      character(len=*), intent (in) :: tok     !none  |token to look up
+
+      do idx = 1, n
+        if (list(idx) == tok) return
+      end do
+
+      n = n + 1
+      list(n) = tok
+      idx = n
+
+      return
+      end function tok_register
+
+!!    ---------------------------------------------------------------------
       integer function cn_fam_index (nm) result (ifam)
 !!    index of a family token in cn_fam, 0 if the token is not in cntable.lum
 
