@@ -44,6 +44,8 @@ module utils
 contains
 
 subroutine init(self, unit, file_name, start_row_numbr, start_data_row_numbr)
+    implicit none
+
     class(table_reader), intent(inout) :: self
     integer, intent(in), optional                       :: unit          
     ! character(len=:), allocatable, intent(in), optional :: file_name
@@ -73,7 +75,7 @@ subroutine init(self, unit, file_name, start_row_numbr, start_data_row_numbr)
 end subroutine init
 
 
-real function exp_w(y)
+function exp_w(y)
 !===============================================================================
 ! Author: fgeter
 !
@@ -131,6 +133,7 @@ real function exp_w(y)
 #endif
     implicit none
     real, intent(in) :: y
+    real :: exp_w
     logical :: err_output
     
     ! err_output = .true.
@@ -218,6 +221,8 @@ pure function to_lower(str) result(lower)
 !   - No allocation is performed (fixed-length result matches input length)
 !
 !===============================================================================
+    implicit none
+
     character(len=*), intent(in) :: str
     character(len=len(str))      :: lower
     integer                      :: i, code
@@ -272,6 +277,8 @@ subroutine left_of_delim(input, delim, result)
 !   ! comment_free now contains "data  1 2 3  " (note preserved trailing spaces)
 !
 !===============================================================================
+
+    implicit none
 
     character(len=*), intent(in)               :: input
     character(len=1), intent(in)               :: delim
@@ -364,6 +371,8 @@ subroutine split_line(line2, fields2, nfields, delim, maxsplit)
     !     and the subroutine returns early.
     !   - Safe for gfortran debugging (no allocatables or deferred-length components).
     !===============================================================================
+
+    implicit none
 
     character(len=*), intent(in)                 :: line2
     ! The following line uses deferred-length strings for fields2 array, however, gfortran debugger has issues with it.
@@ -530,6 +539,8 @@ end subroutine split_line
 
 function get_row_idx(self) result(row)
 ! returns the current row index
+  implicit none
+
   class(table_reader), intent(inout) :: self
   integer :: row
   row = self%nrow
@@ -538,6 +549,8 @@ end function get_row_idx
 
 function get_col_count(self) result(col)
 ! returns the number of columns
+  implicit none
+
   class(table_reader), intent(inout) :: self
   integer :: col
   col = self%ncols
@@ -578,6 +591,8 @@ function get_num_data_lines(self) result(imax)
 ! @param[inout] self   The `table_reader` object containing file unit and buffers
 ! @return       imax   Number of valid data rows (rows with correct column count)
 !===============================================================================
+    implicit none
+
     class(table_reader), intent(inout) :: self
     integer :: imax
     integer :: eof = 0              !           |end of file
@@ -637,6 +652,8 @@ end function get_num_data_lines
 
 subroutine min_req_cols(self, min_cols)
 ! Sets the minimum required columns data element
+    implicit none
+
     class(table_reader), intent(inout) :: self
     character(len=*), intent(in) :: min_cols
     self%min_cols = trim(adjustl(min_cols))
@@ -649,6 +666,8 @@ subroutine min_header_cols(self, min_cols)
 ! Purpose: Checks to see if user specified required columns are in the header 
 !          columns that are read in and if not print error and stop.
 !===============================================================================
+
+    implicit none
 
     class(table_reader), intent(inout) :: self
     character(len=*), intent(in) :: min_cols
@@ -722,6 +741,8 @@ subroutine get_header_columns(self, eof)
 !     tblr%lrow incremented by 4 (title + comment + blank + header)
 !
 !============================================o===================================
+
+    implicit none
 
     class(table_reader), intent(inout) :: self
     integer                     :: i
@@ -817,6 +838,8 @@ subroutine get_row_fields(self, eof)
 !   - Module variable/type: tblr (table reader context)
 !   - External routines: left_of_delim, split_line
 !===============================================================================
+    implicit none
+
     class(table_reader), intent(inout) :: self
     integer, intent(out)          :: eof
     integer                       :: i
@@ -896,6 +919,8 @@ subroutine output_column_warning(self, i)
 !
 ! Note: The warning is printed only once per unknown column name.
 !===============================================================================
+    implicit none
+
     class(table_reader), intent(inout) :: self
     integer, intent(in) :: i
     if (self%col_okay(i) .eqv. .true.) then
