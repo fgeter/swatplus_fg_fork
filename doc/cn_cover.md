@@ -122,6 +122,35 @@ Without a guard, frozen-day runoff on full Raccoon rises 30%, and January–Marc
 With `frz_hold = 1` (the default), `cn2` is held at the table value on every day `sq_dailycn`
 treats as frozen, and frozen-day runoff stays within 0.4% of the static run.
 
+The hold puts a step in `cn2`, from about 84 down to 78 at freeze-up on Ames and back up at thaw.
+The step is in `cn2` only. The curve number actually applied jumps **up** at freeze-up, from about
+70 to 93 (next section).
+
+### `cn2` versus the curve number applied
+
+Two curve numbers are involved:
+
+* **`cn2`** is the average-moisture curve number: the table value in SWAT+ today, and the value
+  this method sets each day. `curno` builds the retention parameter `smx` from it.
+* **`cnday`** is the curve number the runoff equation actually uses: the `cn` column of
+  `hru_wb`. `sq_dailycn` computes it each day from `smx` and the soil water, and on frozen days
+  through the frozen-soil formula above.
+
+On unfrozen days `cnday` is usually well below `cn2`, because the soil is usually drier than the
+average condition `cn2` describes. The meaningful comparison is `cnday` with and without the
+method. Ames (`rc_strow_g`, HSG B, table 78), means over 47 years:
+
+| period | cn_cover `cn2` | `cnday`, static | `cnday`, cn_cover |
+|---|---|---|---|
+| frozen days | 78, held | 93.4 | 93.3 |
+| April–May, unfrozen | 84.0 | 65.8 | 74.1 |
+| July–September | 73.6 | 64.3 | 58.4 |
+| October–December, unfrozen | 82.4 | 64.0 | 70.1 |
+
+The method raises the applied curve number by 6–8 points in spring and fall, lowers it by 6
+under a full canopy, and leaves frozen days unchanged. To see this for a run, use `cn = 2` and
+daily `hru_wb` output, then compare `cn2` in `cn_cover.out` with `cn` in `hru_wb_day`.
+
 ### Choosing `lo_pct`
 
 The high and middle points come from the table; `lo_pct` is the only fitted value. It is chosen
@@ -251,7 +280,7 @@ Written only at `cn = 2`, one line per active HRU per day:
 | `c_tot` | combined cover fraction |
 | `cn2_cov` | `cn2` from the curve, before the offset |
 | `cn2_off` | accumulated external offset (calibration, `cnup`, burn) |
-| `cn2` | what was handed to `curno` |
+| `cn2` | what was handed to `curno`; the average-moisture value, not the curve number applied (that is `cn` in `hru_wb`) |
 
 This file is one line per HRU per day and is not size-managed. Use `cn = 1` for production runs.
 
