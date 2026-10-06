@@ -48,7 +48,9 @@
       real :: k_rsd_row = 2.657e-4  !ha/kg   |residue mass -> cover, row crops.  NRCS puts
                                     !        |20% cover at 750 lb/ac = 840 kg/ha
       real :: k_rsd_grain = 6.64e-4 !ha/kg   |same for small grains: 300 lb/ac = 336 kg/ha
-      real :: c_sat = 0.60          !frac    |cover at which the effect plateaus (Rawls 1980)
+      real :: c_min = 0.60          !frac    |minimum cover giving the full effect: the
+                                    !        |plateau in Rawls (1980).  scales combined
+                                    !        |cover in x_tot, living cover in x_bio
       real :: cn_floor = 30.        !none    |NEH table 650-2.15 footnote 4 - "actual curve
                                     !        |number is less than 30; use CN = 30"
       real :: cn_ceil = 98.         !none    |highest curve number in cntable.lum (urban)
@@ -68,7 +70,7 @@
 !!    annual-flood storms, not the state of the surface on a given day), and
 !!    cover swings cn2 over a wider range around it, in two legs:
 !!
-!!      x_tot = c_tot / c_sat, x_bio = c_bio / c_sat, both capped at 1
+!!      x_tot = c_tot / c_min, x_bio = c_bio / c_min, both capped at 1
 !!      cn2 = cn_hi + x_tot * (cn_mid - cn_hi) + x_bio * (cn_lo - cn_mid)
 !!
 !!      cn_hi  = fallow-poor row + treatment offset              (bare)
@@ -107,7 +109,8 @@
       character(len=40) :: hi_nm = "fal_res_p" !none |cntable.lum row for the bare, high end
       integer :: frz_hold = 1       !none    |1 holds curve 2 at the table CN on frozen days: smx
                                     !        |still scales sq_dailycn's frozen branch, so without
-                                    !        |this winter residue lowers frozen-day runoff too
+                                    !        |this winter cn2 sits on the residue leg, above the
+                                    !        |table, and frozen-day runoff rises (+30% on Raccoon)
       integer :: i_hi = 0           !none    |cn(:) row of hi_nm
       character(len=40) :: mid_nm = "fal_res_g" !none |cntable.lum row anchoring the middle point,
                                     !        |"none" anchors it on the table CN instead
@@ -327,7 +330,7 @@
 !!      n_fam, cn_fam     family count and names - cn_cover_init pass 1
 !!      cn_row            (fam,trt,cond) -> cntable.lum row - cn_cover_init pass 2
 !!      cn_trt_def        default treatment per family - cn_cover_init, after pass 2
-!!      c_sat, cov_poor, cov_fair, cov_good, cn_floor
+!!      c_min, cov_poor, cov_fair, cov_good, cn_floor
 !!                        tunable; set where declared at the top of this module,
 !!                        never written at run time
 !!      cn(:)             cntable.lum itself (landuse_data_module, cntbl_read)
@@ -374,7 +377,7 @@
       case (0)
         !! two-point family (rc_*, sg_*, legr_*, fal_res_*) - linear in cover
         !! up to the Rawls plateau
-        idx = cov / c_sat
+        idx = cov / c_min
         if (idx > 1.) idx = 1.
         if (idx < 0.) idx = 0.
         cnv = cn_p - idx * (cn_p - cn_g)
@@ -417,10 +420,10 @@
       real :: cn_l = 0.                        !none  |low end, full cover and canopy
       real :: cn_m = 0.                        !none  |middle point, full cover, no canopy
 
-      x_tot = c_tot / c_sat
+      x_tot = c_tot / c_min
       if (x_tot > 1.) x_tot = 1.
       if (x_tot < 0.) x_tot = 0.
-      x_bio = c_bio / c_sat
+      x_bio = c_bio / c_min
       if (x_bio > x_tot) x_bio = x_tot
       if (x_bio < 0.) x_bio = 0.
 

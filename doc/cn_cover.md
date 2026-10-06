@@ -42,8 +42,8 @@ optional `cn_cover.prm` overrides them.
 | `c_rsd` | residue cover, `1 - exp(-k_rsd * rsd)`, with `rsd` the above-ground residue in kg/ha |
 | `c_bio` | near-surface living-biomass cover: the APEX ground-cover S-curve on `sum(ab_gr * exp(-k_ns * cht))` |
 | `c_tot` | combined cover, `1 - (1-c_rsd)(1-c_bio)` |
-| `x_tot` | `min(c_tot / c_sat, 1)`: all cover |
-| `x_bio` | `min(c_bio / c_sat, x_tot)`: living canopy only |
+| `x_tot` | `min(c_tot / c_min, 1)`: all cover |
+| `x_bio` | `min(c_bio / c_min, x_tot)`: living canopy only |
 
 ### Three points, two legs
 
@@ -74,6 +74,12 @@ treatments carry an advantage over straight row, and that advantage should survi
 is bare. Both anchors are therefore shifted by the land use's offset from the **non-residue**
 straight row (`strow` in editor tables, `sr` in HUC8 tables).
 
+The offset is the land use's table CN minus the table CN of plain straight-row land of the same
+family and condition. For example, contoured and terraced row crops with crop residue
+(`rc_c_t_cr_g`) is 70 on HSG B against 78 for plain straight row (`rc_sr_g`), an offset of −8, so
+that field's bare and full-residue CN2 are 8 points below a plain field's. It is fixed per HRU at
+startup. It is not the calibration offset described under "Calibration is preserved".
+
 Examples, HSG B (fallow-poor 85, fallow-good 83), `lo_pct` 0.057:
 
 | land-use row | table | reference | offset | cn_hi | cn_mid | cn_lo |
@@ -81,6 +87,11 @@ Examples, HSG B (fallow-poor 85, fallow-good 83), `lo_pct` 0.057:
 | `rc_sr_g` | 78 | `rc_sr_g` 78 | 0 | 85 | 83 | 73.6 |
 | `rc_sr_cr_g` | 75 | `rc_sr_g` 78 | −3 | 82 | 80 | 70.7 |
 | `rc_c_t_cr_g` | 70 | `rc_sr_g` 78 | −8 | 77 | 75 | 66.0 |
+
+Row names are `family_treatment_condition`. HUC8-constructor tokens: `rc` row crops, `sg` small
+grain, `fal` fallow; `sr` straight row, `c` contoured, `t` terraced (only with `c`), `cr`
+crop-residue cover; `p` / `g` poor / good hydrologic condition. Editor tables spell treatments as
+single tokens: `strow`, `strowres`, `cont`, `contres`, `contter`, `conterres`.
 
 **Why the non-residue reference.** Measuring `rc_sr_cr_g` against `rc_sr_cr_g` itself (`off_ref`
 1) gives it the same anchors as plain straight row. Its 3-point table residue credit then
@@ -102,10 +113,14 @@ crops, legumes. Every other HRU is held at its table value every day:
 
 ### Frozen days
 
-On frozen soil (layer 2 at or below 0 °C), `sq_dailycn` switches to its frozen-soil branch, which
-still scales from `smx` and therefore from `cn2`. Winter residue would hold `cn2` near the low end
-and cut frozen-day runoff by 26–32%, an effect cover has no physical claim to. With `frz_hold = 1`
-(the default), `cn2` is held at the table value on every day `sq_dailycn` treats as frozen.
+On frozen soil (layer 2 at or below 0 °C), `sq_dailycn` switches to its frozen-soil branch. It
+cuts retention to `smx * (1 - exp(-cn_froz * r2))`, so the curve number actually applied is high
+(about 93 at Ames against about 70 on unfrozen fall days), but it still starts from `smx` and
+therefore from `cn2`. Over winter a crop field sits on the residue leg, above the table value.
+Without a guard, frozen-day runoff on full Raccoon rises 30%, and January–March outlet flow rises
+24–27%. The cover evidence comes from unfrozen storms, and `lo_pct` cannot correct a winter excess.
+With `frz_hold = 1` (the default), `cn2` is held at the table value on every day `sq_dailycn`
+treats as frozen, and frozen-day runoff stays within 0.4% of the static run.
 
 ### Choosing `lo_pct`
 
@@ -270,7 +285,7 @@ parameters, so they can be calibrated later. Only the curve-shape settings in th
 | `k_ns` | canopy-height decay, 1/m | 0.328 | `ero_cfactor.f90` (APEX) |
 | `k_rsd_row` | residue mass → cover, row crops, ha/kg | 2.657e-4 | NRCS 20 % at 750 lb/ac |
 | `k_rsd_grain` | same, small grains | 6.64e-4 | NRCS 20 % at 300 lb/ac |
-| `c_sat` | cover at which the effect plateaus | 0.60 | Rawls (1980) |
+| `c_min` | minimum cover giving the full effect (the plateau); scales combined cover in `x_tot` and living cover in `x_bio` | 0.60 | Rawls (1980) |
 | `cn_floor`, `cn_ceil` | limits on the `cn2` written | 30, 98 | NEH 650-2.15 fn. 4; `cntable.lum` maximum |
 | `lo_pct` | full-canopy reduction of the table CN | 0.057 | fitted, calibrated Raccoon |
 | `cov_poor/fair/good` | breakpoints for `cn_curve 1` only | 0.50 / 0.625 / 0.75 | NEH 650-2.15 fn. 2, 3 |

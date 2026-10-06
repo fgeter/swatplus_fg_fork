@@ -145,7 +145,7 @@
 !!    Note the fam 2 row has no F entries: rc, sg, legr and fal are two-point
 !!    families, poor and good only.  pastg and brush carry all three.  That
 !!    difference is what cn_from_cover branches on - two-point families scale
-!!    cover by c_sat, three-point families interpolate through the NRCS
+!!    cover by c_min, three-point families interpolate through the NRCS
 !!    ground-cover breakpoints instead.
 !!
 !!    Two cells repay a second look:
