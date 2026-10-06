@@ -1,13 +1,23 @@
 # Cover-driven daily curve number (cn_cover)
 
-SWAT+ normally takes `cn2` from one fixed `cntable.lum` row per land use, and after that only
-soil water moves the daily curve number. A corn field has the same `cn2` the day after spring
+SWAT+ normally takes `cn2`, the curve number for average soil water, from one fixed
+`cntable.lum` row per land use, and `cn2` never changes after that. Each day `sq_dailycn` adjusts
+it for soil water, so soil water is the only thing that moves the curve number applied. A corn field has the same `cn2` the day after spring
 tillage as under a full August canopy.
 
 The cn_cover approach keeps the table value as the **average over the simulation**, but moves
 `cn2` every day with the surface cover: above-ground residue plus the near-surface part of the
-living canopy. Fields run off more when bare or freshly tilled and less under a full canopy. The
-soil-water machinery downstream (`curno`, `sq_dailycn`) is untouched.
+living canopy. Fields run off more when bare or freshly tilled and less under a full canopy.
+
+Only `cn2` changes. The soil-water adjustment downstream (`curno`, `sq_dailycn`) is untouched and
+still runs every day, so the curve number applied responds to both cover (through `cn2`) and soil
+water:
+
+```
+cn2    <- cover curve (this method)                cn_cover_update
+cnday  <- cn2 adjusted for today's soil water      sq_dailycn, unchanged
+          (frozen-soil formula on frozen days)
+```
 
 It is off by default.
 
@@ -136,8 +146,12 @@ Two curve numbers are involved:
   `hru_wb`. `sq_dailycn` computes it each day from `smx` and the soil water, and on frozen days
   through the frozen-soil formula above.
 
-On unfrozen days `cnday` is usually well below `cn2`, because the soil is usually drier than the
-average condition `cn2` describes. The meaningful comparison is `cnday` with and without the
+With `cn2` fixed (static run), unfrozen-day `cnday` depends on one variable: the profile's soil
+water when `surface` runs, after today's soil evaporation and before today's rain infiltrates. On
+Ames it rises steadily with that soil water, from about 61 below 150 mm to about 78 at 300–400 mm.
+Under this method `cnday` responds to that same soil water and to cover through `cn2`. On unfrozen
+days `cnday` is usually well below `cn2`, because the soil is usually drier than the average
+condition `cn2` describes. The meaningful comparison is `cnday` with and without the
 method. Ames (`rc_strow_g`, HSG B, table 78), means over 47 years:
 
 | period | cn_cover `cn2` | `cnday`, static | `cnday`, cn_cover |
