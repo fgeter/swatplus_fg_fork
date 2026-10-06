@@ -30,7 +30,7 @@
       
       implicit none
       
-      external :: cn_cover_update, ero_cfactor, ero_eiusle, ero_ovrsed, ero_pkq, ero_ysed, sq_dailycn, &
+      external :: cn_cover_tally, cn_cover_update, ero_cfactor, ero_eiusle, ero_ovrsed, ero_pkq, ero_ysed, sq_dailycn, &
                   sq_volq, sq_crackflow
 
       integer :: j = 0            !none          |HRU number 
@@ -64,6 +64,11 @@
 
       !! add irrigation runoff and surface runon runoff
       surfq(j) = surfq(j) + irrig(j)%runoff
+
+      select case (bsn_cc%cn)
+      case (1, 2)
+        call cn_cover_tally (j)
+      end select
 
       !! calculate amount of surface runoff reaching main channel during day
       !! (qday) and store the remainder

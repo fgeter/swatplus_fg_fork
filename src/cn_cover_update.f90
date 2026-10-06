@@ -46,6 +46,7 @@
       use plant_module, only : pcom
       use organic_mineral_mass_module, only : pl_mass
       use time_module, only : time
+      use soil_module, only : soil
       use utils, only : exp_w
       use cn_cover_module
 
@@ -120,46 +121,68 @@
       if (c_tot < 0.) c_tot = 0.
       if (c_tot > 1.) c_tot = 1.
 
-      !! -- stage 4: condition index and interpolation -------------------
-      !! blend the plants' families by above-ground mass.  a mixed community
-      !! (corn under a rye cover crop) is rc and sg at once, and the cover that
-      !! drives the condition is a property of the whole surface, so c_tot is
-      !! computed once and only the family endpoints are weighted
-      cn_sum = 0.
-      w_sum = 0.
-      cn_first = 0.
-      nfam_hit = 0
-      do ipl = 1, pcom(j)%npl
-        idp = pcom(j)%plcur(ipl)%idplt
-        if (idp < 1 .or. .not. allocated (pl_cov)) cycle
-        ifam = pl_cov(idp)%fam
-        if (ifam < 1) cycle                 !! plant not in plants.cov
-        if (ifam == cn_cov_hru(j)%fam_lum) then
-          !! same family as the land use - hold its treatment, never silently
-          !! move the HRU onto a different cntable.lum treatment row
-          cnv = cn_from_cover (ifam, cn_cov_hru(j)%trt_lum, cn_cov_hru(j)%hyd, c_tot, .false.)
-        else
-          cnv = cn_from_cover (ifam, cn_cov_hru(j)%trt_lum, cn_cov_hru(j)%hyd, c_tot, .true.)
-        end if
-        if (cnv < 1.e-6) cycle              !! static family (wood, woodgr)
-        nfam_hit = nfam_hit + 1
-        if (nfam_hit == 1) cn_first = cnv
-        w = pl_mass(j)%ab_gr(ipl)%m + pl_mass(j)%abg_rsd(ipl)%m
-        cn_sum = cn_sum + w * cnv
-        w_sum = w_sum + w
-      end do
+      select case (cn_curve)
+      case (1)
+        !! -- stage 4: condition index and interpolation -------------------
+        !! blend the plants' families by above-ground mass.  a mixed community
+        !! (corn under a rye cover crop) is rc and sg at once, and the cover that
+        !! drives the condition is a property of the whole surface, so c_tot is
+        !! computed once and only the family endpoints are weighted
+        cn_sum = 0.
+        w_sum = 0.
+        cn_first = 0.
+        nfam_hit = 0
+        do ipl = 1, pcom(j)%npl
+          idp = pcom(j)%plcur(ipl)%idplt
+          if (idp < 1 .or. .not. allocated (pl_cov)) cycle
+          ifam = pl_cov(idp)%fam
+          if (ifam < 1) cycle                 !! plant not in plants.cov
+          if (ifam == cn_cov_hru(j)%fam_lum) then
+            !! same family as the land use - hold its treatment, never silently
+            !! move the HRU onto a different cntable.lum treatment row
+            cnv = cn_from_cover (ifam, cn_cov_hru(j)%trt_lum, cn_cov_hru(j)%hyd, c_tot, .false.)
+          else
+            cnv = cn_from_cover (ifam, cn_cov_hru(j)%trt_lum, cn_cov_hru(j)%hyd, c_tot, .true.)
+          end if
+          if (cnv < 1.e-6) cycle              !! static family (wood, woodgr)
+          nfam_hit = nfam_hit + 1
+          if (nfam_hit == 1) cn_first = cnv
+          w = pl_mass(j)%ab_gr(ipl)%m + pl_mass(j)%abg_rsd(ipl)%m
+          cn_sum = cn_sum + w * cnv
+          w_sum = w_sum + w
+        end do
 
-      if (w_sum > 1.e-6) then
-        cn_new = cn_sum / w_sum
-      else if (nfam_hit > 0) then
-        cn_new = cn_first                   !! community present but no mass yet
-      else
-        !! fallow, or no plant carries a family - fall back to the land use's
-        !! own family.  residue alone then drives the condition, which is the
-        !! right answer for a bare seedbed between tillage and emergence
-        cn_new = cn_from_cover (cn_cov_hru(j)%fam_lum, cn_cov_hru(j)%trt_lum,  &
-                                cn_cov_hru(j)%hyd, c_tot, .false.)
-      end if
+        if (w_sum > 1.e-6) then
+          cn_new = cn_sum / w_sum
+        else if (nfam_hit > 0) then
+          cn_new = cn_first                   !! community present but no mass yet
+        else
+          !! fallow, or no plant carries a family - fall back to the land use's
+          !! own family.  residue alone then drives the condition, which is the
+          !! right answer for a bare seedbed between tillage and emergence
+          cn_new = cn_from_cover (cn_cov_hru(j)%fam_lum, cn_cov_hru(j)%trt_lum,  &
+                                  cn_cov_hru(j)%hyd, c_tot, .false.)
+        end if
+
+      case (2)
+        !! -- stage 4, curve 2: the table value is the period average and
+        !! cover swings cn2 around it - see CURVE SHAPE in cn_cover_module
+        if (cn_cov_hru(j)%wide) then
+          cn_new = cn_wide (cn_cov_hru(j)%cn_tbl, cn_cov_hru(j)%cn_hi, cn_cov_hru(j)%cn_mid,  &
+                            c_tot, c_bio)
+        else
+          cn_new = cn_cov_hru(j)%cn_tbl
+        end if
+        !! same frozen test as sq_dailycn
+        if (frz_hold == 1 .and. soil(j)%phys(2)%tmp <= 0.) cn_new = cn_cov_hru(j)%cn_tbl
+
+      case (3)
+        !! -- stage 4, curve 3: static, the baseline curve 2 is matched to
+        cn_new = cn_cov_hru(j)%cn_tbl
+
+      case default
+        return
+      end select
 
       if (cn_new < 1.e-6) return            !! nothing to re-seat
 

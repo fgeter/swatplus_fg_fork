@@ -62,6 +62,50 @@
       real :: cov_fair = 0.625      !frac    |midpoint of the "Fair" band
       real :: cov_good = 0.750      !frac    |at or above this cover the row is "Good"
 
+!!    ~ ~ ~ CURVE SHAPE (optional cn_cover.prm, read by cn_cover_prm_read) ~ ~ ~
+!!    curve 1 is the v1 method: cn2 moves between the poor and good rows of the
+!!    plant's family.  curve 2 treats the land use's own cntable.lum value as the
+!!    AVERAGE over the simulation (NEH 630 ch9: each row is the median CN of a
+!!    management system's annual-flood storms, not the state of the surface on a
+!!    given day) and lets cover swing cn2 over a wider range around it, in two
+!!    legs:
+!!
+!!      x_tot = c_tot / c_sat, x_bio = c_bio / c_sat, both capped at 1
+!!      cn2 = cn_hi + x_tot * (cn_mid - cn_hi) + x_bio * (cn_lo - cn_mid)
+!!
+!!      cn_hi  = fallow-poor row + the treatment's offset from straight row (bare)
+!!      cn_mid = fallow-good-residue row + the same treatment offset + d_mid
+!!                                        (full cover, but no canopy: residue only)
+!!               or, with mid_row "none", table CN + d_mid
+!!      cn_lo  = table CN * (1 - lo_pct) (full cover AND full canopy)
+!!
+!!    any cover - residue or canopy - moves cn2 from the high end to the middle;
+!!    only living canopy carries it on to the low end.  residue alone reaches
+!!    the cover cap for about half of all days, so without the canopy gate the
+!!    low end was the typical state rather than the extreme.  x_bio <= x_tot
+!!    because c_bio <= c_tot, so the curve is monotone in cover.
+!!
+!!    with both ends of the residue leg anchored in cntable.lum, lo_pct is the
+!!    handle tuned so that unfrozen-day surface runoff matches the static run;
+!!    d_mid is left at 0.  curve 3 holds every HRU at its table CN - the same cn2 as
+!!    cn = 0 - so the static run carries the same runoff tally (cn_cover_sum.out).
+!!    under curve 2, HRUs without a straight-row equivalent (pasture, woods,
+!!    urban, fallow) are held at their table CN as well.
+      integer :: cn_curve = 1       !none    |1 condition rows, 2 wide curve, 3 flat at table CN
+      real :: lo_pct = 0.12         !frac    |full-cover reduction off the table CN.  Rawls max ~10-12.5%;
+                                    !        |0.12 chosen on full Raccoon: outlet flow -0.1% vs static
+      real :: d_mid = 0.            !none    |middle point offset from its anchor
+      character(len=40) :: hi_nm = "fal_res_p" !none |cntable.lum row for the bare, high end
+      integer :: frz_hold = 1       !none    |1 holds curve 2 at the table CN on frozen days: smx
+                                    !        |still scales sq_dailycn's frozen branch, so without
+                                    !        |this winter residue lowers frozen-day runoff too
+      integer :: i_hi = 0           !none    |cn(:) row of hi_nm
+      character(len=40) :: mid_nm = "fal_res_g" !none |cntable.lum row anchoring the middle point,
+                                    !        |"none" anchors it on the table CN instead
+      integer :: i_mid = 0          !none    |cn(:) row of mid_nm, 0 = table CN
+      integer, dimension(:), allocatable :: trt_sr  !none |(trt) -> straight-row treatment with the
+                                    !        |same residue status, 0 if none - cn_cover_init
+
 !!    ~ ~ ~ PARSED cntable.lum ROW KEYS ~ ~ ~
 !!    every row name decomposes as <family>[_<treatment>][_<condition>], e.g.
 !!    rc_strow_p -> (rc, strow, poor), pastg_g -> (pastg, "", good),
@@ -103,10 +147,17 @@
         real :: c_bio = 0.           !frac  |near-surface biomass cover (audit only)
         real :: c_tot = 0.           !frac  |combined cover         (audit only)
         real :: cn_sel = 0.          !none  |interpolated cn2 before the offset (audit only)
+        logical :: wide = .false.    !none  |curve 2 applies (row has a straight-row equivalent)
+        real :: cn_tbl = 0.          !none  |the land use's own cntable.lum value
+        real :: cn_hi = 0.           !none  |curve 2 high end
+        real :: cn_mid = 0.          !none  |curve 2 middle point before d_mid
+        real :: q_unf = 0.           !mm    |surface runoff summed over unfrozen days
+        real :: q_frz = 0.           !mm    |surface runoff summed over frozen days
       end type cn_cover_state
       type (cn_cover_state), dimension(:), allocatable :: cn_cov_hru
 
       integer, parameter :: cn_cov_unit = 4002 !none  |unit for cn_cover.out
+      integer, parameter :: cn_sum_unit = 4003 !none  |unit for cn_cover_sum.out
 
       contains
 
@@ -329,5 +380,43 @@
 
       return
       end function cn_from_cover
+
+!!    ---------------------------------------------------------------------
+      function cn_wide (cn_t, cn_h, cn_a, c_tot, c_bio) result (cnv)
+!!    curve 2: the high-to-middle leg follows all cover, the middle-to-low leg
+!!    follows living canopy only.  see CURVE SHAPE at the top of the module.
+
+      implicit none
+
+      real, intent (in) :: cn_t                !none  |the land use's table CN
+      real, intent (in) :: cn_h                !none  |high end, zero cover
+      real, intent (in) :: cn_a                !none  |middle-point anchor, before d_mid
+      real, intent (in) :: c_tot               !frac  |combined ground cover
+      real, intent (in) :: c_bio               !frac  |near-surface living biomass cover
+      real :: cnv                              !none  |cn2
+
+      real :: x_tot = 0.                       !frac  |all-cover index
+      real :: x_bio = 0.                       !frac  |canopy index
+      real :: cn_l = 0.                        !none  |low end, full cover and canopy
+      real :: cn_m = 0.                        !none  |middle point, full cover, no canopy
+
+      x_tot = c_tot / c_sat
+      if (x_tot > 1.) x_tot = 1.
+      if (x_tot < 0.) x_tot = 0.
+      x_bio = c_bio / c_sat
+      if (x_bio > x_tot) x_bio = x_tot
+      if (x_bio < 0.) x_bio = 0.
+
+      cn_l = cn_t * (1. - lo_pct)
+      cn_m = cn_a + d_mid
+      if (cn_m > cn_h) cn_m = cn_h
+      if (cn_m < cn_l) cn_m = cn_l
+
+      cnv = cn_h + x_tot * (cn_m - cn_h) + x_bio * (cn_l - cn_m)
+
+      if (cnv < cn_floor) cnv = cn_floor
+
+      return
+      end function cn_wide
 
       end module cn_cover_module

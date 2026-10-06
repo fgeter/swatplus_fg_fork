@@ -27,7 +27,7 @@
       use basin_module, only : bsn_cc
       use hru_module, only : hru, cn2
       use soil_module, only : sol
-      use landuse_data_module, only : lum_str
+      use landuse_data_module, only : lum_str, cn
       use hydrograph_module, only : sp_ob
       use cn_cover_module
 
@@ -39,6 +39,8 @@
       integer :: icn = 0                    !none  |cntable.lum row of this land use
       integer :: ifam = 0                   !none  |family index of that row
       integer :: itrt = 0                   !none  |treatment index of that row
+      integer :: icond = 0                  !none  |hydrologic condition of that row
+      integer :: iref = 0                   !none  |cntable.lum row of the straight-row equivalent
 
       select case (bsn_cc%cn)
       case (0)
@@ -76,11 +78,48 @@
       cn_cov_hru(j)%trt_lum = itrt
 
       cn_cov_hru(j)%active = .false.
-      if (ifam >= 1 .and. itrt >= 1) then
-        if (cn_row(ifam,itrt,cn_cond_poor) > 0 .and. cn_row(ifam,itrt,cn_cond_good) > 0) then
-          cn_cov_hru(j)%active = .not. fam_is_static (cn_fam(ifam))
+      cn_cov_hru(j)%wide = .false.
+      cn_cov_hru(j)%cn_tbl = 0.
+      cn_cov_hru(j)%cn_hi = 0.
+      cn_cov_hru(j)%cn_mid = 0.
+      if (icn >= 1) cn_cov_hru(j)%cn_tbl = cn(icn)%cn(cn_cov_hru(j)%hyd)
+
+      select case (cn_curve)
+      case (1)
+        if (ifam >= 1 .and. itrt >= 1) then
+          if (cn_row(ifam,itrt,cn_cond_poor) > 0 .and. cn_row(ifam,itrt,cn_cond_good) > 0) then
+            cn_cov_hru(j)%active = .not. fam_is_static (cn_fam(ifam))
+          end if
         end if
-      end if
+
+      case (2, 3)
+        !! every HRU with a cntable.lum row is re-seated daily - at its table
+        !! value unless curve 2 applies - so both runs take the same path
+        cn_cov_hru(j)%active = icn >= 1
+        select case (cn_curve)
+        case (2)
+          !! curve 2 needs a straight-row row of the same family and condition
+          !! to measure the treatment offset against: row crops, small grains,
+          !! legumes.  pasture, woods, urban and fallow stay at the table value
+          icond = 0
+          if (icn >= 1 .and. allocated (cn_key)) icond = cn_key(icn)%cond
+          iref = 0
+          if (ifam >= 1 .and. itrt >= 1 .and. icond >= cn_cond_poor .and. i_hi >= 1) then
+            if (trt_sr(itrt) >= 1) iref = cn_row(ifam,trt_sr(itrt),icond)
+          end if
+          if (iref >= 1) then
+            cn_cov_hru(j)%wide = .true.
+            cn_cov_hru(j)%cn_hi = cn(i_hi)%cn(cn_cov_hru(j)%hyd)                  &
+                                + (cn_cov_hru(j)%cn_tbl - cn(iref)%cn(cn_cov_hru(j)%hyd))
+            if (i_mid >= 1) then
+              cn_cov_hru(j)%cn_mid = cn(i_mid)%cn(cn_cov_hru(j)%hyd)              &
+                                   + (cn_cov_hru(j)%cn_tbl - cn(iref)%cn(cn_cov_hru(j)%hyd))
+            else
+              cn_cov_hru(j)%cn_mid = cn_cov_hru(j)%cn_tbl
+            end if
+          end if
+        end select
+      end select
 
       !! cn2_init has just written the table value and called curno.  start the
       !! offset ledger from there: anything that moves cn2 afterwards
@@ -94,6 +133,8 @@
       cn_cov_hru(j)%c_rsd = 0.
       cn_cov_hru(j)%c_bio = 0.
       cn_cov_hru(j)%c_tot = 0.
+      !! q_unf and q_frz are NOT reset: this routine also runs on a land use
+      !! change, and the runoff tally covers the whole simulation
 
       return
       end subroutine cn_cover_hru_init

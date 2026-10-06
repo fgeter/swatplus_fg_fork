@@ -39,11 +39,11 @@
 !!      cn_trt_def  LIVE  cn_from_cover
 !!      cn_fam      LIVE  cn_fam_index, and fam_is_static needs a family NAME
 !!                        back from an index; cn_cover_update tests it for "sg"
-!!      cn_key      LIVE  cn_cover_hru_init reads %fam and %trt
-!!      cn_trt      SCAFFOLDING - deallocated below
+!!      cn_key      LIVE  cn_cover_hru_init reads %fam and %trt, and %cond under curve 2
+!!      trt_sr      LIVE  cn_cover_hru_init, curve 2's straight-row reference
+!!      cn_trt      SCAFFOLDING - deallocated below; trt_sr is built from it first
 !!
-!!    cn_key%cond is dead after pass 2 as well, but a component cannot be freed
-!!    on its own and the other two are needed, so cn_key stays whole.
+!!    cn_key%cond is read only by curve 2's straight-row lookup.
 !!
 !!    To use cn_trt later - printing a treatment name in a diagnostic, say -
 !!    comment out the deallocate at the end of this subroutine.
@@ -171,7 +171,7 @@
 
       implicit none
 
-      external :: cn_cover_read
+      external :: cn_cover_prm_read, cn_cover_read
 
       integer :: icno = 0                   !none  |cntable.lum row counter
       integer :: ifam = 0                   !none  |family index of the current row
@@ -180,6 +180,9 @@
       integer :: imax = 0                   !none  |number of cntable.lum rows
       character(len=16) :: fam = ""         !none  |family token parsed from the row name
       character(len=16) :: trt = ""         !none  |treatment token parsed from the row name
+      integer :: jtrt = 0                   !none  |candidate straight-row treatment index
+      integer :: ic = 0                     !none  |candidate counter
+      character(len=16) :: sr_cand(3) = ""  !none  |straight-row treatment tokens to try
 
       !! the cover method is opt-in through codes.bsn column "cn"
       select case (bsn_cc%cn)
@@ -293,7 +296,82 @@
       !! plant -> family map.  must come AFTER the two passes: cn_cover_read
       !! validates each plants.cov cn_family token against cn_fam, so the
       !! dictionary has to exist first.
+      !! curve shape.  absent cn_cover.prm keeps curve 1, the v1 method
+      call cn_cover_prm_read
+
+      !! straight-row equivalent of every treatment, for curve 2's high end.
+      !! the fallow rows exist only for straight row, so a contoured or terraced
+      !! field keeps its treatment's offset from straight row when bare.  the
+      !! residue status is held: rc_cont_cr is measured against rc_sr_cr, so
+      !! the offset is the contouring alone.  both cntable.lum vocabularies:
+      !! the SWAT+ editor's strow/strowres and Raccoon's sr/sr_cr
+      allocate (trt_sr(0:n_trt))
+      trt_sr = 0
+      do itrt = 1, n_trt
+        if (index (cn_trt(itrt), "res") > 0 .or. index (cn_trt(itrt), "cr") > 0) then
+          sr_cand = (/ "strowres        ", "sr_cr           ", "cr_sr           " /)
+        else
+          sr_cand = (/ "strow           ", "sr              ", "                " /)
+        end if
+        do ic = 1, 3
+          if (len_trim (sr_cand(ic)) == 0) cycle
+          do jtrt = 1, n_trt
+            if (cn_trt(jtrt) == sr_cand(ic)) then
+              trt_sr(itrt) = jtrt
+              exit
+            end if
+          end do
+          if (trt_sr(itrt) > 0) exit
+        end do
+      end do
+
+      !! curve 2's high end.  the default fal_res_p is the editor's name; the
+      !! Raccoon vocabulary calls the same row fal_p
+      i_hi = 0
+      do icno = 1, imax
+        if (trim (cn(icno)%name) == trim (hi_nm)) i_hi = icno
+      end do
+      if (i_hi == 0 .and. trim (hi_nm) == "fal_res_p") then
+        do icno = 1, imax
+          if (trim (cn(icno)%name) == "fal_p") i_hi = icno
+        end do
+      end if
+      !! curve 2's middle point: fal_res_g in the editor vocabulary, fal_g in
+      !! Raccoon's.  "none" anchors it on the land use's own table CN
+      i_mid = 0
+      if (trim (mid_nm) /= "none") then
+        do icno = 1, imax
+          if (trim (cn(icno)%name) == trim (mid_nm)) i_mid = icno
+        end do
+        if (i_mid == 0 .and. trim (mid_nm) == "fal_res_g") then
+          do icno = 1, imax
+            if (trim (cn(icno)%name) == "fal_g") i_mid = icno
+          end do
+        end if
+      end if
+      select case (cn_curve)
+      case (2)
+        if (i_mid == 0 .and. trim (mid_nm) /= "none") then
+          write (*,*)    "ERROR: cn_cover.prm mid_row ", trim (mid_nm), " is not in cntable.lum"
+          write (9001,*) "ERROR: cn_cover.prm mid_row ", trim (mid_nm), " is not in cntable.lum"
+          error stop
+        end if
+        if (i_hi == 0) then
+          write (*,*)    "ERROR: cn_cover.prm hi_row ", trim (hi_nm), " is not in cntable.lum"
+          write (9001,*) "ERROR: cn_cover.prm hi_row ", trim (hi_nm), " is not in cntable.lum"
+          error stop
+        end if
+      end select
+
       call cn_cover_read
+
+      !! per-HRU runoff split by frozen soil, written at the end of the run -
+      !! the quantity curve 2 is tuned to hold equal to the static run
+      call open_output_file (cn_sum_unit, "cn_cover_sum.out", 800)
+      write (cn_sum_unit,*) "cn_cover_sum.out: cn_curve", cn_curve, " lo_pct", lo_pct,   &
+                            " d_mid", d_mid, " hi_row ", trim (hi_nm),           &
+                            " mid_row ", trim (mid_nm), " frz_hold", frz_hold
+      write (cn_sum_unit,1002)
 
       !! daily audit file - only at cn = 2.  one line per participating HRU per
       !! day, so it is not something to leave on for a production run.
@@ -309,6 +387,8 @@
               6x,"c_tot",5x,"cn2_cov",6x,"cn2_off",7x,"cn2")
 1001  format (6x," ",5x," ",6x," ",5x,"kg/ha",6x,"kg/ha",5x,"frac",7x,"frac",          &
               7x,"frac",8x,"none",9x,"none",8x,"none")
+
+1002  format (4x,"unit",2x,"wide",8x,"area_ha",6x,"cn_tbl",7x,"cn_hi",6x,"cn_mid",8x,"q_unf",8x,"q_frz")
 
       !! free the scaffolding.  cn_trt was needed only to give each distinct
       !! treatment token a stable index during pass 1; from here on the model
