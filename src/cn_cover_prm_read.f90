@@ -2,17 +2,18 @@
 
 !!    ~ ~ ~ PURPOSE ~ ~ ~
 !!    read the optional curve-shape file cn_cover.prm.  absent, every value
-!!    keeps the default set where it is declared in cn_cover_module, which is
-!!    curve 1 - the v1 method - so existing datasets are unaffected.
+!!    keeps the default set where it is declared in cn_cover_module (the cover
+!!    curve, cn_curve 2).  the file exists to override those defaults - for
+!!    calibration, or to run the static baseline (cn_curve 3) for comparison.
 !!
 !!    ~ ~ ~ FILE FORMAT ~ ~ ~
-!!    title line, header line, one data row, all six fields required:
+!!    title line, header line, one data row, all seven fields required:
 !!
-!!      cn_curve  lo_pct  d_mid  hi_row     mid_row    frz_hold
-!!             2    0.12    0.0  fal_res_p  fal_res_g         1
+!!      cn_curve  lo_pct  d_mid  hi_row     mid_row    frz_hold  off_ref
+!!             2   0.057    0.0  fal_res_p  fal_res_g         1        2
 !!
 !!    ~ ~ ~ OUTGOING (cn_cover_module) ~ ~ ~
-!!    cn_curve, lo_pct, d_mid, hi_nm, mid_nm, frz_hold
+!!    cn_curve, lo_pct, d_mid, hi_nm, mid_nm, frz_hold, off_ref
 
       use cn_cover_module
 
@@ -49,10 +50,10 @@
       !! read from the line, not the unit, so a short row is an error instead
       !! of running on into the next record
       ios = 1
-      if (eof == 0) read (line,*,iostat=ios) cn_curve, lo_pct, d_mid, hi_nm, mid_nm, frz_hold
+      if (eof == 0) read (line,*,iostat=ios) cn_curve, lo_pct, d_mid, hi_nm, mid_nm, frz_hold, off_ref
       if (ios /= 0) then
-        write (*,*)    "ERROR: ", prm_file, " data row is not <cn_curve> <lo_pct> <d_mid> <hi_row> <mid_row> <frz_hold>"
-        write (9001,*) "ERROR: ", prm_file, " data row is not <cn_curve> <lo_pct> <d_mid> <hi_row> <mid_row> <frz_hold>"
+        write (*,*)    "ERROR: ", prm_file, " data row is not <cn_curve> <lo_pct> <d_mid> <hi_row> <mid_row> <frz_hold> <off_ref>"
+        write (9001,*) "ERROR: ", prm_file, " data row is not <cn_curve> <lo_pct> <d_mid> <hi_row> <mid_row> <frz_hold> <off_ref>"
         error stop
       end if
 
@@ -65,6 +66,15 @@
         error stop
       end select
 
+      select case (off_ref)
+      case (1, 2)
+        continue
+      case default
+        write (*,*)    "ERROR: ", prm_file, " off_ref must be 1 or 2; got ", off_ref
+        write (9001,*) "ERROR: ", prm_file, " off_ref must be 1 or 2; got ", off_ref
+        error stop
+      end select
+
       if (lo_pct < 0. .or. lo_pct >= 1.) then
         write (*,*)    "ERROR: ", prm_file, " needs 0 <= lo_pct < 1"
         write (9001,*) "ERROR: ", prm_file, " needs 0 <= lo_pct < 1"
@@ -72,7 +82,7 @@
       end if
 
       write (9001,*) "cn_cover.prm: cn_curve", cn_curve, " lo_pct", lo_pct,  &
-                     " d_mid", d_mid, " hi_row ", trim (hi_nm), " mid_row ", trim (mid_nm), " frz_hold", frz_hold
+                     " d_mid", d_mid, " hi_row ", trim (hi_nm), " mid_row ", trim (mid_nm), " frz_hold", frz_hold, " off_ref", off_ref
 
       return
       end subroutine cn_cover_prm_read

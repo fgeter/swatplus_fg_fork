@@ -63,21 +63,26 @@
       real :: cov_good = 0.750      !frac    |at or above this cover the row is "Good"
 
 !!    ~ ~ ~ CURVE SHAPE (optional cn_cover.prm, read by cn_cover_prm_read) ~ ~ ~
-!!    curve 1 is the v1 method: cn2 moves between the poor and good rows of the
-!!    plant's family.  curve 2 treats the land use's own cntable.lum value as the
-!!    AVERAGE over the simulation (NEH 630 ch9: each row is the median CN of a
-!!    management system's annual-flood storms, not the state of the surface on a
-!!    given day) and lets cover swing cn2 over a wider range around it, in two
-!!    legs:
+!!    the land use's own cntable.lum value is treated as the AVERAGE over the
+!!    simulation (NEH 630 ch9: each row is the median CN of a management system's
+!!    annual-flood storms, not the state of the surface on a given day), and
+!!    cover swings cn2 over a wider range around it, in two legs:
 !!
 !!      x_tot = c_tot / c_sat, x_bio = c_bio / c_sat, both capped at 1
 !!      cn2 = cn_hi + x_tot * (cn_mid - cn_hi) + x_bio * (cn_lo - cn_mid)
 !!
-!!      cn_hi  = fallow-poor row + the treatment's offset from straight row (bare)
-!!      cn_mid = fallow-good-residue row + the same treatment offset + d_mid
+!!      cn_hi  = fallow-poor row + treatment offset              (bare)
+!!      cn_mid = fallow-good-residue row + treatment offset + d_mid
 !!                                        (full cover, but no canopy: residue only)
 !!               or, with mid_row "none", table CN + d_mid
 !!      cn_lo  = table CN * (1 - lo_pct) (full cover AND full canopy)
+!!      treatment offset = table CN - the family's NON-residue straight row of the
+!!               same condition (off_ref 2).  the fallow rows exist only for
+!!               straight row, so a contoured, terraced or crop-residue row keeps
+!!               its table advantage at both anchors.  measuring a _cr row against
+!!               the _cr straight row instead (off_ref 1) drops its residue credit
+!!               at the anchors while simulated residue cover credits it again -
+!!               residue counted twice; kept only for comparison.
 !!
 !!    any cover - residue or canopy - moves cn2 from the high end to the middle;
 !!    only living canopy carries it on to the low end.  residue alone reaches
@@ -86,14 +91,18 @@
 !!    because c_bio <= c_tot, so the curve is monotone in cover.
 !!
 !!    with both ends of the residue leg anchored in cntable.lum, lo_pct is the
-!!    handle tuned so that unfrozen-day surface runoff matches the static run;
-!!    d_mid is left at 0.  curve 3 holds every HRU at its table CN - the same cn2 as
-!!    cn = 0 - so the static run carries the same runoff tally (cn_cover_sum.out).
-!!    under curve 2, HRUs without a straight-row equivalent (pasture, woods,
-!!    urban, fallow) are held at their table CN as well.
-      integer :: cn_curve = 1       !none    |1 condition rows, 2 wide curve, 3 flat at table CN
-      real :: lo_pct = 0.12         !frac    |full-cover reduction off the table CN.  Rawls max ~10-12.5%;
-                                    !        |0.12 chosen on full Raccoon: outlet flow -0.1% vs static
+!!    one fitted value: chosen so annual outlet flow matches the static curve
+!!    number on a calibrated watershed.  d_mid is left at 0.  HRUs whose row has
+!!    no straight-row equivalent (pasture, woods, urban, fallow) are held at
+!!    their table CN.  cn_curve 3 holds every HRU at its table CN - the same cn2
+!!    as cn = 0 - so a static baseline carries the same runoff tally
+!!    (cn_cover_sum.out).  cn_curve 1 is the original v1 method (cn2 between the
+!!    poor and good rows of the plant's family), kept for comparison.
+      integer :: cn_curve = 2       !none    |1 condition rows (the original v1 method), 2 the cover
+                                    !        |curve described above, 3 flat at table CN
+      real :: lo_pct = 0.057        !frac    |full-cover reduction off the table CN.  fitted on the
+                                    !        |calibrated full Raccoon run (off_ref 2): annual outlet
+                                    !        |flow -0.01% vs the static curve number
       real :: d_mid = 0.            !none    |middle point offset from its anchor
       character(len=40) :: hi_nm = "fal_res_p" !none |cntable.lum row for the bare, high end
       integer :: frz_hold = 1       !none    |1 holds curve 2 at the table CN on frozen days: smx
@@ -105,6 +114,14 @@
       integer :: i_mid = 0          !none    |cn(:) row of mid_nm, 0 = table CN
       integer, dimension(:), allocatable :: trt_sr  !none |(trt) -> straight-row treatment with the
                                     !        |same residue status, 0 if none - cn_cover_init
+      integer, dimension(:), allocatable :: trt_sr0 !none |(trt) -> straight-row treatment WITHOUT
+                                    !        |residue credit (strow / sr), 0 if none - cn_cover_init
+      integer :: off_ref = 2        !none    |treatment offset measured against: 1 the straight
+                                    !        |row of the same residue status (the offset is the
+                                    !        |contouring alone); 2 the non-residue straight row
+                                    !        |(a _cr row also keeps its table residue credit at
+                                    !        |both anchors, so curve 2 does not credit residue
+                                    !        |twice - once in the table, once as simulated cover)
 
 !!    ~ ~ ~ PARSED cntable.lum ROW KEYS ~ ~ ~
 !!    every row name decomposes as <family>[_<treatment>][_<condition>], e.g.

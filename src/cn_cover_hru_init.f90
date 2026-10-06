@@ -105,7 +105,12 @@
           if (icn >= 1 .and. allocated (cn_key)) icond = cn_key(icn)%cond
           iref = 0
           if (ifam >= 1 .and. itrt >= 1 .and. icond >= cn_cond_poor .and. i_hi >= 1) then
-            if (trt_sr(itrt) >= 1) iref = cn_row(ifam,trt_sr(itrt),icond)
+            select case (off_ref)
+            case (1)
+              if (trt_sr(itrt) >= 1) iref = cn_row(ifam,trt_sr(itrt),icond)
+            case (2)
+              if (trt_sr0(itrt) >= 1) iref = cn_row(ifam,trt_sr0(itrt),icond)
+            end select
           end if
           if (iref >= 1) then
             cn_cov_hru(j)%wide = .true.

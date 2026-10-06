@@ -41,6 +41,7 @@
 !!                        back from an index; cn_cover_update tests it for "sg"
 !!      cn_key      LIVE  cn_cover_hru_init reads %fam and %trt, and %cond under curve 2
 !!      trt_sr      LIVE  cn_cover_hru_init, curve 2's straight-row reference
+!!      trt_sr0     LIVE  cn_cover_hru_init, the same without residue credit (off_ref = 2)
 !!      cn_trt      SCAFFOLDING - deallocated below; trt_sr is built from it first
 !!
 !!    cn_key%cond is read only by curve 2's straight-row lookup.
@@ -306,7 +307,9 @@
       !! the offset is the contouring alone.  both cntable.lum vocabularies:
       !! the SWAT+ editor's strow/strowres and Raccoon's sr/sr_cr
       allocate (trt_sr(0:n_trt))
+      allocate (trt_sr0(0:n_trt))
       trt_sr = 0
+      trt_sr0 = 0
       do itrt = 1, n_trt
         if (index (cn_trt(itrt), "res") > 0 .or. index (cn_trt(itrt), "cr") > 0) then
           sr_cand = (/ "strowres        ", "sr_cr           ", "cr_sr           " /)
@@ -322,6 +325,13 @@
             end if
           end do
           if (trt_sr(itrt) > 0) exit
+        end do
+        !! the non-residue straight row, for off_ref = 2
+        do jtrt = 1, n_trt
+          if (cn_trt(jtrt) == "strow" .or. cn_trt(jtrt) == "sr") then
+            trt_sr0(itrt) = jtrt
+            exit
+          end if
         end do
       end do
 
@@ -370,7 +380,8 @@
       call open_output_file (cn_sum_unit, "cn_cover_sum.out", 800)
       write (cn_sum_unit,*) "cn_cover_sum.out: cn_curve", cn_curve, " lo_pct", lo_pct,   &
                             " d_mid", d_mid, " hi_row ", trim (hi_nm),           &
-                            " mid_row ", trim (mid_nm), " frz_hold", frz_hold
+                            " mid_row ", trim (mid_nm), " frz_hold", frz_hold,     &
+                            " off_ref", off_ref
       write (cn_sum_unit,1002)
 
       !! daily audit file - only at cn = 2.  one line per participating HRU per
