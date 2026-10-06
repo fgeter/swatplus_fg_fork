@@ -2260,6 +2260,7 @@ surface
 ├── <a href="#ero_pkq">ero_pkq</a>                             this subroutine computes the peak runoff rate for each HRU
 ├── <a href="#ero_ysed">ero_ysed</a>                            this subroutine predicts daily soil loss caused by water erosion
 ├── [if bsn_cc%cn is 1 or 2]  <a href="#cn_cover_update">cn_cover_update</a>   re-seat cn2 from residue and near-surface biomass
+├── [if bsn_cc%cn is 1 or 2]  <a href="#cn_cover_tally">cn_cover_tally</a>    add the day's surface runoff to the frozen / unfrozen totals
 ├── <a href="#sq_dailycn">sq_dailycn</a>                          Calculates curve number for the day in the HRU
 ├── [if surfq > 0 and bsn_cc%crk == 1]  <a href="#sq_crackflow">sq_crackflow</a>   route <a href="#surface">surface</a> runoff into soil cracks
 └── <a href="#sq_volq">sq_volq</a>                             Call subroutines to calculate the current day"s CN for the HRU and
@@ -2498,7 +2499,8 @@ plant_init
 
 ## cn_cover_init
 
-parse cntable.lum into (family, treatment, hydrologic condition) and read plants.cov
+parse cntable.lum into (family, treatment, hydrologic condition), read cn_cover.prm and
+plants.cov, build the straight-row reference maps and resolve the curve's anchor rows
 
 **Called from:** [`proc_db`](#proc_db)
 
@@ -2509,8 +2511,29 @@ Source: `cn_cover_init.f90`
 <pre>
 cn_cover_init
 ├── cn_name_split                       (cn_cover_module) rc_strow_p -> (rc, strow, poor)
+├── tok_register                        (cn_cover_module) family / treatment dictionaries
+├── <a href="#cn_cover_prm_read">cn_cover_prm_read</a>                    optional cn_cover.prm overrides of the curve settings
 ├── <a href="#cn_cover_read">cn_cover_read</a>                        read plants.cov into pl_cov, indexed like pldb
+├── open_output_file                    cn_cover_sum.out
 └── open_output_file                    [if cn == 2] cn_cover.out
+</pre>
+
+---
+
+## cn_cover_prm_read
+
+read the optional cn_cover.prm (cn_curve, lo_pct, d_mid, hi_row, mid_row, frz_hold, off_ref)
+
+**Called from:** [`cn_cover_init`](#cn_cover_init)
+
+Absent file: every setting keeps its `cn_cover_module` default (the cover curve, `cn_curve` 2).
+A short or malformed row, `cn_curve` outside 1-3, `off_ref` outside 1-2 or `lo_pct` outside
+[0, 1) is an error stop. The values in effect are echoed to `diagnostics.out`.
+
+Source: `cn_cover_prm_read.f90`
+
+<pre>
+cn_cover_prm_read
 </pre>
 
 ---
@@ -2535,14 +2558,18 @@ cn_cover_read
 
 ## cn_cover_hru_init
 
-cache one hru's family, treatment, hydrologic soil group and offset ledger
+cache one hru's family, treatment, hydrologic soil group, table CN, curve anchors and offset ledger
 
 **Called from:** [`cn2_init`](#cn2_init)
 
 Runs once per hru at startup and again on every `lu_change` d-table action, because
-both paths go through [`cn2_init`](#cn2_init). The hru takes part only if its own
-cntable.lum row has both a poor and a good variant - that is what holds urban,
-farmstead, meadow, the roads and bare fallow static.
+both paths go through [`cn2_init`](#cn2_init). Under the default cover curve every hru
+with a cntable.lum row is re-seated daily; it follows the curve (`wide`) only if its row
+has a hydrologic condition and a non-residue straight-row reference in its family (row
+crops, small grains, legumes), and otherwise stays at its table value. `cn_hi` and
+`cn_mid` are the fallow-poor and fallow-good-residue rows plus the treatment offset.
+Under `cn_curve` 1 the old rule applies: the row needs both a poor and a good variant.
+The runoff tally is not reset, so it spans land use changes.
 
 Source: `cn_cover_hru_init.f90`
 
@@ -2562,7 +2589,11 @@ re-select cn2 from surface cover for one hru, once per day
 Runs immediately before [`sq_dailycn`](#sq_dailycn) and ends in [`curno`](#curno), so
 `smx` and `wrt` are rebuilt from today's cn2 before the soil-water curve number is
 taken off them. The four stages are residue cover, near-surface living biomass,
-combined cover, and interpolation between the family's hydrologic-condition rows.
+combined cover, and `cn2` from the cover curve (`cn_wide`): fallow-poor anchor at zero
+cover, fallow-good-residue anchor at full residue cover, table CN x (1 - `lo_pct`) at
+full cover under a full canopy. Frozen days (soil layer 2 <= 0 C) are held at the table
+value when `frz_hold` = 1. `cn_curve` 3 holds every hru at its table value; `cn_curve` 1
+interpolates between the family's hydrologic-condition rows (`cn_from_cover`).
 Whatever else moved cn2 since yesterday - `calibration.cal`, the `cnup` operation,
 the `cn_update` d-table action, `pl_burnop` - is carried forward as an accumulated
 offset rather than overwritten.
@@ -2571,8 +2602,28 @@ Source: `cn_cover_update.f90`
 
 <pre>
 cn_cover_update
-├── cn_from_cover                       (cn_cover_module) interpolate between poor/fair/good rows
+├── cn_wide                             (cn_cover_module) [cn_curve 2] cn2 on the cover curve
+├── cn_from_cover                       (cn_cover_module) [cn_curve 1] interpolate between poor/fair/good rows
 └── <a href="#curno">curno</a>                               rebuild smx and wrt from the new cn2
+</pre>
+
+---
+
+## cn_cover_tally
+
+add one hru's surface runoff for the day to its frozen or unfrozen total
+
+**Called from:** [`surface`](#surface)
+
+Runs once `surfq` is final, irrigation runoff included. Frozen uses the same test as
+[`sq_dailycn`](#sq_dailycn): soil layer 2 at or below 0 C. On the last day of the
+simulation each hru writes its line to `cn_cover_sum.out` (area, table CN, anchors,
+unfrozen and frozen runoff); hrus that never call [`surface`](#surface) are absent.
+
+Source: `cn_cover_tally.f90`
+
+<pre>
+cn_cover_tally
 </pre>
 
 ---
