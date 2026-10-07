@@ -86,13 +86,14 @@
 !!               at the anchors while simulated residue cover credits it again -
 !!               residue counted twice; kept only for comparison.
 !!
-!!    any cover - residue or canopy - moves cn2 from the high end to the middle;
-!!    only living canopy carries it on to the low end.  residue alone reaches
+!!    cover leg (x_tot): any cover - residue or canopy - moves cn2 from the high
+!!    end to the middle.  canopy leg (x_bio): only living canopy carries it on to
+!!    the low end, and lo_pct sets only that end.  residue alone reaches
 !!    the cover cap for about half of all days, so without the canopy gate the
 !!    low end was the typical state rather than the extreme.  x_bio <= x_tot
 !!    because c_bio <= c_tot, so the curve is monotone in cover.
 !!
-!!    with both ends of the residue leg anchored in cntable.lum, lo_pct is the
+!!    with both ends of the cover leg anchored in cntable.lum, lo_pct is the
 !!    one fitted value: chosen so annual outlet flow matches the static curve
 !!    number on a calibrated watershed.  d_mid is left at 0.  HRUs whose row has
 !!    no straight-row equivalent (pasture, woods, urban, fallow) are held at
@@ -109,7 +110,7 @@
       character(len=40) :: hi_nm = "fal_res_p" !none |cntable.lum row for the bare, high end
       integer :: frz_hold = 1       !none    |1 holds curve 2 at the table CN on frozen days: smx
                                     !        |still scales sq_dailycn's frozen branch, so without
-                                    !        |this winter cn2 sits on the residue leg, above the
+                                    !        |this winter cn2 sits on the cover leg, above the
                                     !        |table, and frozen-day runoff rises (+30% on Raccoon)
       integer :: i_hi = 0           !none    |cn(:) row of hi_nm
       character(len=40) :: mid_nm = "fal_res_g" !none |cntable.lum row anchoring the middle point,

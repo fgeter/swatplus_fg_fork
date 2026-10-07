@@ -66,9 +66,38 @@ cn_lo  = CN(table) * (1 - lo_pct)                     full cover under a full ca
 offset = CN(table) - CN(non-residue straight row of the same family and condition)
 ```
 
-* **Residue leg (high → middle).** Any cover, residue or canopy, moves `cn2` from the bare value
-  toward the middle point. Residue alone goes no further than the middle.
-* **Canopy leg (middle → low).** Only living canopy carries `cn2` on to the low end.
+* **Cover leg (high → middle), driven by `x_tot`.** Every kind of cover counts: residue, living
+  canopy, or both together. As combined cover rises to `c_min`, `cn2` falls from the bare value to
+  the middle point. Both ends of this leg are table rows, so `lo_pct` has no effect on it. A field
+  whose cover is all residue stops at the middle point, however thick the residue.
+* **Canopy leg (middle → low), driven by `x_bio`.** Only living canopy carries `cn2` below the
+  middle point. The end of this leg, `cn_lo`, is the one point `lo_pct` sets.
+
+A growing canopy moves `cn2` down both legs at once, because its cover counts in `x_tot` and again
+in `x_bio`. Residue moves `cn2` only down the cover leg. So `lo_pct` controls the extra drop that
+only living canopy can give. It has no say over how residue, or the first part of any cover,
+moves the curve number.
+
+#### What `lo_pct` changes
+
+`rc_sr_g` on HSG B (table 78, offset 0). Each `cn2` column is one cover state, given as
+(`x_tot`, `x_bio`):
+
+| `lo_pct` | `cn_hi` | `cn_mid` | `cn_lo` | bare (0, 0) | full residue, no canopy (1, 0) | half cover, all canopy (0.5, 0.5) | full residue, half canopy (1, 0.5) | full residue, full canopy (1, 1) |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 85 | 83 | 78.0 | 85 | 83 | 81.5 | 80.5 | 78.0 |
+| **0.057** (default) | 85 | 83 | 73.6 | 85 | 83 | 79.3 | 78.3 | 73.6 |
+| 0.10 | 85 | 83 | 70.2 | 85 | 83 | 77.6 | 76.6 | 70.2 |
+
+* **Only `cn_lo` moves.** `cn_hi` and `cn_mid` are the same in every row, so bare and residue-only
+  days do not see `lo_pct` at all.
+* **With canopy present, the effect scales with `x_bio`.** Each 0.01 of `lo_pct` lowers `cn_lo` by
+  0.78 points on this row (1% of the table CN) and `cn2` by 0.78 × `x_bio`.
+* **Frozen days are untouched too:** `frz_hold` sets `cn2` to the table value.
+* **At `lo_pct` = 0, a full canopy brings `cn2` only back to the table value.** The cover leg sits
+  above the table (83–85 against 78), and fields spend much of the year on it, so the year would
+  average above the table and run off more than the calibrated static model. `lo_pct` sets how far
+  below the table the canopy months go, so that annual outlet flow balances.
 
 Without the canopy requirement, residue alone saturates the cover index for about half of all
 days, and the low end becomes the typical state instead of the extreme.
@@ -126,7 +155,7 @@ crops, legumes. Every other HRU is held at its table value every day:
 On frozen soil (layer 2 at or below 0 °C), `sq_dailycn` switches to its frozen-soil branch. It
 cuts retention to `smx * (1 - exp(-cn_froz * r2))`, so the curve number actually applied is high
 (about 93 at Ames against about 70 on unfrozen fall days), but it still starts from `smx` and
-therefore from `cn2`. Over winter a crop field sits on the residue leg, above the table value.
+therefore from `cn2`. Over winter a crop field sits on the cover leg, above the table value.
 Without a guard, frozen-day runoff on full Raccoon rises 30%, and January–March outlet flow rises
 24–27%. The cover evidence comes from unfrozen storms, and `lo_pct` cannot correct a winter excess.
 With `frz_hold = 1` (the default), `cn2` is held at the table value on every day `sq_dailycn`
@@ -168,14 +197,15 @@ daily `hru_wb` output, then compare `cn2` in `cn_cover.out` with `cn` in `hru_wb
 ### Choosing `lo_pct`
 
 The high and middle points come from the table; `lo_pct` is the only fitted value. It is chosen
-so that annual outlet flow on a calibrated watershed matches the static curve number. The default,
+so that annual outlet flow on a calibrated watershed matches the static curve number. What it does
+to `cn2` is shown in the example table under "What `lo_pct` changes". The default,
 **0.057**, was fitted on the calibrated full Raccoon dataset (7949 HRUs, 1997–2006).
 
 **`lo_pct` is not the Rawls et al. (1980) residue effect.** Rawls measured the percent change in CN
 from residue against storms on the *same crop and season* with no residue. Canopy was present on
 both sides of that comparison, so it cancels. His ~10% (natural rain) / 12.5% (simulated) is a
-residue-leg quantity. It is in fact larger than the residue leg here (the fallow rows put full
-residue about 2.3% below bare). `lo_pct` instead sets the full-canopy CN against the table
+measure of residue's effect on the cover leg (bare → full residue). It is in fact larger than this
+curve's (the fallow rows put full residue about 2.3% below bare). `lo_pct` instead sets the full-canopy CN against the table
 *average*, a quantity the paper does not measure.
 
 Use one `lo_pct` per basin. Only outlet flow constrains it, and fitting it per land use against
@@ -203,7 +233,7 @@ The volume barely changes; the timing does:
 
 Runoff moves from the canopy months into the seedbed and post-harvest months, carrying more
 sediment and, after spring fertiliser, more nitrate. `lo_pct` acts mainly on July–October; May,
-June and December are set by the residue leg.
+June and December are set by the cover leg.
 
 **Known limitation:** curve-following HRUs on HSG B gain about 10% unfrozen-day runoff and those on
 HSG C about 0%. The fallow-good-residue row sits 5 points above row crops on B (83 vs 78) but 3 on
