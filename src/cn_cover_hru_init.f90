@@ -29,6 +29,8 @@
       use soil_module, only : sol
       use landuse_data_module, only : lum_str, cn
       use hydrograph_module, only : sp_ob
+      use plant_module, only : pcom
+      use time_module, only : time
       use cn_cover_module
 
       implicit none
@@ -41,6 +43,7 @@
       integer :: itrt = 0                   !none  |treatment index of that row
       integer :: icond = 0                  !none  |hydrologic condition of that row
       integer :: iref = 0                   !none  |cntable.lum row of the straight-row equivalent
+      integer :: npl = 0                    !none  |plants in the community
 
       select case (bsn_cc%cn)
       case (0)
@@ -123,6 +126,43 @@
               cn_cov_hru(j)%cn_mid = cn_cov_hru(j)%cn_tbl
             end if
           end if
+
+          !! per-crop family.  the land-use row is decomposed into layout,
+          !! residue and condition, which every crop's row then shares; the
+          !! anchors start as the land-use row's and hold until a crop is
+          !! planted.  a land use changed mid-run starts its clocks again
+          cn_cov_hru(j)%icn = icn
+          cn_cov_hru(j)%b_tbl = cn_cov_hru(j)%cn_tbl
+          cn_cov_hru(j)%b_hi = cn_cov_hru(j)%cn_hi
+          cn_cov_hru(j)%b_mid = cn_cov_hru(j)%cn_mid
+          cn_cov_hru(j)%lay = 0
+          cn_cov_hru(j)%res = 0
+          cn_cov_hru(j)%cond = icond
+          select case (crop_fam)
+          case (1)
+            if (cn_cov_hru(j)%wide) then
+              cn_cov_hru(j)%lay = trt_lay(itrt)
+              cn_cov_hru(j)%res = trt_res(itrt)
+              if (cn_cov_hru(j)%lay < 1 .and. .not. crop_noted(icn,0)) then
+                crop_noted(icn,0) = .true.
+                write (9001,*) "NOTE: cn_cover crop_fam: land use cn row ", trim (cn(icn)%name),     &
+                  " has a treatment outside the editor vocabulary; its crops use this row"
+              end if
+              npl = pcom(j)%npl
+              if (allocated (cn_cov_hru(j)%seen)) deallocate (cn_cov_hru(j)%seen)
+              if (allocated (cn_cov_hru(j)%gro_prev)) deallocate (cn_cov_hru(j)%gro_prev)
+              if (allocated (cn_cov_hru(j)%yr_p)) deallocate (cn_cov_hru(j)%yr_p)
+              if (allocated (cn_cov_hru(j)%day_p)) deallocate (cn_cov_hru(j)%day_p)
+              allocate (cn_cov_hru(j)%seen(npl))
+              allocate (cn_cov_hru(j)%gro_prev(npl))
+              allocate (cn_cov_hru(j)%yr_p(npl))
+              allocate (cn_cov_hru(j)%day_p(npl))
+              cn_cov_hru(j)%seen = .false.
+              cn_cov_hru(j)%gro_prev = .false.
+              cn_cov_hru(j)%yr_p = time%yrc
+              cn_cov_hru(j)%day_p = time%day
+            end if
+          end select
         end select
       end select
 

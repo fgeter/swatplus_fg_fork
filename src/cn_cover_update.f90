@@ -47,6 +47,8 @@
       use organic_mineral_mass_module, only : pl_mass
       use time_module, only : time
       use soil_module, only : soil
+      use landuse_data_module, only : cn
+      use plant_data_module, only : pldb
       use utils, only : exp_w
       use cn_cover_module
 
@@ -74,6 +76,23 @@
       real :: w_sum = 0.                    !kg/ha  |sum of the weights
       real :: w = 0.                        !kg/ha  |this plant's weight
       real :: cn_new = 0.                   !none   |cn2 handed to curno
+      real :: cn_t = 0.                     !none   |curve 2 table CN in effect today
+      real :: cn_h = 0.                     !none   |curve 2 high end in effect today
+      real :: cn_a = 0.                     !none   |curve 2 middle point in effect today
+      logical :: gro = .false.              !none   |plant growing today
+      logical :: ok = .false.               !none   |crop has a row of its own
+      logical :: nores = .false.            !none   |crop's row is used without its residue treatment
+      integer :: iage = 0                   !yr     |whole years since the stand clock started
+      integer :: nhit = 0                   !none   |plants contributing to the blend
+      real :: t_c = 0.                      !none   |one crop's table CN
+      real :: h_c = 0.                      !none   |one crop's high end
+      real :: m_c = 0.                      !none   |one crop's middle point
+      real :: t_1 = 0.                      !none   |first contributing crop's table CN
+      real :: h_1 = 0.                      !none   |first contributing crop's high end
+      real :: m_1 = 0.                      !none   |first contributing crop's middle point
+      real :: d_t = 0.                      !none   |weighted departures from the first crop
+      real :: d_h = 0.                      !none   |
+      real :: d_m = 0.                      !none   |
 
       if (.not. allocated (cn_cov_hru)) return
       if (.not. cn_cov_hru(j)%active) return
@@ -121,6 +140,9 @@
       if (c_tot < 0.) c_tot = 0.
       if (c_tot > 1.) c_tot = 1.
 
+      !! table CN in effect today, for the audit file; curve 2 may replace it
+      cn_t = cn_cov_hru(j)%cn_tbl
+
       select case (cn_curve)
       case (1)
         !! -- stage 4: condition index and interpolation -------------------
@@ -167,14 +189,89 @@
       case (2)
         !! -- stage 4, curve 2: the table value is the period average and
         !! cover swings cn2 around it - see CURVE SHAPE in cn_cover_module
+        cn_t = cn_cov_hru(j)%cn_tbl
+        cn_h = cn_cov_hru(j)%cn_hi
+        cn_a = cn_cov_hru(j)%cn_mid
+
+        select case (crop_fam)
+        case (1)
+          !! per-crop family - see PER-CROP FAMILY in cn_cover_module.  blend
+          !! the anchors of every plant planted this run, weighted by living
+          !! biomass plus surface residue.  departures from the first plant are
+          !! summed so a field of one family gets its anchors back exactly
+          if (cn_cov_hru(j)%wide .and. cn_cov_hru(j)%lay >= 1 .and. allocated (cn_cov_hru(j)%seen)) then
+            nhit = 0
+            w_sum = 0.
+            d_t = 0.
+            d_h = 0.
+            d_m = 0.
+            do ipl = 1, pcom(j)%npl
+              gro = pcom(j)%plcur(ipl)%gro == "y"
+              if (gro .neqv. cn_cov_hru(j)%gro_prev(ipl)) then
+                !! planted, or killed: either starts the stand clock again
+                if (gro) cn_cov_hru(j)%seen(ipl) = .true.
+                cn_cov_hru(j)%yr_p(ipl) = time%yrc
+                cn_cov_hru(j)%day_p(ipl) = time%day
+                cn_cov_hru(j)%gro_prev(ipl) = gro
+              end if
+              if (.not. cn_cov_hru(j)%seen(ipl)) cycle
+              w = pl_mass(j)%ab_gr(ipl)%m + pl_mass(j)%abg_rsd(ipl)%m
+              if (w <= 1.e-6) cycle
+
+              iage = time%yrc - cn_cov_hru(j)%yr_p(ipl)
+              if (time%day < cn_cov_hru(j)%day_p(ipl)) iage = iage - 1
+              idp = pcom(j)%plcur(ipl)%idplt
+              call crop_anchor (j, idp, iage, t_c, h_c, m_c, ok, nores)
+              !! each fallback once per land-use row and plant
+              if ((nores .or. .not. ok) .and. idp >= 1 .and. idp <= ubound (crop_noted, 2)) then
+                if (pl_cov(idp)%fam >= 1 .and. .not. crop_noted(cn_cov_hru(j)%icn,idp)) then
+                  crop_noted(cn_cov_hru(j)%icn,idp) = .true.
+                  if (ok) then
+                    write (9001,*) "NOTE: cn_cover crop_fam: ", trim (cn_fam(pl_cov(idp)%fam)),       &
+                      " has no residue row; on land use cn row ", trim (cn(cn_cov_hru(j)%icn)%name),   &
+                      " plant ", trim (pldb(idp)%plantnm), " uses the row without residue"
+                  else
+                    write (9001,*) "NOTE: cn_cover crop_fam: ", trim (cn_fam(pl_cov(idp)%fam)),       &
+                      " has no row for the layout and condition of land use cn row ",                  &
+                      trim (cn(cn_cov_hru(j)%icn)%name), "; plant ", trim (pldb(idp)%plantnm),         &
+                      " uses the land-use row"
+                  end if
+                end if
+              end if
+
+              nhit = nhit + 1
+              if (nhit == 1) then
+                t_1 = t_c
+                h_1 = h_c
+                m_1 = m_c
+              end if
+              w_sum = w_sum + w
+              d_t = d_t + w * (t_c - t_1)
+              d_h = d_h + w * (h_c - h_1)
+              d_m = d_m + w * (m_c - m_1)
+            end do
+
+            !! nothing with weight today (before the first planting, or all
+            !! residue gone) - hold the anchors already in effect
+            if (w_sum > 1.e-6) then
+              cn_cov_hru(j)%b_tbl = t_1 + d_t / w_sum
+              cn_cov_hru(j)%b_hi = h_1 + d_h / w_sum
+              cn_cov_hru(j)%b_mid = m_1 + d_m / w_sum
+            end if
+            cn_t = cn_cov_hru(j)%b_tbl
+            cn_h = cn_cov_hru(j)%b_hi
+            cn_a = cn_cov_hru(j)%b_mid
+          end if
+        end select
+
         if (cn_cov_hru(j)%wide) then
-          cn_new = cn_wide (cn_cov_hru(j)%cn_tbl, cn_cov_hru(j)%cn_hi, cn_cov_hru(j)%cn_mid,  &
-                            c_tot, c_bio)
+          cn_new = cn_wide (cn_t, cn_h, cn_a, c_tot, c_bio)
         else
           cn_new = cn_cov_hru(j)%cn_tbl
         end if
-        !! same frozen test as sq_dailycn
-        if (frz_hold == 1 .and. soil(j)%phys(2)%tmp <= 0.) cn_new = cn_cov_hru(j)%cn_tbl
+        !! same frozen test as sq_dailycn.  with crop_fam 1 the hold is the
+        !! current crop's table CN
+        if (frz_hold == 1 .and. soil(j)%phys(2)%tmp <= 0.) cn_new = cn_t
 
       case (3)
         !! -- stage 4, curve 3: static, the baseline curve 2 is matched to
@@ -212,10 +309,10 @@
       select case (bsn_cc%cn)
       case (2)
         write (cn_cov_unit,1000) time%day, time%yrc, j, rsd, bio_ns, c_rsd, c_bio, c_tot,  &
-                                 cn_cov_hru(j)%cn_sel, cn_cov_hru(j)%off, cn2(j)
+                                 cn_cov_hru(j)%cn_sel, cn_cov_hru(j)%off, cn2(j), cn_t
       end select
 
-1000  format (i6,i6,i7,2f11.2,3f11.4,3f11.3)
+1000  format (i6,i6,i7,2f11.2,3f11.4,4f11.3)
 
       return
       end subroutine cn_cover_update

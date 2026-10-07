@@ -8,9 +8,18 @@
 !!    subset of plants.plt is fine):
 !!
 !!      plants.cov: <provenance line>
-!!      name        cn_family   k_rsd
-!!      corn        rc          0.
-!!      wwht        sg          6.64e-4
+!!      name   cn_family  k_rsd    mature_row  res   cond
+!!      corn   rc         0.       null        null  null
+!!      wwht   sg         6.64e-4  null        y     null
+!!      fesc   legr       0.       pasth       null  null
+!!
+!!    the last three columns are used only at cn_curve 2 with crop_fam 1:
+!!      mature_row  cntable.lum row a stand of this plant ages toward (grass in
+!!                  a rotation: legr in its planting year, pasth when mature);
+!!                  null = the plant does not age
+!!      res         y / n: this crop is (not) residue-managed, whatever the
+!!                  land-use row says; null = inherit the land-use row's
+!!      cond        p / g: this crop's hydrologic condition; null = inherit
 !!
 !!    every column carries a value on every row - there are no optional columns
 !!    and no short rows.  k_rsd = 0. means "use the family default", which is
@@ -21,7 +30,7 @@
 !!    cn_cover_init actually found in cntable.lum, so a typo stops the run on
 !!    day one instead of silently leaving a plant static.
 !!
-!!    trailing text after the third field is ignored, as in every other SWAT+
+!!    trailing text after the sixth field is ignored, as in every other SWAT+
 !!    input file: the list-directed read stops once its io-list is satisfied.
 !!
 !!    called from cn_cover_init, which has already rejected bsn_cc%cn values
@@ -31,7 +40,8 @@
 !!
 !!    ~ ~ ~ WHAT THIS SUBROUTINE PRODUCES ~ ~ ~
 !!
-!!    One array: pl_cov, holding (family index, k_rsd) for each plant.
+!!    One array: pl_cov, holding (family index, k_rsd, mature row, residue and
+!!    condition overrides) for each plant.
 !!
 !!    It is indexed like pldb, NOT like the file, and that is the whole point.
 !!    The daily routine can then ask
@@ -54,6 +64,7 @@
 
       use maximum_data_module, only : db_mx
       use plant_data_module, only : pldb
+      use landuse_data_module, only : cn
       use cn_cover_module
       use utils, only : to_lower
 
@@ -66,6 +77,13 @@
       character(len=250) :: line = ""       !      |one raw record
       character(len=40) :: nm = ""          !      |plant name from the file
       character(len=16) :: fam = ""         !      |family token from the file
+      character(len=40) :: mat = ""         !      |mature_row from the file
+      character(len=16) :: rtok = ""        !      |res from the file
+      character(len=16) :: ctok = ""        !      |cond from the file
+      integer :: imat = 0                   !none  |cn(:) row of mature_row
+      integer :: ires = 0                   !none  |residue override
+      integer :: icond = 0                  !none  |condition override
+      logical :: bad = .false.              !none  |a token failed to resolve
       integer :: eof = 0                    !none  |end of file / read status
       integer :: ios = 0                    !none  |internal read status
       integer :: ic = 0                     !none  |pldb counter
@@ -133,10 +151,52 @@
         !! read straight off the unit would run on into the next record to
         !! satisfy the missing item and silently consume the following plant
         kk = 0.
-        read (line,*,iostat=ios) nm, fam, kk
+        read (line,*,iostat=ios) nm, fam, kk, mat, rtok, ctok
         if (ios /= 0) then
-          write (*,*)    "ERROR: ", cov_file, " row ", irow, " is not <name> <cn_family> <k_rsd>: ", trim(line)
-          write (9001,*) "ERROR: ", cov_file, " row ", irow, " is not <name> <cn_family> <k_rsd>: ", trim(line)
+          write (*,*)    "ERROR: ", cov_file, " row ", irow,  &
+                         " is not <name> <cn_family> <k_rsd> <mature_row> <res> <cond>: ", trim(line)
+          write (9001,*) "ERROR: ", cov_file, " row ", irow,  &
+                         " is not <name> <cn_family> <k_rsd> <mature_row> <res> <cond>: ", trim(line)
+          error stop
+        end if
+
+        !! the three per-crop columns.  null inherits; anything else must resolve
+        bad = .false.
+        imat = 0
+        if (trim(to_lower(mat)) /= "null") then
+          do ic = 1, db_mx%cn_lu
+            if (trim(cn(ic)%name) == trim(mat)) then
+              imat = ic
+              exit
+            end if
+          end do
+          if (imat == 0) bad = .true.
+        end if
+        select case (trim(to_lower(rtok)))
+        case ("null")
+          ires = -1
+        case ("y")
+          ires = 1
+        case ("n")
+          ires = 0
+        case default
+          bad = .true.
+        end select
+        select case (trim(to_lower(ctok)))
+        case ("null")
+          icond = cn_cond_none
+        case ("p")
+          icond = cn_cond_poor
+        case ("g")
+          icond = cn_cond_good
+        case default
+          bad = .true.
+        end select
+        if (bad) then
+          write (*,*)    "ERROR: ", cov_file, " plant ", trim(nm), ": mature_row must be null or a ",  &
+                         "cntable.lum row, res null/y/n, cond null/p/g: ", trim(line)
+          write (9001,*) "ERROR: ", cov_file, " plant ", trim(nm), ": mature_row must be null or a ",  &
+                         "cntable.lum row, res null/y/n, cond null/p/g: ", trim(line)
           error stop
         end if
 
@@ -181,6 +241,9 @@
         !! after this.
         pl_cov(ipl)%fam = ifam
         pl_cov(ipl)%k_rsd = kk
+        pl_cov(ipl)%i_mat = imat
+        pl_cov(ipl)%res = ires
+        pl_cov(ipl)%cond = icond
       end do
 
       close (107)

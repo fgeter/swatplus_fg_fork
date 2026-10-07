@@ -335,6 +335,36 @@
         end do
       end do
 
+      !! layout x residue for the per-crop family (crop_fam = 1).  only the
+      !! SWAT+ editor vocabulary is decoded: it is the standard cntable.lum, and
+      !! a treatment left at layout 0 makes every crop fall back to the land-use
+      !! row (design note, "Vocabulary")
+      allocate (trt_lay(0:n_trt))
+      allocate (trt_res(0:n_trt))
+      trt_lay = 0
+      trt_res = 0
+      trt_of = 0
+      do itrt = 1, n_trt
+        select case (trim (cn_trt(itrt)))
+        case ("strow")
+          trt_lay(itrt) = 1
+        case ("strowres")
+          trt_lay(itrt) = 1
+          trt_res(itrt) = 1
+        case ("cont")
+          trt_lay(itrt) = 2
+        case ("contres")
+          trt_lay(itrt) = 2
+          trt_res(itrt) = 1
+        case ("contter")
+          trt_lay(itrt) = 3
+        case ("conterres")
+          trt_lay(itrt) = 3
+          trt_res(itrt) = 1
+        end select
+        if (trt_lay(itrt) >= 1) trt_of(trt_lay(itrt),trt_res(itrt)) = itrt
+      end do
+
       !! curve 2's high end.  the default fal_res_p is the editor's name; the
       !! Raccoon vocabulary calls the same row fal_p
       i_hi = 0
@@ -375,13 +405,18 @@
 
       call cn_cover_read
 
+      !! one note per (land-use row, plant) when a crop falls back
+      allocate (crop_noted(0:imax,0:db_mx%plantparm))
+      crop_noted = .false.
+
       !! per-HRU runoff split by frozen soil, written at the end of the run -
       !! the quantity curve 2 is tuned to hold equal to the static run
       call open_output_file (cn_sum_unit, "cn_cover_sum.out", 800)
       write (cn_sum_unit,*) "cn_cover_sum.out: cn_curve", cn_curve, " lo_pct", lo_pct,   &
                             " d_mid", d_mid, " hi_row ", trim (hi_nm),           &
                             " mid_row ", trim (mid_nm), " frz_hold", frz_hold,     &
-                            " off_ref", off_ref
+                            " off_ref", off_ref, " crop_fam", crop_fam, " age_yrs", age_yrs, &
+                            " till_reset", till_reset
       write (cn_sum_unit,1002)
 
       !! daily audit file - only at cn = 2.  one line per participating HRU per
@@ -395,9 +430,9 @@
       end select
 
 1000  format (2x,"jday",4x,"yr",3x,"unit",8x,"rsd",5x,"bio_ns",6x,"c_rsd",6x,"c_bio",  &
-              6x,"c_tot",5x,"cn2_cov",6x,"cn2_off",7x,"cn2")
+              6x,"c_tot",5x,"cn2_cov",6x,"cn2_off",7x,"cn2",4x,"cn_table")
 1001  format (6x," ",5x," ",6x," ",5x,"kg/ha",6x,"kg/ha",5x,"frac",7x,"frac",          &
-              7x,"frac",8x,"none",9x,"none",8x,"none")
+              7x,"frac",8x,"none",9x,"none",8x,"none",8x,"none")
 
 1002  format (4x,"unit",2x,"wide",8x,"area_ha",6x,"cn_tbl",7x,"cn_hi",6x,"cn_mid",8x,"q_unf",8x,"q_frz")
 

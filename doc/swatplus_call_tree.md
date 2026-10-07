@@ -643,8 +643,10 @@ mgt_sched(isched)
     │   ├── [if bsn_cc%cswat == 1]  <a href="#mgt_newtillmix_cswat1">mgt_newtillmix_cswat1</a>(j, 0., idtill)
     │   │     mixes CENTURY pool masses between layers; sets tillage_switch=1,
     │   │     tillage_days=0 → till_eff=1.6 in <a href="#cbn_zhang2">cbn_zhang2</a> for till_eff_days
-    │   └── [if bsn_cc%cswat == 0]  <a href="#mgt_newtillmix_cswat0">mgt_newtillmix_cswat0</a>(j, 0., idtill)
-    │         mixes residue and humus variables between layers
+    │   ├── [if bsn_cc%cswat == 0]  <a href="#mgt_newtillmix_cswat0">mgt_newtillmix_cswat0</a>(j, 0., idtill)
+    │   │     mixes residue and humus variables between layers
+    │   └── cn_cover_till(j, idtill)   restart grass stand ages if effmix >= till_reset
+    │         (no-op unless cn_curve 2 with crop_fam 1)
     │
     ├── case "irrm" ── date-scheduled irrigation ─────────────────────────────
     │   └── [no subroutine called]
@@ -2592,7 +2594,11 @@ taken off them. The four stages are residue cover, near-surface living biomass,
 combined cover, and `cn2` from the cover curve (`cn_wide`): fallow-poor anchor at zero
 cover, fallow-good-residue anchor at full residue cover, table CN x (1 - `lo_pct`) at
 full cover under a full canopy. Frozen days (soil layer 2 <= 0 C) are held at the table
-value when `frz_hold` = 1. `cn_curve` 3 holds every hru at its table value; `cn_curve` 1
+value when `frz_hold` = 1. With `crop_fam` 1 the anchors follow each crop's own
+`cntable.lum` family (the land-use row supplies layout, and residue and condition unless
+`plants.cov` overrides them), blended across the plants planted so far by living biomass
+plus surface residue, with grass stands aging toward their `mature_row`
+(`crop_anchor`). `cn_curve` 3 holds every hru at its table value; `cn_curve` 1
 interpolates between the family's hydrologic-condition rows (`cn_from_cover`).
 Whatever else moved cn2 since yesterday - `calibration.cal`, the `cnup` operation,
 the `cn_update` d-table action, `pl_burnop` - is carried forward as an accumulated
@@ -2602,6 +2608,7 @@ Source: `cn_cover_update.f90`
 
 <pre>
 cn_cover_update
+├── crop_anchor                         (cn_cover_module) [cn_curve 2, crop_fam 1] one crop's anchors
 ├── cn_wide                             (cn_cover_module) [cn_curve 2] cn2 on the cover curve
 ├── cn_from_cover                       (cn_cover_module) [cn_curve 1] interpolate between poor/fair/good rows
 └── <a href="#curno">curno</a>                               rebuild smx and wrt from the new cn2

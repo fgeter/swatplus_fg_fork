@@ -25,6 +25,7 @@
 !!      proc_db   -> cn_cover_init      parse cntable.lum, read plants.cov
 !!      cn2_init  -> cn_cover_hru_init  cache the HRU row set (also on lu_change)
 !!      surface   -> cn_cover_update    daily re-seat of cn2, then curno
+!!      mgt_sched, actions -> cn_cover_till   restart stand ages after tillage
 !!
 !!    design note: tmp/CN_cover_design.md (section numbers are cited below).
 
@@ -127,6 +128,43 @@
                                     !        |both anchors, so curve 2 does not credit residue
                                     !        |twice - once in the table, once as simulated cover)
 
+!!    ~ ~ ~ PER-CROP FAMILY (curve 2, crop_fam = 1) ~ ~ ~
+!!    NRCS rows describe one crop grown continuously, so in a rotation the
+!!    anchors follow the crop on the field rather than the land use.  the
+!!    land-use row supplies the layout (straight row / contoured / contoured +
+!!    terraced), and the residue treatment and condition unless plants.cov
+!!    overrides them; the crop supplies the family:
+!!
+!!      crop row = cn_row (crop family, trt_of (layout, residue), condition)
+!!      T        = crop row's CN, aged toward mature_row for perennial grass:
+!!                 T = t0 + f * (CN(mature_row) - ref), f = min (stand age,
+!!                 age_yrs) / age_yrs, so a mature stand keeps the layout's
+!!                 advantage over straight row (contoured legr 69 -> pasth 58 - 3)
+!!      cn_hi    = fallow-poor + (T - ref),  cn_mid = fallow-good + (T - ref)
+!!      cn_lo    = T * (1 - lo_pct)
+!!
+!!    ref is the crop family's straight row (off_ref as above).  each plant
+!!    that has been planted this run contributes its anchors weighted by its
+!!    living above-ground biomass plus its surface residue; tillage has already
+!!    removed effmix of that residue, so heavy tillage hands the field to the
+!!    next crop sooner.  before the first planting, and on a day with no weight
+!!    at all, the anchors hold: the land-use row's, then yesterday's.  a missing
+!!    crop row (res y in a family without residue rows retries res n) or a
+!!    treatment outside the SWAT+ editor vocabulary falls back to the land-use
+!!    row's anchors, noted once in diagnostics.out.  stand age is whole years
+!!    since planting; a kill or a tillage pass with effmix >= till_reset starts
+!!    it again.  design note: tmp/cn_cover/rotation_design.md.
+      integer :: crop_fam = 0       !none    |0 every crop uses the land-use row (as before);
+                                    !        |1 anchors follow each crop's own family
+      integer :: age_yrs = 3        !yr      |years for a grass stand to reach its mature row
+      real :: till_reset = 0.3      !frac    |tillage effmix at or above which stand age restarts
+      integer, dimension(:), allocatable :: trt_lay  !none |(trt) -> layout: 1 straight row,
+                                    !        |2 contoured, 3 contoured + terraced, 0 unknown
+      integer, dimension(:), allocatable :: trt_res  !none |(trt) -> 1 residue treatment, else 0
+      integer :: trt_of(3,0:1) = 0  !none    |(layout, residue) -> treatment index, 0 if absent
+      logical, dimension(:,:), allocatable :: crop_noted !none |(land-use row, plant) fallback
+                                    !        |already written to diagnostics.out
+
 !!    ~ ~ ~ PARSED cntable.lum ROW KEYS ~ ~ ~
 !!    every row name decomposes as <family>[_<treatment>][_<condition>], e.g.
 !!    rc_strow_p -> (rc, strow, poor), pastg_g -> (pastg, "", good),
@@ -153,6 +191,11 @@
         integer :: fam = 0                     !none  |index into cn_fam, 0 = plant not listed
         real :: k_rsd = 0.                     !ha/kg |residue cover coefficient from plants.cov;
                                                !      |0. means use the family default
+        integer :: i_mat = 0                   !none  |cn(:) row a stand of this plant matures
+                                               !      |toward (mature_row), 0 = does not age
+        integer :: res = -1                    !none  |residue treatment override: 1 y, 0 n,
+                                               !      |-1 inherit from the land-use row
+        integer :: cond = cn_cond_none         !none  |condition override, cn_cond_none = inherit
       end type plant_cover
       type (plant_cover), dimension(:), allocatable :: pl_cov  !indexed like pldb
 
@@ -174,6 +217,18 @@
         real :: cn_mid = 0.          !none  |curve 2 middle point before d_mid
         real :: q_unf = 0.           !mm    |surface runoff summed over unfrozen days
         real :: q_frz = 0.           !mm    |surface runoff summed over frozen days
+        !! crop_fam = 1 only
+        integer :: icn = 0           !none  |cntable.lum row of the land use
+        integer :: lay = 0           !none  |layout of the land-use row's treatment
+        integer :: res = 0           !none  |residue treatment of the land-use row
+        integer :: cond = 0          !none  |condition of the land-use row
+        real :: b_tbl = 0.           !none  |blended table CN, held when nothing has weight
+        real :: b_hi = 0.            !none  |blended high end
+        real :: b_mid = 0.           !none  |blended middle point before d_mid
+        logical, dimension(:), allocatable :: seen     !none |(ipl) planted this run
+        logical, dimension(:), allocatable :: gro_prev !none |(ipl) growing yesterday
+        integer, dimension(:), allocatable :: yr_p     !none |(ipl) year the stand clock started
+        integer, dimension(:), allocatable :: day_p    !none |(ipl) julian day it started
       end type cn_cover_state
       type (cn_cover_state), dimension(:), allocatable :: cn_cov_hru
 
@@ -439,5 +494,110 @@
 
       return
       end function cn_wide
+
+!!    ---------------------------------------------------------------------
+      function cn_row_lay (ifam, lay, ires, icond) result (irow)
+!!    cntable.lum row for a family, layout, residue treatment and condition;
+!!    0 if the table has no such row
+
+      implicit none
+
+      integer, intent (in) :: ifam             !none  |family index
+      integer, intent (in) :: lay              !none  |layout, 1-3
+      integer, intent (in) :: ires             !none  |residue treatment, 0 or 1
+      integer, intent (in) :: icond            !none  |cn_cond_poor or cn_cond_good
+      integer :: irow                          !none  |cn(:) row, 0 if absent
+
+      integer :: itrt = 0                      !none  |treatment index
+
+      irow = 0
+      if (ifam < 1 .or. ifam > n_fam) return
+      if (lay < 1 .or. lay > 3 .or. ires < 0 .or. ires > 1) return
+      if (icond < cn_cond_poor .or. icond > cn_cond_good) return
+      itrt = trt_of(lay,ires)
+      if (itrt < 1) return
+      irow = cn_row(ifam,itrt,icond)
+
+      return
+      end function cn_row_lay
+
+!!    ---------------------------------------------------------------------
+      subroutine crop_anchor (j, idp, iage, tbl, c_hi, c_mid, ok, nores)
+!!    curve 2 anchors for one crop on HRU j - see PER-CROP FAMILY above.
+!!    ok = .false. means the crop has no row of its own and the caller uses
+!!    the land-use row's anchors.  nores = .true. means the residue treatment
+!!    was asked for but the family has none, so the row without it was used.
+
+      implicit none
+
+      integer, intent (in) :: j                !none  |HRU number
+      integer, intent (in) :: idp              !none  |plant number in plants.plt
+      integer, intent (in) :: iage             !yr    |whole years since the stand started
+      real, intent (out) :: tbl                !none  |table CN, aged if the plant matures
+      real, intent (out) :: c_hi               !none  |high end
+      real, intent (out) :: c_mid              !none  |middle point before d_mid
+      logical, intent (out) :: ok              !none  |.true. if the crop's own row was found
+      logical, intent (out) :: nores           !none  |.true. if the residue treatment was dropped
+
+      integer :: ifam = 0                      !none  |crop family
+      integer :: ires = 0                      !none  |residue treatment used
+      integer :: icond = 0                     !none  |condition used
+      integer :: icr = 0                       !none  |cn(:) row of the crop
+      integer :: iref = 0                      !none  |cn(:) row of the family's straight row
+      integer :: ih = 0                        !none  |hydrologic soil group subscript
+      real :: t0 = 0.                          !none  |crop row's CN
+      real :: rf = 0.                          !none  |straight row's CN
+      real :: f = 0.                           !frac  |fraction of the way to the mature row
+
+      ok = .false.
+      nores = .false.
+      tbl = cn_cov_hru(j)%cn_tbl
+      c_hi = cn_cov_hru(j)%cn_hi
+      c_mid = cn_cov_hru(j)%cn_mid
+      if (idp < 1 .or. .not. allocated (pl_cov)) return
+      ifam = pl_cov(idp)%fam
+      if (ifam < 1) return
+
+      ires = cn_cov_hru(j)%res
+      if (pl_cov(idp)%res >= 0) ires = pl_cov(idp)%res
+      icond = cn_cov_hru(j)%cond
+      if (pl_cov(idp)%cond /= cn_cond_none) icond = pl_cov(idp)%cond
+
+      !! a family without residue rows (legumes) keeps the layout without it
+      icr = cn_row_lay (ifam, cn_cov_hru(j)%lay, ires, icond)
+      if (icr == 0 .and. ires == 1) then
+        ires = 0
+        icr = cn_row_lay (ifam, cn_cov_hru(j)%lay, ires, icond)
+        nores = icr > 0
+      end if
+      select case (off_ref)
+      case (1)
+        iref = cn_row_lay (ifam, 1, ires, icond)
+      case (2)
+        iref = cn_row_lay (ifam, 1, 0, icond)
+      end select
+      if (icr == 0 .or. iref == 0) return
+
+      ih = cn_cov_hru(j)%hyd
+      t0 = cn(icr)%cn(ih)
+      rf = cn(iref)%cn(ih)
+      tbl = t0
+      if (pl_cov(idp)%i_mat >= 1 .and. age_yrs >= 1) then
+        f = real (min (max (iage, 0), age_yrs)) / real (age_yrs)
+        tbl = t0 + f * (cn(pl_cov(idp)%i_mat)%cn(ih) - rf)
+      end if
+
+      !! same grouping as cn_cover_hru_init, so a crop of the land use's own
+      !! row gives bit-identical anchors
+      c_hi = cn(i_hi)%cn(ih) + (tbl - rf)
+      if (i_mid >= 1) then
+        c_mid = cn(i_mid)%cn(ih) + (tbl - rf)
+      else
+        c_mid = tbl
+      end if
+      ok = .true.
+
+      return
+      end subroutine crop_anchor
 
       end module cn_cover_module

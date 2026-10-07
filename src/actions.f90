@@ -32,7 +32,7 @@
 
       implicit none
       
-      external :: cn2_init, cs_fert, curno, hru_fr_change, hru_lum_init, mgt_harvbiomass, mgt_harvgrain, &
+      external :: cn2_init, cn_cover_till, cs_fert, curno, hru_fr_change, hru_lum_init, mgt_harvbiomass, mgt_harvgrain, &
                   mgt_harvresidue, mgt_harvtuber, mgt_killop, mgt_newtillmix, mgt_newtillmix_wet, &
                   mgt_transplant, pest_apply, pl_burnop, pl_fert, pl_fert_wet, pl_graze, pl_manure, &
                   plant_init, salt_fert, structure_set_parms, wet_initial, chg_par, mgt_newtillmix_cswat1, &
@@ -417,6 +417,8 @@
               else
                 call mgt_newtillmix_cswat0(j, 0., idtill)
               endif
+              !! a sod-breaking pass restarts a grass stand's age (cn_cover, crop_fam 1)
+              call cn_cover_till (j, idtill)
             
               if (pco%mgtout == "y") then
                 write (2612, *) j, time%yrc, time%mo, time%day_mo, tilldb(idtill)%tillnm, "    TILLAGE",    &
