@@ -62,6 +62,8 @@
       real :: gx = 0.        !mm        |lowest depth in layer from which nitrogen
                              !          |may be removed
       real :: wuse = 0.      !mm H2O    |water uptake by plants in each soil layer
+      real :: reduc = 0.     !none      |fraction of potential uptake a layer allows by its water
+                             !          |content (1 at or above 25% of available water)
       real :: satco = 0.     !          | 
       real :: scparm = 0.    !          |  
       real :: reduc_salt = 0.                                                !rtb salt
@@ -125,12 +127,19 @@
             sum = epmax(ipl) * (1. - Exp(-uptake%water_dis * gx / pcom(j)%plg(ipl)%root_dep)) / uptake%water_norm
           end if
 
-          !! let second layer compensate - 10 mm layer causes problems when root depth is shallow
-          if (k == 2) then
-            wuse = sum      !epco is always 1.0 for second layer
-          else
-            wuse = sum - sump * (1. - pcom(j)%plcur(ipl)%epco)
+          !! compensate for epco x the demand the layers above failed to supply
+          !! (SWAT2012 swu.f); sum_wusep is the uptake already taken above
+          wuse = sum - sump + (sump - sum_wusep) * pcom(j)%plcur(ipl)%epco
+
+          !! reduce uptake as the layer dries below 25% of its available water
+          !! (SWAT2012 swu.f): 1 at 25% of available water, 0.0067 at wilting point
+          reduc = 1.
+          if (soil(j)%phys(k)%fc > 1.e-6) then
+            if (soil(j)%phys(k)%st < 0.25 * soil(j)%phys(k)%fc) then
+              reduc = Exp (5. * (4. * Max (0., soil(j)%phys(k)%st) / soil(j)%phys(k)%fc - 1.))
+            end if
           end if
+          wuse = wuse * reduc
           
           ! adjust for impervious area
           ulu = hru(j)%luse%urb_lu
