@@ -373,7 +373,7 @@
               prf_swc = 0.0
               prf_depth = 0.0
               do ly = 1, soil(j)%nly
-                prf_swc = prf_swc + soil(j)%phys(ly)%tot_sw
+                prf_swc = prf_swc + soil(j)%phys(ly)%tot_sw * soil(j)%phys(ly)%thick   ! mm/mm -> mm
                 prf_depth = prf_depth + soil(j)%phys(ly)%thick
               enddo
               prf_swc = prf_swc / prf_depth
