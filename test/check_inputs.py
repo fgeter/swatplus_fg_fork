@@ -86,7 +86,7 @@ ASSUMPTIONS / SCOPE (read this before trusting a clean report)
 VERSION-ADAPTIVE, ALWAYS
 ------------------------
 Every run re-derives the whole schema (derived types, read statements, expected column
-counts) from whatever `src/` it's pointed at (`--repo`, default `.`) -- there is no cached
+counts) from whatever `src/` it's pointed at (`--repo`, default: this script's repo) -- no cached
 or pinned schema. Point it at a different checkout/branch/commit and it reflects that
 source automatically. Each run prints `[src] deriving schema from <path> @ <git describe>`
 so you always know which version of the model the expected types came from.
@@ -203,14 +203,13 @@ OTHER CHECKS (source- and dataset-level, beyond per-field types)
 
 USAGE
 -----
-Every path this script touches -- `src/*.f90`, `input_file_module.f90`, `file.cio`, the
-dataset directory itself -- is resolved relative to `--repo` (default: `.`, the current
-directory), NOT relative to where this script file lives. There is no requirement to run
-it from `test/`, or from the repo root either, as long as `--repo` points at the repo:
+The source files (`src/*.f90`, `input_file_module.f90`) are found under `--repo`, which
+defaults to the repo this script lives in (the parent of its `test/` directory), so it
+works from any current directory. The dataset directory is an ordinary path, resolved
+relative to the current directory (or give it absolute):
 
-    cd swatplus_fg_fork && test/check_inputs.py <dataset_dir>       # --repo defaults to
-                                                                     # "." = the repo root
-    test/check_inputs.py --repo /path/to/swatplus_fg_fork <dataset_dir>   # run from anywhere
+    test/check_inputs.py <dataset_dir>                  # src/ from this script's repo
+    test/check_inputs.py --repo /path/to/other_checkout <dataset_dir>   # another checkout's src/
     test/check_inputs.py <dataset_dir> --file parameters.bsn   # check just one file
     test/check_inputs.py <dataset_dir> -v         # also show skipped/unresolved routines
     test/check_inputs.py <dataset_dir> --int_to_float   # also list REAL columns whose data
@@ -226,7 +225,7 @@ every check that doesn't need a real dataset on disk (currently: unit-number reu
 without a `close()`) -- it just skips every check that needs actual input-file data to
 compare against:
 
-    test/check_inputs.py                       # index mode against --repo="." (the repo root)
+    test/check_inputs.py                       # index mode against this script's repo
     test/check_inputs.py --repo /path/to/swatplus_fg_fork    # index mode against another checkout
 
 OUTPUT AND EXIT CODE
@@ -2079,6 +2078,11 @@ def check_name_references(dataset_dir, src_files, types, module_vars, type_defau
     return findings
 
 
+# The repo this script belongs to: it lives in <repo>/test/, so the parent of its own
+# directory. Default for --repo, so the script finds src/ from any current directory.
+DEFAULT_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Cross-check SWAT+ input-file data against what the Fortran source's "
@@ -2089,7 +2093,9 @@ def main():
     ap.add_argument("dataset_dir", nargs="?", default=None,
                      help="dataset directory to check (e.g. workdata/Clayton). "
                           "Omit to just build and summarize the source-derived schema index.")
-    ap.add_argument("--repo", default=".", help="path to the swatplus repo root (default: .)")
+    ap.add_argument("--repo", default=DEFAULT_REPO,
+                     help="path to the swatplus repo root whose src/ defines the expected "
+                          "input schema (default: the repo this script lives in, %(default)s)")
     ap.add_argument("--file", default=None, help="only check this one input filename")
     ap.add_argument("-v", "--verbose", action="store_true",
                      help="also list subroutines/files the tool could not resolve or skipped")
