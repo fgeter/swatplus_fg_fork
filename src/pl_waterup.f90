@@ -64,6 +64,10 @@
       real :: wuse = 0.      !mm H2O    |water uptake by plants in each soil layer
       real :: satco = 0.     !          | 
       real :: scparm = 0.    !          |  
+      real :: rz_sw = 0.     !mm H2O    |soil water in the root zone
+      real :: rz_fc = 0.     !mm H2O    |field capacity water of the root zone
+      real :: rz_ul = 0.     !mm H2O    |saturated water of the root zone
+      real :: frac = 0.      !none      |fraction of soil layer k inside the root zone
       real :: reduc_salt = 0.                                                !rtb salt
       real :: reduc_salt_min = 0.                                            !rtb salt
       real :: sw_decrease = 0.                                               !rtb salt
@@ -78,9 +82,29 @@
       j = ihru
       idp = pcom(j)%plcur(ipl)%idplt
        
-      !! compute aeration stress
-      if (soil(j)%sw > soil(j)%sumfc) then
-        satco = (soil(j)%sw - soil(j)%sumfc) / (soil(j)%sumul - soil(j)%sumfc)
+      !! compute aeration stress from the water in the root zone (not the whole profile)
+      !! the layer that holds the root tip counts in proportion to the rooted thickness;
+      !! layer 1 always counts, so a plant with no roots yet sees the surface layer
+      rz_sw = 0.
+      rz_fc = 0.
+      rz_ul = 0.
+      do k = 1, soil(j)%nly
+        if (k == 1) then
+          frac = 1.
+        else if (soil(j)%phys(k)%thick > 1.e-6) then
+          frac = (pcom(j)%plg(ipl)%root_dep - soil(j)%phys(k-1)%d) / soil(j)%phys(k)%thick
+          frac = Max (0., Min (1., frac))
+        else
+          frac = 0.
+        end if
+        if (frac <= 0.) exit
+        rz_sw = rz_sw + frac * soil(j)%phys(k)%st
+        rz_fc = rz_fc + frac * soil(j)%phys(k)%fc
+        rz_ul = rz_ul + frac * soil(j)%phys(k)%ul
+        if (frac < 1.) exit
+      end do
+      if (rz_sw > rz_fc .and. rz_ul - rz_fc > 1.e-6) then
+        satco = (rz_sw - rz_fc) / (rz_ul - rz_fc)
         scparm = 100. * (satco - pldb(idp)%aeration) / (1.0001 - pldb(idp)%aeration)
         if (scparm > 0.) then
           pcom(j)%plstr(ipl)%strsa = 1. - (scparm / (scparm + Exp(2.9014 - .03867 * scparm)))
