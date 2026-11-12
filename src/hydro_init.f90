@@ -123,8 +123,12 @@
         end if
       end do
 
-!!    set maximum depth in soil to maximum rooting depth of plant
-      soil(j)%zmx = soil(j)%phys(nly)%d
+!!    keep the root-restricting depth from soils.sol (dp_tot) when it lies inside the
+!!    profile; when it is missing, zero or deeper than the profile use the profile bottom.
+!!    roots are capped at the lesser of this and the plant's rt_dp_max (pl_root_gro).
+      if (soil(j)%zmx <= 0. .or. soil(j)%zmx > soil(j)%phys(nly)%d) then
+        soil(j)%zmx = soil(j)%phys(nly)%d
+      end if
       
 !!    compute lateral flow travel time
         if (hru(j)%hyd%lat_ttime <= 0.) then
