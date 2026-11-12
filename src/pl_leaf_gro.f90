@@ -138,8 +138,10 @@
             end if
             
             if (pcom(j)%plg(ipl)%lai > laimax) pcom(j)%plg(ipl)%lai = laimax
-            !! only apply water stress to lai            
-            deltalai = ff * laimax * (1.0 - Exp(5.0 * (pcom(j)%plg(ipl)%lai - laimax))) * Sqrt(pcom(j)%plstr(ipl)%strsw)
+            !! apply the most limiting stress to lai, as SWAT2012 grow.f did (Sqrt(reg)).
+            !! reg is set by pl_biomass_gro earlier on the same day (phuacc <= 1 there,
+            !! phuacc < dlai here) as min of water, temperature, n, p, aeration and salt stress.
+            deltalai = ff * laimax * (1.0 - Exp(5.0 * (pcom(j)%plg(ipl)%lai - laimax))) * Sqrt(pcom(j)%plstr(ipl)%reg)
             !! adjust lai increment for plant competition
             sumlaiht = 0.
             do jpl = 1, pcom(j)%npl
