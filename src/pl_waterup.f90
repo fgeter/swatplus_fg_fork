@@ -68,6 +68,12 @@
       real :: rz_fc = 0.     !mm H2O    |field capacity water of the root zone
       real :: rz_ul = 0.     !mm H2O    |saturated water of the root zone
       real :: frac = 0.      !none      |fraction of soil layer k inside the root zone
+      real :: rz_tmp = 0.    !deg C*mm  |thickness-weighted soil temperature of the root zone
+      real :: rz_thk = 0.    !mm        |root zone thickness used for rz_tmp
+      real :: t_rz = 0.      !deg C     |root-zone soil temperature
+      real :: tfac = 0.      !none      |fraction of the aeration stress applied (0-1)
+      real, parameter :: aer_t50 = 10.  !deg C |root-zone soil temp at which half the aeration stress applies
+      real, parameter :: aer_w = 2.     !deg C |width of the logistic temperature response
       real :: reduc_salt = 0.                                                !rtb salt
       real :: reduc_salt_min = 0.                                            !rtb salt
       real :: sw_decrease = 0.                                               !rtb salt
@@ -88,6 +94,8 @@
       rz_sw = 0.
       rz_fc = 0.
       rz_ul = 0.
+      rz_tmp = 0.
+      rz_thk = 0.
       do k = 1, soil(j)%nly
         if (k == 1) then
           frac = 1.
@@ -101,6 +109,8 @@
         rz_sw = rz_sw + frac * soil(j)%phys(k)%st
         rz_fc = rz_fc + frac * soil(j)%phys(k)%fc
         rz_ul = rz_ul + frac * soil(j)%phys(k)%ul
+        rz_tmp = rz_tmp + frac * soil(j)%phys(k)%thick * soil(j)%phys(k)%tmp
+        rz_thk = rz_thk + frac * soil(j)%phys(k)%thick
         if (frac < 1.) exit
       end do
       if (rz_sw > rz_fc .and. rz_ul - rz_fc > 1.e-6) then
@@ -108,6 +118,21 @@
         scparm = 100. * (satco - pldb(idp)%aeration) / (1.0001 - pldb(idp)%aeration)
         if (scparm > 0.) then
           pcom(j)%plstr(ipl)%strsa = 1. - (scparm / (scparm + Exp(2.9014 - .03867 * scparm)))
+          !! scale aeration stress by root-zone soil temperature: oxygen demand of roots and
+          !! soil microbes falls in cold soil, so waterlogging does little harm then.
+          !! logistic in temperature, half strength at aer_t50; none at or below 0 C.
+          !! aer_t50 and aer_w are first estimates (Goodwater Creek Field 1 winter wheat)
+          !! to be refined with more cold-annual crop data.
+          tfac = 1.
+          if (rz_thk > 1.e-6) then
+            t_rz = rz_tmp / rz_thk
+            if (t_rz <= 0.) then
+              tfac = 0.
+            else
+              tfac = 1. - 1. / (1. + Exp((t_rz - aer_t50) / aer_w))
+            end if
+          end if
+          pcom(j)%plstr(ipl)%strsa = 1. - tfac * (1. - pcom(j)%plstr(ipl)%strsa)
         else
           pcom(j)%plstr(ipl)%strsa = 1.
         end if
