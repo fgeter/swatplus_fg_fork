@@ -165,8 +165,8 @@
             end do
             pcom(j)%plcur(ipl)%phumat = .95 * phutot
           else if (pldb(idp)%days_mat < 2.e-6) then
-            ! if negative assume heat units to maturity
-            pcom(j)%plcur(ipl)%phumat = -pcom(j)%plcur(ipl)%phumat
+            ! if negative assume heat units to maturity (-days_mat, deg C days)
+            pcom(j)%plcur(ipl)%phumat = -Real(pldb(idp)%days_mat)
           else
             ! if positive assume days to maturity
             ! calculate planting day for summer annuals
