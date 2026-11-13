@@ -25,6 +25,11 @@
       iwst = ob(iob)%wst
       iwgn = wst(iwst)%wco%wgn
 
+      !! EXPERIMENT: cold annual dormancy is set daily in hru_control from air
+      !! temperature and frozen surface soil, not from day length. heat units are
+      !! never reset.
+      if (pldb(idp)%typ == "cold_annual") return
+
       !! check for beginning of dormant season
       if (pcom(j)%plcur(ipl)%idorm == "n" .and. wst(iwst)%weat%daylength - dormhr(j) < wgn_pms(iwgn)%daylmn) then
 

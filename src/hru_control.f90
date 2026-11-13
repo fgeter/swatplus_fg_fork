@@ -67,6 +67,8 @@
       integer :: id = 0             !              |
       integer :: jj = 0             !              |
       integer :: ly = 0             !none          |soil layer
+      real :: dep_top = 0.          !mm            |depth to bottom of previous soil layer (cold annual dormancy test)
+      logical :: top_frozen = .false.  !         |a soil layer starting above 50 mm is frozen
       integer :: ipest = 0          !none          |sequential pesticide number
       real :: strsa_av = 0.         !              |
       integer :: icn = 0            !              |
@@ -415,6 +417,29 @@
         if (sep(isep)%opt /= 0. .and. time%yrc >= sep(isep)%yr) then
           if (soil(j)%phys(i_sep(j))%tmp > 0.) call sep_biozone     
         endif
+
+        !! EXPERIMENT: a cold annual is dormant (no heat units, growth, nutrient
+        !! or water uptake) on any day the mean air temperature is <= 0 C or a
+        !! soil layer starting above 50 mm is frozen; otherwise it is active.
+        !! replaces the day-length dormancy in pl_dormant for cold annuals.
+        top_frozen = .false.
+        dep_top = 0.
+        do ly = 1, soil(j)%nly
+          if (dep_top >= 50.) exit
+          if (soil(j)%phys(ly)%tmp <= 0.) top_frozen = .true.
+          dep_top = soil(j)%phys(ly)%d
+        end do
+        do ipl = 1, pcom(j)%npl
+          idp = pcom(j)%plcur(ipl)%idplt
+          if (pcom(j)%plcur(ipl)%gro == "y" .and. pldb(idp)%typ == "cold_annual") then
+            if (w%tave <= 0. .or. top_frozen) then
+              if (pcom(j)%plcur(ipl)%idorm == "n") pcom(j)%plstr(ipl)%strsw = 1.
+              pcom(j)%plcur(ipl)%idorm = "y"
+            else
+              pcom(j)%plcur(ipl)%idorm = "n"
+            end if
+          end if
+        end do
 
         !! compute plant community partitions
         call pl_community
