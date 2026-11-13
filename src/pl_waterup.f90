@@ -64,9 +64,7 @@
       real :: wuse = 0.      !mm H2O    |water uptake by plants in each soil layer
       real :: satco = 0.     !          | 
       real :: scparm = 0.    !          |  
-      real :: rz_sw = 0.     !mm H2O    |soil water in the root zone
-      real :: rz_fc = 0.     !mm H2O    |field capacity water of the root zone
-      real :: rz_ul = 0.     !mm H2O    |saturated water of the root zone
+      real :: rz_sat = 0.    !mm        |root-weighted thickness x layer saturation (st-fc)/(ul-fc) >= 0
       real :: frac = 0.      !none      |fraction of soil layer k inside the root zone
       real :: rz_tmp = 0.    !deg C*mm  |thickness-weighted soil temperature of the root zone
       real :: rz_thk = 0.    !mm        |root zone thickness used for rz_tmp
@@ -90,10 +88,11 @@
        
       !! compute aeration stress from the water in the root zone (not the whole profile)
       !! the layer that holds the root tip counts in proportion to the rooted thickness;
-      !! layer 1 always counts, so a plant with no roots yet sees the surface layer
-      rz_sw = 0.
-      rz_fc = 0.
-      rz_ul = 0.
+      !! layer 1 always counts, so a plant with no roots yet sees the surface layer.
+      !! EXPERIMENT: each layer's saturation (st-fc)/(ul-fc) is taken separately and
+      !! clipped at 0 before the thickness-weighted root-zone mean, so water below field
+      !! capacity in one layer cannot cancel saturation in another.
+      rz_sat = 0.
       rz_tmp = 0.
       rz_thk = 0.
       do k = 1, soil(j)%nly
@@ -106,15 +105,17 @@
           frac = 0.
         end if
         if (frac <= 0.) exit
-        rz_sw = rz_sw + frac * soil(j)%phys(k)%st
-        rz_fc = rz_fc + frac * soil(j)%phys(k)%fc
-        rz_ul = rz_ul + frac * soil(j)%phys(k)%ul
+        if (soil(j)%phys(k)%st > soil(j)%phys(k)%fc .and.                         &
+                       soil(j)%phys(k)%ul - soil(j)%phys(k)%fc > 1.e-6) then
+          rz_sat = rz_sat + frac * soil(j)%phys(k)%thick *                         &
+            Min (1., (soil(j)%phys(k)%st - soil(j)%phys(k)%fc) / (soil(j)%phys(k)%ul - soil(j)%phys(k)%fc))
+        end if
         rz_tmp = rz_tmp + frac * soil(j)%phys(k)%thick * soil(j)%phys(k)%tmp
         rz_thk = rz_thk + frac * soil(j)%phys(k)%thick
         if (frac < 1.) exit
       end do
-      if (rz_sw > rz_fc .and. rz_ul - rz_fc > 1.e-6) then
-        satco = (rz_sw - rz_fc) / (rz_ul - rz_fc)
+      if (rz_sat > 1.e-6 .and. rz_thk > 1.e-6) then
+        satco = rz_sat / rz_thk
         scparm = 100. * (satco - pldb(idp)%aeration) / (1.0001 - pldb(idp)%aeration)
         if (scparm > 0.) then
           pcom(j)%plstr(ipl)%strsa = 1. - (scparm / (scparm + Exp(2.9014 - .03867 * scparm)))
