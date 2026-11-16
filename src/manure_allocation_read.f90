@@ -75,6 +75,43 @@
                 exit
               endif
             end do
+
+            !! xwalk the same name to a manure_om.frt entry.  manure drawn from an
+            !! allocation source is chemically manure, not fertilizer, so when this
+            !! resolves the application goes through pl_manure (manure_om.frt) and
+            !! gets the CENTURY pool partitioning, instead of pl_fert
+            !! (fertilizer.frt).  manure_db already carries the crosswalk in
+            !! iorg_min, so go through it rather than matching manure_om directly.
+            do idb = 1, db_mx%manureparm
+              if (mallo(imro)%src(i)%manure_typ == manure_db(idb)%name) then
+                mallo(imro)%src(i)%iorg_min = manure_db(idb)%iorg_min
+                exit
+              endif
+            end do
+
+            !! a source may name a manure_om entry without a manure_db wrapper
+            if (mallo(imro)%src(i)%iorg_min == 0) then
+              do idb = 1, db_mx%manure_om
+                if (mallo(imro)%src(i)%manure_typ == manure_om(idb)%name) then
+                  mallo(imro)%src(i)%iorg_min = idb
+                  exit
+                endif
+              end do
+            end if
+
+            !! fatal.  the old behaviour was to fall through to pl_fert, which
+            !! applied manure as though it were fertilizer - the defect this
+            !! crosswalk exists to remove.  there is no safe silent fallback:
+            !! pl_fert has no manure composition to work from.
+            if (mallo(imro)%src(i)%iorg_min == 0) then
+              write (*,*)    "ERROR: manure allocation source ",                        &
+                trim(mallo(imro)%src(i)%manure_typ), " matches no manure_db.frt or ",   &
+                "manure_om.frt entry"
+              write (9001,*) "ERROR: manure allocation source ",                        &
+                trim(mallo(imro)%src(i)%manure_typ), " matches no manure_db.frt or ",   &
+                "manure_om.frt entry - manure cannot be applied through pl_fert"
+              error stop
+            end if
           end do
           
           !! read demand object data

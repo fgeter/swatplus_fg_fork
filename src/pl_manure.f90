@@ -35,6 +35,8 @@
       !!added by zhang
       !!======================
       real :: org_c = 0.                       !organic carbon applied (kg C/ha)
+      real :: org_n = 0.                       !organic nitrogen applied (kg N/ha)
+      real :: fresh_n = 0.     !organic N allocated to the fresh litter pools (metabolic + structural)
       real :: meta_fr = 0.  !fraction of carbon in fertilizer that is allocated to metabolic litter C pool
       real :: meta_c = 0.                  !organic carbon allocated to metabolic litter C pool
       real :: meta_m = 0.        !fertilizer (including C and N) allocated into metabolic litter SOM pool
@@ -110,8 +112,14 @@
           soil1(j)%tot(l)%p = soil1(j)%tot(l)%p + rtof * fr_mass * manure_om(ifrt)%forgp
           soil1(j)%hs(l)%p = soil1(j)%hs(l)%p + (1. - rtof) * fr_mass * manure_om(ifrt)%forgp
           
+          !! rtof splits the applied organic N exactly once: (1-rtof) to slow
+          !! humus, rtof to the fresh litter pools.  the two shares must add back
+          !! to org_n for ANY rtof - that is the invariant the old code broke.
+          org_n = fr_mass * manure_om(ifrt)%forgn
+          fresh_n = rtof * org_n
+
           !!allocate organic fertilizer to Slow N pool;
-          soil1(j)%hs(l)%n = soil1(j)%hs(l)%n + (1. - rtof) * fr_mass * manure_om(ifrt)%forgn
+          soil1(j)%hs(l)%n = soil1(j)%hs(l)%n + (1. - rtof) * org_n
         
           org_c = fr_mass * manure_om(ifrt)%fcbn 
                     
@@ -134,12 +142,19 @@
           meta_m = meta_c / 0.58
           soil1(j)%meta(l)%m = soil1(j)%meta(l)%m + meta_m
           
-          meta_n = org_c * rtof * manure_om(ifrt)%forgn * meta_fr
+          !! split the FRESH share by meta_fr.  the old form multiplied by org_c
+          !! (kg C/ha) where the mass term must be the manure mass, which scaled
+          !! metabolic N by fcbn (~0.20 for mw_bf_sd) and starved the fast pool:
+          !! 4.40 kg N/ha where a clean partition gives 21.65.
+          meta_n = fresh_n * meta_fr
           
           soil1(j)%meta(l)%n = soil1(j)%meta(l)%n + meta_n
           
-          !! remaining organic N is llocated to structural litter N pool
-          soil1(j)%str(l)%n = soil1(j)%str(l)%n + fr_mass * manure_om(ifrt)%forgn - meta_n
+          !! the remainder of the FRESH share - not of the whole application -
+          !! goes to structural litter N.  subtracting meta_n from org_n instead
+          !! of fresh_n made hs + meta + str total (2-rtof)*org_n, because meta_n
+          !! cancels: 1.5x the applied organic N at the default rtof = 0.5.
+          soil1(j)%str(l)%n = soil1(j)%str(l)%n + fresh_n - meta_n
             
           str_c = org_c - meta_c
           soil1(j)%str(l)%c = soil1(j)%str(l)%c + str_c
